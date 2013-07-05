@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1">
+  <ComponentClass name="grid_2d">
+<!--
+    <Parameter dimension=" " name="fillOrder" />
+    <Parameter dimension=" " name="aspectRatioXY" />
+    <Parameter dimension=" " name="dx" />
+    <Parameter dimension=" " name="dy" />
+    <Parameter dimension=" " name="x0" />
+    <Parameter dimension=" " name="y0" />
+-->
+  </ComponentClass>
+</NineML>

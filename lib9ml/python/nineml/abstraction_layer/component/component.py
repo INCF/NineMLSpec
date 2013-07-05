@@ -368,12 +368,11 @@ class InterfaceInferer(ActionVisitor):
 
 
 
-    
 
 
 
 class ComponentClass( ComponentClassMixinFlatStructure, 
-                      ComponentClassMixinNamespaceStructure ):
+                      ComponentClassMixinNamespaceStructure):
     """A ComponentClass object represents a *component* in NineML. 
 
       .. todo::
@@ -386,8 +385,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
     def __init__(self, name, parameters=None, analog_ports=None, 
                     event_ports=None, dynamics=None, subnodes=None, 
                     portconnections=None, regimes=None, 
-                    aliases=None,state_variables=None
-                    ):
+                    aliases=None, state_variables=None):
         """Constructs a ComponentClass
         
         :param name: The name of the component.
@@ -453,12 +451,11 @@ class ComponentClass( ComponentClassMixinFlatStructure,
         self._query = componentqueryer.ComponentQueryer(self)
 
 
-        
         # EventPort, StateVariable and Parameter Inference:
         inferred_struct = InterfaceInferer(dynamics, analog_ports=analog_ports)
         inf_check = lambda l1, l2, desc: check_list_contain_same_items( l1, l2,
                 desc1='Declared', desc2='Inferred', ignore=['t'], desc=desc) 
-        
+    
         # Check any supplied parameters match:
         if parameters is not None:
             parameter_names = [p.name for p in parameters]
@@ -514,6 +511,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
                                                 subnodes=subnodes, 
                                                 portconnections=portconnections)
 
+
         #Finalise initiation:
         self._resolve_transition_regime_names()
 
@@ -522,7 +520,7 @@ class ComponentClass( ComponentClassMixinFlatStructure,
 
         # Is the finished component valid?:
         self._validate_self()
-        
+
     
     @property
     def flattener(self):

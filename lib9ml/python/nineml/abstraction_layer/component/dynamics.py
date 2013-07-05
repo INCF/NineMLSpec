@@ -598,12 +598,13 @@ class StateVariable(object):
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
         return visitor.visit_statevariable(self, **kwargs)
-    def __init__(self, name, ):
+    def __init__(self, name, dimension=""):
         """StateVariable Constructor
 
         :param name:  The name of the state variable.
         """
         self._name = name.strip()
+        self._dimension = dimension
         nineml.utility.ensure_valid_c_variable_name(self._name)
 
 
@@ -611,5 +612,9 @@ class StateVariable(object):
     def name(self):
         return self._name
 
+    @property
+    def dimension(self):
+        return self._dimension
+
     def __str__(self):
-        return "<StateVariable: %s>" % self.name
+        return "<StateVariable: %s (%s)>" % (self.name, self.dimension)

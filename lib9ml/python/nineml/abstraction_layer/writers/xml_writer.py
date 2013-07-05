@@ -43,13 +43,13 @@ class XMLWriter(ComponentVisitor):
         return nineml.al.E('Regime', name=regime.name, *nodes )
 
     def visit_statevariable(self, state_variable):
-        return nineml.al.E('StateVariable', name=state_variable.name,dimension='??')
+        return nineml.al.E('StateVariable', name=state_variable.name, dimension=state_variable.dimension)
 
     def visit_outputevent(self, output_event, **kwargs):
         return nineml.al.E('EventOut', port = output_event.port_name ) 
 
     def visit_parameter(self, parameter):
-        return nineml.al.E('Parameter', name=parameter.name, dimension='??')
+        return nineml.al.E('Parameter', name=parameter.name, dimension=parameter.dimension)
 
     def visit_analogport(self, port, **kwargs):
         if port.reduce_op:

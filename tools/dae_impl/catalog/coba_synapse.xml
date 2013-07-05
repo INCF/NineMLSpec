@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1">
+  <ComponentClass name="CobaSyn">
+    <AnalogPort mode="recv" name="V"/>
+    <AnalogPort mode="send" name="I"/>
+    <EventPort mode="recv" name="spikeinput"/>
+
+    <Parameter name="tau" dimension="T"/>
+    <Parameter name="weight" dimension="M^-1 L^-2 T^3 I^2"/>
+    <Parameter name="vrev" dimension="M L^2 T^-3 I^-1"/>
+
+    <Dynamics>
+      <Regime name="cobadefaultregime">
+        <TimeDerivative variable="g">
+          <MathInline>-g/tau</MathInline>
+        </TimeDerivative>
+        <OnEvent target_regime="cobadefaultregime" src_port="spikeinput">
+          <StateAssignment variable="g">
+            <MathInline>g+weight</MathInline>
+          </StateAssignment>
+        </OnEvent>
+      </Regime>
+      <Alias name="I">
+        <MathInline>g*(vrev-V)</MathInline>
+      </Alias>
+      <StateVariable name="g" dimension="M^-1 L^-2 T^3 I^2"/>
+    </Dynamics>
+  </ComponentClass>
+</NineML>

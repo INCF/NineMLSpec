@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1">
+  <ComponentClass name="iaf">
+    <AnalogPort mode="send" name="V"/>
+    <AnalogPort mode="reduce" reduce_op="+" name="I"/>
+    <EventPort mode="send" name="spikeoutput"/>
+    <Parameter name="cm" dimension="M^-1 L^-2 T^4 I^2"/>
+    <Parameter name="taurefrac" dimension="T"/>
+    <Parameter name="gl" dimension="M^-1 L^-2 T^3 I^2"/>
+    <Parameter name="vreset" dimension="M L^2 T^-3 I^-1"/>
+    <Parameter name="vrest" dimension="M L^2 T^-3 I^-1"/>
+    <Parameter name="vthresh" dimension="M L^2 T^-3 I^-1"/>
+    <Dynamics>
+      <Regime name="subthresholdregime">
+        <TimeDerivative variable="V">
+          <MathInline>( gl*( vrest - V ) + I)/(cm)</MathInline>
+        </TimeDerivative>
+        <OnCondition target_regime="refractoryregime">
+          <StateAssignment variable="tspike">
+            <MathInline>t</MathInline>
+          </StateAssignment>
+          <StateAssignment variable="V">
+            <MathInline>vreset</MathInline>
+          </StateAssignment>
+          <EventOut port="spikeoutput"/>
+          <Trigger>
+            <MathInline>V &gt; vthresh</MathInline>
+          </Trigger>
+        </OnCondition>
+      </Regime>
+      <Regime name="refractoryregime">
+        <TimeDerivative variable="V">
+          <MathInline>0</MathInline>
+        </TimeDerivative>
+        <OnCondition target_regime="subthresholdregime">
+          <Trigger>
+            <MathInline>t &gt;= tspike + taurefrac</MathInline>
+          </Trigger>
+        </OnCondition>
+      </Regime>
+      <StateVariable name="V" dimension="M L^2 T^-3 I^-1"/>
+      <StateVariable name="tspike" dimension="T"/>
+    </Dynamics>
+  </ComponentClass>
+</NineML>

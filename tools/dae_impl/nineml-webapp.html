@@ -1,0 +1,784 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>NineML WebApp</title>
+    <!-- 
+      Replace or occurrences of "http://localhost" or "http://nineml-app.incf.org" with:
+        - http://localhost           - Local webserver (testing only)
+        - http://nineml-app.incf.org - Phobos
+    -->
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <link type="text/css" href="http://nineml-app.incf.org/script/css/smoothness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />  
+    <!--
+      Blueish theme
+      <link type="text/css" href="http://nineml-app.incf.org/script/css/redmond/jquery-ui-1.8.16.custom.css" rel="stylesheet" />  
+    -->
+    
+    <!--
+      Some Valentine's voodoo-mojo with css styles that does not work anyway, therefore commented out:
+      <style type="text/css">@import url(http://www.incf.org/portal_css/INCF.org%20skin/base-cachekey2304.css);</style>
+      <style type="text/css" media="all">@import url(http://www.incf.org/portal_css/INCF.org%20skin/ploneCustom-cachekey9204.css);</style>
+    -->
+    
+    <link type="text/css" href="http://localhost/nineml-webapp.css" rel="stylesheet" media="all" />
+    <script type="text/javascript" src="http://localhost/script/js/jquery-1.6.2.min.js"></script>
+    <script type="text/javascript" src="http://localhost/script/js/jquery-ui-1.8.16.custom.min.js"></script>
+    <script type="text/javascript" src="http://localhost/script/jquery.form.js"></script>
+    <script type="text/javascript" src="http://localhost/script/jquery.validate.js"></script>
+    <script type="text/javascript" src="http://localhost/script/download.jQuery.js"></script>
+
+    <script src="http://localhost/script/jquery.alerts.js" type="text/javascript"></script>
+    <link href="http://localhost/script/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
+    
+    <noscript>          
+        <style type="text/css">
+            div {display:none;}
+        </style>
+        <p>You don't have javascript enabled.</p>
+    </noscript>         
+    <script type="text/javascript">
+        var __nineml_webapp__ = "http://localhost/nineml-webapp";
+        
+        $(document).ready(function(){
+            
+            $("#mainContent").css("display", "inline");
+            
+            $("#dialogInitialPage").dialog({
+                autoOpen: true,
+                modal : true,
+                width : 700,
+                height : 500,
+                buttons: {
+                    "Generate AL report": function() { 
+                        // Get App ID from the server which is needed to store the input data for activity
+                        $("#dialogInitialPage").dialog("disable"); 
+                        var parameters = {"__NINEML_ACTION__" : "getApplicationID"};
+                        $.post(__nineml_webapp__, parameters, function(data) {
+                            var results = data;
+                            var success = results["success"];
+                            var error   = results["error"];
+                            var uuid    = results["content"];
+                            if(success == true)
+                            {
+                                $("#applicationID").text(uuid);
+                                $("#dialogInitialPage").dialog("close"); 
+                                $("#dialogGenerateALReport").dialog("open");
+                            }
+                            else
+                            {
+                                var traceback = results["traceback"];
+                                var message = "<p>Error occured while getting the uuid:<br/><pre>{0}</pre></p> <p>Traceback:<br/><pre>{1}</pre></p>".format(error, traceback);
+                                showErrorMessage(message, 500, 300);
+                            }
+                            $("#dialogInitialPage").dialog("enable"); 
+                        });
+                    },
+                    /*
+                    "Simulate Network": function() { 
+                        //$(this).dialog("close"); 
+                    },
+                    */
+                    "About": function() { 
+                        $("#dialogInitialPageHelp").dialog("open");
+                        //$(this).dialog("close"); 
+                    }
+                }
+            });
+            
+            $("#dialogDownloadReport").dialog({
+                autoOpen: false,
+                modal : true,
+                width : 550,
+                height : 200,
+                buttons: {
+                    "Download PDF": function() { 
+                        if($("#pdfAvailable").text() != "true")
+                        {
+                            showErrorMessage("PDF report is not available", 400, 200);
+                            return;
+                        }
+                        var appID      = $("#applicationID").html();
+                        var parameters = {"__NINEML_ACTION__"    : "downloadPDF",
+                                          "__NINEML_WEBAPP_ID__" : appID};
+                        $.download(__nineml_webapp__, $.param(parameters));
+                    }, 
+                    "Download HTML": function() { 
+                        if($("#htmlAvailable").text() != "true")
+                        {
+                            showErrorMessage("HTML report is not available", 400, 200);
+                            return;
+                        }
+                        var appID      = $("#applicationID").html();
+                        var parameters = {"__NINEML_ACTION__"    : "downloadHTML",
+                                          "__NINEML_WEBAPP_ID__" : appID};
+                        $.download(__nineml_webapp__, $.param(parameters));
+                    }, 
+                    "Download ZIP": function() { 
+                        if($("#zipAvailable").text() != "true")
+                        {
+                            showErrorMessage("ZIP archive with the test data is not available", 400, 200);
+                            return;
+                        }
+                        var appID      = $("#applicationID").html();
+                        var parameters = {"__NINEML_ACTION__"    : "downloadZIP",
+                                          "__NINEML_WEBAPP_ID__" : appID};
+                        $.download(__nineml_webapp__, $.param(parameters));
+                    }, 
+                    "Close": function() { 
+                        $(this).dialog("close");                         
+                    } 
+                },
+            });
+
+            $("#dialogGenerateALReport").dialog({
+                autoOpen: false,
+                modal : true,
+                width : 700,
+                height : 500,
+                buttons: {
+                    "Generate": function() { 
+                        $("#dialogGenerateALReport").dialog("disable");
+                        
+                        var appID      = $("#applicationID").html();
+                        var parameters = {"__NINEML_ACTION__"    : "generateReport",
+                                          "__NINEML_WEBAPP_ID__" : appID};
+                        $.post(__nineml_webapp__, parameters, function(data) {
+                            var results = data;
+                            var success = results["success"];
+                            var error   = results["error"];
+                            var status  = results["content"];
+                            if(success == true)
+                            {
+                                if(status["pdfAvailable"] == true)
+                                {
+                                    $("#pdfAvailable").text("true");
+                                }
+                                if(status["htmlAvailable"] == true)
+                                {
+                                    $("#htmlAvailable").text("true");
+                                }
+                                if(status["zipAvailable"] == true)
+                                {
+                                    $("#zipAvailable").text("true");
+                                }
+                                $("#downloadReportMessage").text("Report generation is successsful");
+                                $("#dialogDownloadReport").dialog("open");
+                            }
+                            else
+                            {
+                                var traceback = results["traceback"];
+                                var message = "<p>Error occured while generating the report:<br/><pre>{0}</pre></p><p>Traceback:<br/><pre>{1}</pre></p>".format(error, traceback);
+                                showErrorMessage(message, 400, 300);
+                            }
+                            
+                            $("#dialogGenerateALReport").dialog("enable");
+                        });
+                    }, 
+                    "Close": function() { 
+                            $(this).dialog("close"); 
+                    }
+                },
+                open: function(event, ui) {
+                        $("#testableComponent").empty();
+                        $("#selectedALComponentName").empty();
+                        $("#testsList").empty();
+                    },
+                close: function(event, ui) { 
+                        $("#testableComponent").empty();
+                        $("#selectedALComponentName").empty();
+                        $("#testsList").empty();
+                        $("#applicationID").empty();
+                        
+                        $("#dialogInitialPage").dialog("open"); 
+                    }
+            });
+
+            $("#dialogSelectALComponent").dialog({
+                autoOpen: false,
+                modal : true,
+                buttons: {
+                    "Ok": function() { 
+                        $("#dialogSelectALComponent").dialog("disable");
+                        var component  = $("#listALComponent").val();
+                        var appID      = $("#applicationID").html();
+                        var parameters = {"__NINEML_ACTION__"    : "setALComponent",
+                                          "__NINEML_WEBAPP_ID__" : appID,
+                                          "TestableComponent" : component};
+                        $.post(__nineml_webapp__, parameters, function(data) {
+                            var results = data;
+                            var success = results["success"];
+                            var error   = results["error"];
+                            var name    = results["content"];
+                            if(success == true)
+                            {
+                                $("#testableComponent").text(component);
+                                $("#selectedALComponentName").text(component);  
+                                $("#postResults").html(component);
+                                $("#testsList").empty();
+                            }
+                            else
+                            {
+                                var traceback = results["traceback"];
+                                var message = "<p>Error occured while setting the component:<br/><pre>{0}</pre></p> <p>Traceback:<br/><pre>{1}</pre></p>".format(error, traceback);
+                                showErrorMessage(message, 500, 300);
+                            }
+                            $("#dialogSelectALComponent").dialog("enable");
+                            $("#dialogSelectALComponent").dialog("close"); 
+                        });
+                    }, 
+                    "Cancel": function() { 
+                        $(this).dialog("close");                         
+                    } 
+                },
+            });
+
+            $("#formUploadXMLFile").ajaxForm({  
+                dataType: "json",
+                success: function(responseText, statusText) {        
+                    var results        = responseText;
+                    var success        = results["success"];
+                    var error          = results["error"];
+                    var component_name = results["content"];
+                    if(success == true)
+                    {
+                        $("#testableComponent").text(component_name);
+                        $("#selectedALComponentName").text(component_name);  
+                        $("#postResults").html(component_name);
+                    }
+                    else
+                    {
+                        var traceback = results["traceback"];
+                        var message = "<p>Error occured while processing the xml file:<br/><pre>{0}</pre></p> <p>Traceback:<br/><pre>{1}</pre></p>".format(error, traceback);
+                        showErrorMessage(message, 500, 300);
+                    }
+                    $("#testsList").empty();
+                    
+                    $("#dialogUploadALComponent").dialog("enable"); 
+                    $("#dialogUploadALComponent").dialog("close"); 
+                },
+                error: function(){
+                    $("#dialogUploadALComponent").dialog("enable"); 
+                    $("#dialogUploadALComponent").dialog("close"); 
+                }
+            });
+
+            $("#dialogUploadALComponent").dialog({
+                autoOpen: false,
+                modal : true,
+                width : 400,
+                buttons: {
+                    "Upload": function() { 
+                        var appID      = $("#applicationID").html();
+                        $("#formUploadApplicationID").attr("value", appID)
+                        $("#formUploadXMLFile").attr("action", __nineml_webapp__)
+                        $("#formUploadXMLFile").submit();
+                        $(this).dialog("disable"); 
+                    }, 
+                    "Close": function() { 
+                        $(this).dialog("close");                         
+                    } 
+                },
+                open: function(event, ui) {
+                        $("#fileXML").attr("value", "")
+                        $("#testableComponent").empty();
+                        $("#selectedALComponentName").empty();
+                    }
+            });
+
+            $("#dialog-message").dialog({
+                autoOpen: false,
+                modal: true,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            
+            $("#dialogInitialPageHelp").dialog({
+                autoOpen: false,
+                modal: true,
+                width : 600,
+                height : 500,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            
+            $("#dialogPredefinedValuesHelp").dialog({
+                autoOpen: false,
+                modal: true,
+                width : 700,
+                height : 500,
+                buttons: {
+                    Ok: function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            
+            function showErrorMessage(message, width, height)
+            {
+                if(width != null)
+                {
+                    $("#dialog-message").dialog("option", "width", width);
+                }
+                if(height != null)
+                {
+                    $("#dialog-message").dialog("option", "height", height);
+                }
+                $("#dialog-message-content").html(message);
+                $("#dialog-message").dialog("open");
+            }
+            
+            function checkIfUnique(name)
+            {
+                var unique = true;
+                $("#testsList").children().each(function () {
+                    var child = $(this).text();
+                    if(name == child) 
+                    {
+                        unique = false;
+                    } 
+                });
+                return unique;
+            }
+            
+            function checkName(name)
+            {
+                var regex = /^([a-zA-Z0-9 _-]+)$/;
+                if(regex.test(name) == false)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            jQuery.validator.messages.required = "&nbsp; [required]";
+            jQuery.validator.messages.digits   = "&nbsp; [invalid]";
+            jQuery.validator.messages.number   = "&nbsp; [invalid]";
+            $("#dialogAddTest").dialog({
+                autoOpen: false,
+                modal : true,
+                width : 500,
+                height : 500,
+                buttons: {
+                    "Ok": function() { 
+                        $("#formAddTest").submit();
+                    },
+                    "Cancel": function() { 
+                        $(this).dialog("close");                         
+                    } 
+                },
+                open : function(event, ui) {
+                        $("#errorContainer_dialogAddTest").empty();
+                        $("#errorLabelContainer_dialogAddTest").empty();
+                        
+                        $("#formAddTest").validate(
+                        {
+                            errorClass: "invalid",
+                            submitHandler: function() { 
+                                var testName        = $("#id_testName").val();
+                                var testDescription = $("#id_testDescription").val();
+                                if(checkIfUnique(testName) == false)
+                                {
+                                    var message = "A test with that name already exists.";
+                                    showErrorMessage(message, 400, 200);
+                                    return;
+                                }
+                                if(checkName(testName) == false)
+                                {
+                                    var message = "Test names can contain only alpha-numeric characters, space, _ and -";
+                                    showErrorMessage(message, 400, 200);
+                                    return;
+                                }
+                                
+                                $("#dialogAddTest").dialog("disable");                         
+                                
+                                var formData   = $("#formAddTest").serialize();
+                                var appID      = $("#applicationID").html();
+                                var parameters = {"__NINEML_ACTION__"    : "addTest",
+                                                "__NINEML_WEBAPP_ID__" : appID};
+                                parameters = $.param(parameters) + "&" + formData;
+                                $.post(__nineml_webapp__, parameters, function(data) {
+                                    //var results = JSON.parse(data);
+                                    var results = data;
+                                    var success = results["success"];
+                                    var error   = results["error"];
+                                    var json    = results["content"];
+                                    if(success == true)
+                                    {
+                                        var testName        = $("#id_testName").val();
+                                        var testDescription = $("#id_testDescription").val();
+                                        var length = $("#testsList").children().length;
+                                        var id = "__test_" + length;
+                                        var li = "<li id=\"{0}\">{1}</li>".format(id, testName);
+                                        $("#" + id).data("testName", testName);
+                                        $("#" + id).data("testDescription", testDescription);
+                                        $("#testsList").append(li);
+                                    }
+                                    else
+                                    {
+                                        var traceback = results["traceback"];
+                                        var message = "<p>Error occured while adding the test:<br/><pre>{0}</pre></p> <p>Traceback:<br/><pre>{1}</pre></p>".format(error, traceback);
+                                        showErrorMessage(message, 500, 300);
+                                    }
+                                    $("#dialogAddTest").dialog("enable");                         
+                                    $("#dialogAddTest").dialog("close");                         
+                                });
+                            } 
+                        });
+                    }
+                });
+
+            $("#dialogAddPredefinedInputData").dialog({
+                autoOpen: false,
+                modal : true,
+                width : 600,
+                height : 500,
+                buttons: {
+                    "Help": function() { 
+                        $("#dialogPredefinedValuesHelp").dialog("open");
+                    },
+                    "Cancel": function() { 
+                        $(this).dialog("close");                         
+                    },
+                    "Continue": function() { 
+                        $(this).dialog("close");                         
+                        
+                        var inputData = $("#textareaInputData").val();
+                        var appID      = $("#applicationID").html();
+                        var parameters = {"__NINEML_ACTION__"    : "displayGUI",
+                                          "__NINEML_WEBAPP_ID__" : appID,
+                                          "InitialValues"        : inputData};
+                        $.post(__nineml_webapp__, parameters, function(data) {
+                            //var results = JSON.parse(data);
+                            var results = data;
+                            var success = results["success"];
+                            var error   = results["error"];
+                            var html    = results["content"];
+                            if(success == true)
+                            {
+                                $("#formAddTest").html(html);
+                                $("#dialogAddTest").dialog("open");
+                            }
+                            else
+                            {
+                                var traceback = results["traceback"];
+                                var message = "<p>Error occured while setting the predefined values:<br/><pre>{0}</pre></p> <p>Traceback:<br/><pre>{1}</pre></p>".format(error, traceback);
+                                showErrorMessage(message, 500, 300);
+                            }
+                        });
+                    }
+                }
+            });
+            
+            $("#buttonSelectALComponent").button().click(function(){
+                var parameters = {"__NINEML_ACTION__" : "getAvailableALComponents"};
+                $.post(__nineml_webapp__, parameters, function(data) {
+                    //var results = JSON.parse(data);
+                    var results = data;
+                    var success = results["success"];
+                    var error   = results["error"];
+                    var html    = results["content"];
+                    if(success == true)
+                    {
+                        $("#listALComponent").html(html);
+                        $("#dialogSelectALComponent").dialog("open");
+                    }
+                    else
+                    {
+                        var traceback = results["traceback"];
+                        var message = "<p>Error occured while getting the available components:<br/><pre>{0}</pre></p> <p>Traceback:<br/><pre>{1}</pre></p>".format(error, traceback);
+                        showErrorMessage(message, 500, 300);
+                    }
+                })
+            });
+            
+            $("#buttonUploadALComponent").button().click(function(){
+                $("#dialogUploadALComponent").dialog("open"); 
+            });
+            
+            $("#buttonAddTest").button().click(function(){
+                if($("#selectedALComponentName").text() == "")
+                {
+                    var message = "First select/upload a component";
+                    showErrorMessage(message, 400, 300);
+                    return;
+                }
+                $("#dialogAddPredefinedInputData").dialog("open");
+            });
+
+        });
+        
+        $(window).unload(function(){
+            //alert("Bye bye...");
+        });
+        
+        String.prototype.format = function () {
+            var args = arguments;
+            return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+                if (m == "{{") { return "{"; }
+                if (m == "}}") { return "}"; }
+                return args[n];
+            });
+        }
+    </script>
+</head>
+
+<body>
+<div id="dialogInitialPage" style="display:none;" title="NineML Web Application">
+    <p>
+    The NineML web app is intended to serve as a reference implementation, 
+    testing tool and report generator for <a href="http://software.incf.org/software/nineml">NineML</a> 
+    descriptions and components.
+    </p>
+    <p>
+    <b>Usage:</b><br/>
+    The web application takes an abstraction layer NineML component as an input and produces 
+    the component report in PDF format. The input component can be selected from the catalog or uploaded
+    by the user. Optionally, it can run one or more tests (simulations) for the given set of inputs. 
+    Simulation inputs can be entered into the GUI form where the following information about test should be provided:
+      <ul>
+          <li>Test name and description</li>
+          <li>Simulation time horizon and reporting interval</li>
+          <li>Parameters values</li>
+          <li>Initial conditions values</li>
+          <li>Initially active regimes</li>
+          <li>Analog ports values<br/>
+              The values allowed are simple numbers or time-dependent functions that may contain numbers, 
+              basic mathematical functions, constants (such as <i>&pi;</i>, <i>e</i>) and <i>time</i>.</li>
+          <li>Event ports values<br/>
+              The values allowed at the moment are limited to a comma-delimited sequence of floating point 
+              numbers representing incoming event moments.</li>
+          <li>List of variables/ports/aliases whose values should be included in the report</li>
+      </ul> 
+    Some predefined initial input values can be given in JSON format (to speed-up oftenly repeated tests).
+    If no initial values are provided the GUI will be populated with zeros and defaults. <br/>
+    After the component has been selected and tests data entered the button <i>Generate</i> runs the simulations, 
+    produces results/plots and generates the report with the test data. If successful, the application will
+    offer the user to download the pdf report and the zip archive with the simulation inputs, raw outputs, plots 
+    and log files.
+    </p>
+</div>
+
+
+<div id="dialogGenerateALReport" style="display:none;" title="Generate Abstraction Layer component report">
+    <div id="users-contain" class="ui-widget">
+        <ol>
+            <li>Choose AL component: <br/>
+                <button id="buttonSelectALComponent">Select predefined Component</button>
+                or
+                <button id="buttonUploadALComponent">Upload component</button> <br/> <br/>
+                Selected AL component name: <b id="selectedALComponentName"></b>
+            </li>
+            <br/>
+            <li id="listAddTest">Add some tests (optional): <br/>
+                <ul id="testsList">
+                </ul>
+                <br/>
+                <button id="buttonAddTest">Add test</button>
+            </li>
+        </ol>        
+    </div>    
+</div>
+
+<div id="applicationID" style="display:none;"></div>
+<div id="postResults" style="display:none;"></div>
+<div id="testableComponent" style="display:none;"></div>
+
+<div id="dialogSelectALComponent" title="Select AL Component">
+    <label for="listALComponent" style="width: 200px;">NineML component:</label>
+    <select id="listALComponent"></select>
+</div>
+
+<div id="dialogUploadALComponent" title="Upload AL Component">
+    <form id="formUploadXMLFile" action="" enctype="multipart/form-data" method="post">
+        <input id="formUploadApplicationID" type="hidden" name="__NINEML_WEBAPP_ID__" value=""/>
+        <input type="hidden" name="__NINEML_ACTION__" value="uploadALComponent"/>
+        <label for="file">NineML Abstraction Layer XML file:</label>
+        <input id="fileXML" type="file" name="xmlNineMLFile" accept="text/xml" />
+    </form>
+</div>
+
+<div id="dialogAddPredefinedInputData" title="Predefined input data">
+    <form id="formPredefinedInputData">
+        Predefined input data (in JSON format):<br/>
+        <textarea id="textareaInputData" rows="30" cols="80" style="height:100%; width:100%; white-space:normal;"></textarea>
+    </form>
+</div>
+
+<div id="dialogAddTest" title="Edit components parameters">
+    <p id="errorLabelContainer_dialogAddTest" style="color:red;"></p>
+    <ul id="errorContainer_dialogAddTest"></ul>
+    <form id="formAddTest" action="" method="post">
+    </form>
+<div>
+
+<div id="dialog-message" title="Information">
+    <p id="dialog-message-content">
+    </p>
+</div>
+
+<div id="dialogDownloadReport" title="Report generation results">
+    <p id="downloadReportMessage"></p>
+    <div id="pdfAvailable" style="display:none;"></div>
+    <div id="htmlAvailable" style="display:none;"></div>
+    <div id="zipAvailable" style="display:none;"></div>
+</div>
+
+<div id="dialogInitialPageHelp" title="About">
+<p>
+The NineML web app is intended to serve as a reference implementation, 
+testing tool and report generator for NineML descriptions and components.
+</p>
+
+<p>
+NineML, Network Interchange for Neuroscience ML, is a markup language for 
+computational neuroscience model description developed by the INCF Program on 
+Multiscale Modeling’s Task Force on Standards and Guidelines for Multiscale Modeling. 
+A first version was released to the scientific community in July 2011. 
+Read more on the official NineML web pages are located on the INCF Software Center: 
+<a href="http://software.incf.org/software/nineml">http://software.incf.org/software/nineml</a>
+</p>
+
+<p>
+The NineML web app and reference implementation is developed by Dragan Nikolic and builds on
+<ul>
+<li>the DAE Tools, developed by Dragan Nikolic; <a href="http://daetools.sourceforge.net">http://daetools.sourceforge.net</a> </li>
+<li>the Python implementation of NineML developed by Mike Hull, Eilif Muller, and Andrew Davison; 
+  <a href="http://phobos.incf.ki.se">http://phobos.incf.ki.se</a> </li>
+<li>the work and discussions carried out by the Task Force on Standards and Guidelines for Multiscale Modeling: 
+    <a href="http://www.incf.org/programs/modeling/people">http://www.incf.org/programs/modeling/people</a> </li>
+</ul>
+</p>
+<hr/>
+
+<p>
+NineML is still a work in progress and your comments and feedback will be extremely valuable. 
+You can report bugs or missing features here and you can contact us using the following mailing-lists: <br/>
+
+<ul>
+<li>NineML announce: getting informed about NineML updates, events, ... <br/>
+<a href="http://lists.incf.org/mailman/listinfo/nineml-announce">http://lists.incf.org/mailman/listinfo/nineml-announce</a> </li>
+
+<li>NineML developers: planning to get involved in the further development of NineML, 
+join this list to get in touch with the taskforce and the API developers <br/>
+<a href="http://lists.incf.org/mailman/listinfo/nineml-developers">http://lists.incf.org/mailman/listinfo/nineml-developers</a> </li>
+
+<li>NineML users: Want to use NineML but do not know how to do it? 
+Need more information about the use of the APIs, have questions regarding NineML, 
+join this list and we will give as much detail as possible to satisfy your curiosity <br/>
+<a href="http://lists.incf.org/mailman/listinfo/nineml-users">http://lists.incf.org/mailman/listinfo/nineml-users</a> </li>
+</ul>
+</p>
+
+</div>
+
+<div id="dialogPredefinedValuesHelp" title="Help">
+    <p>Some dummy input data that should work</p>
+    <p><b>Component: hierachical_iaf_1coba</b> <br/>
+        <code>
+{
+    "timeHorizon": 1.0, 
+    "reportingInterval": 0.001, 
+    "initial_conditions": {
+        "iaf_1coba.iaf.tspike": -10000000000, 
+        "iaf_1coba.iaf.V": -0.06, 
+        "iaf_1coba.cobaExcit.g": 0.0
+    }, 
+    "parameters": {
+        "iaf_1coba.iaf.gl": 50.0, 
+        "iaf_1coba.cobaExcit.vrev": 0.0, 
+        "iaf_1coba.cobaExcit.q": 3.0, 
+        "iaf_1coba.iaf.vreset": -0.06, 
+        "iaf_1coba.cobaExcit.tau": 5.0, 
+        "iaf_1coba.iaf.taurefrac": 0.008, 
+        "iaf_1coba.iaf.vthresh": -0.04, 
+        "iaf_1coba.iaf.vrest": -0.06, 
+        "iaf_1coba.iaf.cm": 1.0
+    }, 
+    "variables_to_report": {
+        "iaf_1coba.cobaExcit.I": true, 
+        "iaf_1coba.iaf.V": true
+    }, 
+    "event_ports_expressions": {
+        "iaf_1coba.cobaExcit.spikeinput": "0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90"
+    }, 
+    "active_regimes": {
+        "iaf_1coba.cobaExcit": "cobadefaultregime", 
+        "iaf_1coba.iaf": "subthresholdregime"
+    }, 
+    "analog_ports_expressions": {}
+}
+        </code>
+    </p>
+    
+    <p><b>Component: iaf</b><br/>
+        <code>
+{
+  "timeHorizon": 1.0, 
+  "reportingInterval": 0.001, 
+  "initial_conditions": {
+    "iaf.tspike": -10000000000, 
+    "iaf.V": -0.06
+  }, 
+  "parameters": {
+    "iaf.gl": 50.0, 
+    "iaf.vreset": -0.06, 
+    "iaf.taurefrac": 0.008, 
+    "iaf.vthresh": -0.04, 
+    "iaf.vrest": -0.06, 
+    "iaf.cm": 1.0
+  }, 
+  "variables_to_report": {
+    "iaf.V": true
+  }, 
+  "event_ports_expressions": {}, 
+  "active_regimes": {
+    "iaf": "subthresholdregime"
+  }, 
+  "analog_ports_expressions": {
+    "iaf.ISyn" : "1.2"
+  }
+}
+        </code>
+    </p>
+            
+    <p><b>Component: coba_synapse</b> <br/>
+        <code>
+{
+  "timeHorizon": 1.0, 
+  "reportingInterval": 0.001, 
+  "initial_conditions": {
+    "CobaSyn.g": 0.0
+  }, 
+  "parameters": {
+    "CobaSyn.vrev": 0.0, 
+    "CobaSyn.q": 3.0, 
+    "CobaSyn.tau": 5.0
+  }, 
+  "variables_to_report": {
+    "CobaSyn.I": true 
+  }, 
+  "event_ports_expressions": {
+    "CobaSyn.spikeinput": "0.05, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90"
+  }, 
+  "active_regimes": {
+    "CobaSyn": "cobadefaultregime"
+  }, 
+  "analog_ports_expressions": {
+    "CobaSyn.V" : "-0.050"
+  }
+} 
+        </code>
+    </p>
+</div>
+
+</body>
+</html>

@@ -19,4 +19,4 @@ Dependencies
 * lxml - see http://codespeak.net/lxml/
 * ply (Python Lex-Yacc)
 * Python Nose (for running the tests)
-
+* Cheetah - see http://cheetahtemplate.org/

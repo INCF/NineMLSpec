@@ -329,8 +329,9 @@ def join_norm(*args):
 
 class LocationMgr(object):
     std_append_to_path_called = False
-    temp_dir = '/tmp/'
-        
+    import tempfile
+    temp_dir = str(tempfile.gettempdir())
+
     @classmethod
     def getRootDir(cls):
         localDir = realpath ( dirname( __file__ ) ) 

@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1">
+  <ComponentClass name="uniform_distribution">
+    <!--
+    <Parameter dimension=" " name="lowerBound" />
+    <Parameter dimension=" " name="upperBound" />
+    -->
+  </ComponentClass>
+</NineML>

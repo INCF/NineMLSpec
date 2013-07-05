@@ -63,10 +63,8 @@ class XMLLoader(object):
                               subnodes = dict(subnodes['Subnode'] ),
                               portconnections = subnodes["ConnectPorts"])
 
-
-       
     def load_parameter(self, element):
-        return nineml.al.Parameter(name=element.get('name')) 
+        return nineml.al.Parameter(name=element.get('name'), dimension=element.get('dimension')) 
 
     def load_analogport(self, element):
         return nineml.al.AnalogPort( name = element.get("name"),
@@ -101,7 +99,8 @@ class XMLLoader(object):
 
     def load_statevariable(self, element):
         name = element.get("name")
-        return nineml.al.StateVariable( name=name)
+        dimension=element.get('dimension')
+        return nineml.al.StateVariable( name=name, dimension=dimension)
 
 
     def load_timederivative(self, element):
@@ -165,7 +164,6 @@ class XMLLoader(object):
         assert len( element.findall(nineml.al.NINEML+"MathInline") ) == 1
         
         return nineml.utility.expect_single( element.findall(nineml.al.NINEML+'MathInline') ).text
-
 
 
     # These blocks map directly in to classes:

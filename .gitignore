@@ -1,0 +1,7 @@
+*.pyc
+*.aux
+*.log
+*.out
+*.toc
+*.blg
+*.bbl

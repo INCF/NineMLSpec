@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<NineML xmlns="http://nineml.org/9ML/0.1">
+  <ComponentClass name="spike_source_poisson">
+    <!--
+    <Parameter dimension=" " name="rate" />
+    <Parameter dimension=" " name="duration" />
+    <Parameter dimension=" " name="t0" />
+    -->
+  </ComponentClass>
+</NineML>
