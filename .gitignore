@@ -1,7 +1,10 @@
 *.pyc
+x86_64
+*.toc
 *.aux
 *.log
-*.out
 *.toc
-*.blg
 *.bbl
+*.blg
+*.out
+*.komodoproject
