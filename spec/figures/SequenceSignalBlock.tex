@@ -1,0 +1,24 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{topaths,positioning}
+\usepackage{signalflowdiagram}
+
+\begin{document}
+\pagestyle{empty}
+\begin{figure}
+\begin{signalflow}{$\texttt{SEQUENCE}\quad{}f_{1}\quad{}f_{2}$}
+\begin{scope}[]
+\node[input](in1){$\overrightarrow{X(t)}$};
+\node[input](in2)[above from=in1]{$\overrightarrow{Y(t)}$};
+\node[filter](f1)[right from=in1]{$f_{1}$};
+\node[filter](f2)[right from=f1]{$f_{2}$};
+\node[output](out)[right from=f2]{$f_2\;(\;f_1\;(\;\overrightarrow{X(t)}\;),\; \overrightarrow{Y(t)}\;)$};
+\path[r>](in1) -- (f1);
+\path[r>](f1)  -- (f2);
+\path[r>](in2) -| (f2);
+\path[r>](f2)  -- (out);
+\end{scope}\end{signalflow}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,2338 @@
+<?xml version="1.0" ?>
+
+<toplevel xmlns="mml" xmlns:mml="mml">
+<component name="Izhikevich03">
+<binding name="construct">
+<value>
+<closure>
+<body>
+<function formal="t">
+<body>
+<function formal="V">
+<body>
+<function formal="U">
+<body>
+<function formal="k1">
+<body>
+<function formal="k2">
+<body>
+<function formal="k3">
+<body>
+<function formal="theta">
+<body>
+<function formal="a">
+<body>
+<function formal="b">
+<body>
+<function formal="c">
+<body>
+<function formal="d">
+<body>
+<function formal="spike">
+<body>
+<function formal="tspike">
+<body>
+<function formal="Isyn">
+<body>
+<let0 name="subthreshold_eq">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="ODE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<const>
+<label>t</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>V</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>U</label></const></right></apply></left>
+<right>
+<longid>
+<pident name="null"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="k1"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></right></apply></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="k2"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<longid>
+<pident name="k3"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="neg">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="U"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<longid>
+<pident name="Isyn"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="a"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="sub">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="b"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></right></apply></left>
+<right>
+<longid>
+<pident name="U"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></value>
+<body>
+<let0 name="threshold_detect">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="ASSIGN">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>spike</label></const></right></apply></left>
+<right>
+<longid>
+<pident name="null"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="gt">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="theta"></pident></longid></right></apply></right></apply></right></apply></value>
+<body>
+<let0 name="tspike_set">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="ASSIGN">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>tspike</label></const></right></apply></left>
+<right>
+<longid>
+<pident name="null"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="if">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="spike"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="t"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="tspike"></pident></longid></right></apply></right></apply></right></apply></value>
+<body>
+<let0 name="subthreshold_regime">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="SEQUENCE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="subthreshold_eq"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="SEQUENCE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="threshold_detect"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="tspike_set"></pident></longid></right></apply></right></apply></value>
+<body>
+<let0 name="refractory_eq">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="ASSIGN">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>t</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>spike</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>tspike</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>V</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>U</label></const></right></apply></left>
+<right>
+<longid>
+<pident name="null"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="t"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="boolconst">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<const>
+<bool>#f</bool></const></right></apply></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="tspike"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="c"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="U"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="d"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></value>
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="TRANSIENT">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="subthreshold_regime"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="refractory_eq"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="spike"></pident></longid></right></apply></body></let0></body></let0></body></let0></body></let0></body></let0></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body>
+<env>
+<component name="Diagram">
+<binding name="UNION">
+<value>
+<closure>
+<body>
+<function formal="x60">
+<body>
+<function formal="x59">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>UNION</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x60"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x59"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="SEQUENCE">
+<value>
+<closure>
+<body>
+<function formal="x58">
+<body>
+<function formal="x57">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>SEQUENCE</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x58"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x57"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="RTRANSITION">
+<value>
+<closure>
+<body>
+<function formal="x56">
+<body>
+<function formal="x55">
+<body>
+<function formal="x54">
+<body>
+<function formal="x53">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>RTRANSITION</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x56"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x55"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x54"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x53"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="TRANSIENT">
+<value>
+<closure>
+<body>
+<function formal="x52">
+<body>
+<function formal="x51">
+<body>
+<function formal="x50">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>TRANSIENT</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x52"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x51"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x50"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="TRANSITION">
+<value>
+<closure>
+<body>
+<function formal="x49">
+<body>
+<function formal="x48">
+<body>
+<function formal="x47">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>TRANSITION</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x49"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x48"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x47"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="IDENTITY">
+<value>
+<tuple>
+<left>
+<const>
+<label>diagram</label></const></left>
+<right>
+<tuple>
+<left>
+<const>
+<label>IDENTITY</label></const></left>
+<right>
+<null></null></right></tuple></right></tuple></value></binding>
+<binding name="PURE">
+<value>
+<closure>
+<body>
+<function formal="x46">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>PURE</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x46"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="RELATION">
+<value>
+<closure>
+<body>
+<function formal="x45">
+<body>
+<function formal="x44">
+<body>
+<function formal="x43">
+<body>
+<function formal="x42">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>RELATION</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x45"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x44"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x43"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x42"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="ODE">
+<value>
+<closure>
+<body>
+<function formal="x41">
+<body>
+<function formal="x40">
+<body>
+<function formal="x39">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>ODE</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x41"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x40"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x39"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="ASSIGN">
+<value>
+<closure>
+<body>
+<function formal="x38">
+<body>
+<function formal="x37">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>ASSIGN</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x38"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x37"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="ACTUATE">
+<value>
+<closure>
+<body>
+<function formal="x36">
+<body>
+<function formal="x35">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>ACTUATE</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x36"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x35"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="SENSE">
+<value>
+<closure>
+<body>
+<function formal="x34">
+<body>
+<function formal="x33">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>diagram</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>SENSE</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x34"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x33"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<type_def name="diagram">
+<kind>
+<arity>0</arity></kind>
+<deftype>
+<body>
+<tcon>
+<path>
+<pident name="diagram"></pident></path></tcon></body></deftype></type_def></component>
+<component name="Signal">
+<binding name="neg">
+<value>
+<closure>
+<body>
+<function formal="x32">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>neg</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x32"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="cosh">
+<value>
+<closure>
+<body>
+<function formal="x31">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>cosh</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x31"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="tanh">
+<value>
+<closure>
+<body>
+<function formal="x30">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>tanh</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x30"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="ln">
+<value>
+<closure>
+<body>
+<function formal="x29">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>ln</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x29"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="log">
+<value>
+<closure>
+<body>
+<function formal="x28">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>log</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x28"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="lt">
+<value>
+<closure>
+<body>
+<function formal="x27">
+<body>
+<function formal="x26">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>&lt;</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x27"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x26"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="gt">
+<value>
+<closure>
+<body>
+<function formal="x25">
+<body>
+<function formal="x24">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>&gt;</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x25"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x24"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="lte">
+<value>
+<closure>
+<body>
+<function formal="x23">
+<body>
+<function formal="x22">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>&lt;=</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x23"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x22"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="gte">
+<value>
+<closure>
+<body>
+<function formal="x21">
+<body>
+<function formal="x20">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>&gt;=</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x21"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x20"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="div">
+<value>
+<closure>
+<body>
+<function formal="x19">
+<body>
+<function formal="x18">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>/</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x19"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x18"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="mul">
+<value>
+<closure>
+<body>
+<function formal="x17">
+<body>
+<function formal="x16">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>*</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x17"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x16"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="sub">
+<value>
+<closure>
+<body>
+<function formal="x15">
+<body>
+<function formal="x14">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>-</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x15"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x14"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="add">
+<value>
+<closure>
+<body>
+<function formal="x13">
+<body>
+<function formal="x12">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>+</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x13"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x12"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="if">
+<value>
+<closure>
+<body>
+<function formal="x11">
+<body>
+<function formal="x10">
+<body>
+<function formal="x9">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>if</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x11"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x10"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x9"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="boolconst">
+<value>
+<closure>
+<body>
+<function formal="x8">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>boolconst</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x8"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="realconst">
+<value>
+<closure>
+<body>
+<function formal="x7">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>realconst</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x7"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="boolsig">
+<value>
+<closure>
+<body>
+<function formal="x6">
+<body>
+<function formal="x5">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>boolsig</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x6"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x5"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="realsig">
+<value>
+<closure>
+<body>
+<function formal="x4">
+<body>
+<function formal="x3">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>realsig</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x4"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x3"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="relation">
+<value>
+<closure>
+<body>
+<function formal="x2">
+<body>
+<function formal="x1">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>relation</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x2"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x1"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></right></apply></body></function></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<binding name="signal">
+<value>
+<closure>
+<body>
+<function formal="x0">
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>sigfun</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<const>
+<label>signal</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="pair"></pident></longid></left>
+<right>
+<longid>
+<pident name="x0"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="empty"></pident></longid></right></apply></right></apply></right></apply></body></function></body>
+<env>
+<binding name="pair">
+<value>
+<prim></prim></value></binding>
+<binding name="empty">
+<value>
+<null></null></value></binding></env></closure></value></binding>
+<type_def name="sigfun">
+<kind>
+<arity>0</arity></kind>
+<deftype>
+<body>
+<tcon>
+<path>
+<pident name="sigfun"></pident></path></tcon></body></deftype></type_def></component>
+<binding name="cons">
+<value>
+<prim></prim></value></binding>
+<binding name="null">
+<value>
+<null></null></value></binding></env></closure></value></binding></component></toplevel>

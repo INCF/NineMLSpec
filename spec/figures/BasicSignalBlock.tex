@@ -1,0 +1,21 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{topaths,positioning}
+\usepackage{signalflowdiagram}
+
+\begin{document}
+\pagestyle{empty}
+\begin{figure}
+\begin{signalflow}{$\texttt{SF}\quad{}f$}
+\begin{scope}[]
+\node[input](in){$\overrightarrow{X(t)}$};
+\node[filter](sf)[right from=in]{$f$};
+\node[output](out)[right from=sf]{$f\;(\;\overrightarrow{X(t)}\;)$};
+\path[r>](in) -- (sf);
+\path[r>](sf) -- (out);
+\end{scope}\end{signalflow}
+\caption{\label{Fig:SignalBlock}Basic signal block}
+\end{figure}
+
+\end{document}

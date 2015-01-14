@@ -1,0 +1,166 @@
+The purpose of this document is to document and standardize the semantics of the NineML abstraction layer.
+
+We will define the semantics as follows: first we will give a definition of the abstract syntax -- i.e. the names and general form of the syntactic elements that must be present in the language, but not their particular representation.
+
+Then, we will give a definition of a valuation function, which takes as input the abstract syntax elements and returns values that are intended to be executed by a program, such as a simulator.
+
+In other words, we assume the following sequence of NineML processing steps:
+
+NineML syntax -> NineML interpreter -> Executable value -> Simulator
+
+The valuation function definition is intended to give the rules that must be followed by the NineML interpreter in the scheme above. In practice, the NineML interpreter could be a code generator, or an interpreter that directly runs a simulation or some combination of code generation and interpretation.
+
+Furthermore, we will distinguish certain domains in the abstraction layer, such as arithmetic expressions and differential equations, hybrid system descriptions, graphs and connectivity and so on. In order to simplify and modularize the specification, we will divide the abstraction layer in several sub-languages that each corresponds to a particular domain.
+
+This specification is concerned with the following sub-languages: Core, Signal, Diagram, Interval, Graph.
+Core Language ¶
+
+The syntax of the Core language consists of elements for defining bindings and containers:
+
+CoreExpr ::=   Binding
+             | Container
+
+Bindings are objects that consist of a name and expression. The syntax of bindings is the following:
+
+Binding ::= Name * BindingExpr
+
+BindingExpr ::=  Constant
+               | Identifier
+               | Application
+               | Function
+
+where:
+
+Constant    ::= Boolean | Natural | Real | Label
+
+Identifier  ::= Name | Path
+
+Path        ::= Identifier * Name
+
+Application ::= BindingExpr * BindingExpr
+
+Function    ::= Argument * BindingExpr
+
+Argument    ::= Name
+
+A container can be defined as an identifier referring to another container, or a structure which consists of bindings and containers (called sub-containers) packaged together into a logical unit:
+
+ContainerDef        ::= Name * Container
+
+Container           ::=   Identifier
+                        | Structure 
+
+Structure           ::= StructureElement ...
+
+StructureElement    ::= Binding
+                      | ContainerDefinition 
+
+
+The domain of values is defined as follows:
+
+Value ::=  Constant
+         | Closure
+         | PrimitiveProcedure
+         | Tuple
+         | ValueStructure
+
+Constant           ::= Boolean | Natural | Real | Label
+
+PrimitiveProcedure ::= Name
+
+Closure            ::= BindingExpr * EvalEnv
+
+Tuple              ::= Value * Tuple | Empty
+
+ValueStructure     ::= (Name * Value) ...
+
+The valuation function for the Core language is then:
+
+CoreEval (B: Binding, E: EvalEnv)       = let name = #Name (B)
+                                              expr = #BindingExpr (B)
+                                              value = CoreEvalBE (expr, E)
+                                          in  
+                                               add_value (name, value, E)
+                                          end
+
+CoreEval (CD: ContainerDef, E: EvalEnv)  = let name = #Name(CD) 
+                                               container = #Container(CD)
+                                           in
+                                              match container
+                                                (I: Identifier) =>
+                                                  let body = find_container(I, E)
+                                                  in
+                                                     add_container (name, body, E)
+                                                  end
+                                               | (S: Structure) =>
+                                                  let new_env = fold CoreEval E S 
+                                                      body    = new_env / E
+                                                  in
+                                                     add_container (name, ValueStructure body, E)
+                                                  end
+                                           end
+
+where:
+
+CoreEvalBE (C: Constant, E: EvalEnv)    = C
+
+CoreEvalBE (I: Identifier, E: EvalEnv)  = find_value (I, E)
+
+CoreEvalBE (A: Application, E: EvalEnv) = let F = #BindingExpr1 (A)
+                                              X = #BindingExpr2 (A)
+                                          in
+                                            match (CoreEvalBE (F, E))
+                                               (P: PrimitiveProcedure) => 
+                                               let proc = find_prim (#Name(P), E)
+                                               in
+                                                   proc (X)
+                                               end
+                                             | (C: Closure (B: BindingExpr, CE: EvalEnv)) => 
+                                               match B 
+                                                Function (N: Name, B: BindingExpr) => 
+                                                   let XV = CoreEval (X, E)
+                                                   in
+                                                      CoreEvalBE (B, add_value (N, XV, CE))
+                                                   end
+                                          end
+
+CoreEvalBE (F: Function, E: EvalEnv) = let FV = free_vars (F)
+                                           E1 = select_vars (FV, E)
+                                       in
+                                           Closure (F, E1)
+                                       end
+
+Primitive procedures ¶
+
+The following primitive procedures are defined in the Core language:
+
+Constants:
+
+	  false => Constant [boolean false]
+	  true  => Constant [boolean true]
+          empty => Empty
+
+Arithmetic and comparison operations:
+
+add (x: Natural, y: Natural) => Constant [x+y: Natural]
+
+sub (x: Natural, y: Natural) => Constant [x-y: Natural]
+
+mul (x: Natural, y: Natural) => Constant [x*y: Natural]
+
+div (x: Natural, y: Natural) => Constant [quotient(x,y): Natural]
+
+forall compare in { <> < <= > >= } :
+ compare (x: Natural, y: Natural) => Constant [compare(x,y): Boolean]
+
+Tuple constructor and accessors:
+
+pair (x: Value, y: Value) => Tuple (x,y)
+
+fst (v: Tuple) => match x 
+                   Tuple (x,y) => x
+                 | Empty => error
+
+snd (v: Tuple) => match x 
+                   Tuple (x,y) => y
+                 | Empty => error

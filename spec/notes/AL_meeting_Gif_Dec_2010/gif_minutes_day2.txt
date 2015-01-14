@@ -1,0 +1,318 @@
+
+From day 1:
+---------------------
+
+Collections
+-----------
+Ordered collection
+Unordered collection
+Named collection
+Named ordered collection
+
+TypeSignature
+-------------
+- Order collection of type tags or query variables 
+ordered from most general to most specific. 
+- Query variable can only be the last (?or the first?).
+
+TODO: Query variable here is like the placeholders in SQL
+that become local variables ... 
+
+Value
+----------------
+
+- Has a Type signature
+
+Object (see below)
+Float,Int,String
+TODO - Open Questions???:
+  Reference 
+  Closure 
+  Function
+  Parameterized Binding
+
+Binding:
+- A key/name,value pair
+- name may be of the form: []
+- value is any of primitive
+- The type of the value should be available to the binding.
+
+Object
+------
+- has a fully specified/unambiguous type signature (no query variables)
+- Compounded of values
+
+
+Hash/Dictionary/Namespace:
+--------------------------
+
+A well accepted design pattern/idiom for name protection when many
+components should work together in a single program.
+
+- An unordered collection of Bindings
+- Keys are hash-able
+  - immutable
+- Every key in the collection Bindings must be unique
+- all keys are of the same type, in practice a unicode string.
+- It is analagous to a python dictionary.
+
+- Nesting of namespaces is allowed (key,namespace pairs).
+
+--------------------------------
+
+
+
+Polymorphism of Object Primitives
+---------------------------------
+
+
+
+Object Hierarchy
+----------------
+
+Diagram(Element)
+----------------
+Live in Namespace DiagramLib
+
+-> Regime (see below)
+   TODO: Unions and Sequences, Transient, Tranistion
+   -> Union
+   -> Sequence
+-> Tranistion
+
+
+Equations
+---------
+Live in Namespace: DiagramLib (or maybe EquationLib, MathLib)
+
+-> ODE
+-> Assignments
+
+Condition
+---------
+
+-> InlineCondition
+-> EventPort(mode=recv)
+
+TODO: 
+- Resolve where ODE goes, and relation of Assignment and ODE.
+- Remove Inplace
+
+
+Graph(Element)
+--------------
+Live in Namespace GraphLib
+
+-> Node
+-> Edge
+
+
+NB: In Native syntax now, Diagram namespace has same name as Diagram 
+TODO: Renames Diagram Namespace to DiagramLib or some other 
+appropriate name.  Same is true for Graph.
+
+SignalExpr
+----------
+What: These are representations of math which should be performed in
+the simulator.
+
+Where: Live in Namespace SignalLib
+
+-> sin, cos, exp, etc.
+
+TODO: Interval, Geometry, CSA, SpecialFunctions, Random Numbers and 
+Distributions
+
+
+
+Model
+-----
+TODO: Sub types here, there is interaction to be considered
+      with Ontology work ...
+
+-> ConnectivityModel
+-> NetworkElementModel
+   -> Neuron (Has V-like var, input port for synaptic current,
+              may or may not spike)
+   -> Filters (AnalogFilters, Spike/Event Filters)
+   -> SpikeSource
+   TODO:
+   -> Current (Ih current, IAHP, "pas", etc.)
+   
+   TODO: 
+   -> PostSynapticResponse
+   -> ConnectionDynamics
+   
+
+***Go for lunch.***
+
+Object Contents
+---------------
+
+In this section we define what are the compounding of values that 
+results in each object in the object model.
+
+
+Regime
+------
+
+- Unordered collection of (i.e. Union of) 1 or more ODEs
+
+TODO: Sequence, Assignment.
+
+Transition
+----------
+
+- 'to' property is a Regime 
+- 'from' property is a Regime
+- a Condition for triggering the event
+
+TODO: refernce or copy of Regime.  Reference is one way of allowing
+for example to query in a NetworkElementModel all transitions that target
+a given Regime.
+ 
+TODO: Condition inline vs Event variable.  The latter uses Assignments
+in regimes.  The former is necesssary if Assignments are disallowed in
+Regimes.
+
+
+NetworkElementModel
+-------------------
+
+Namespace
+
+|
+|
+v
+
+Has as least 1 Regime 
+May have Transitions between Regimes
+Can't have a Transition to or from a Regime not in the Model
+No islands: 
+- Single Model forms one connected system of Regimes and Transitions
+- All Regimes and Trantransitions give values to the same set of state
+  variables.
+- Independent variable is same in all ODEs in Model.
+
+The following information needs to be provided:
+- collection of State Variables
+- collection of parameters
+- independent variable
+
+TODO: Ports, Dimensions
+
+
+First XML serialization!
+------------------------
+
+For an XML Example we chose the Morris-Lecar model
+(A model which is unaffected by open questions on object model)
+
+Classname_Candidate
+TODO: Yann asks why append "_Candidate" ?
+-> Candidate, Namespace ...
+TODO: References in XML 
+ -> name attribute
+ -> proper XML (xlink) referencing system
+ For now we use name attribute 
+
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1" generator="g4-summit">
+  <Namespace type="NetworkElementModel">
+    <Binding name="regime012345">
+      <DiagramLib:Regime>
+        <DiagramLib:ODE independent_variable="t" dependent_variable="V">
+
+	  <SignalLib xmlns="http://nineml.org/9ML/0.1/SignalLib"> 
+	  <apply><divide/>					  
+	    <apply><plus/>					  
+	      <ci>Isyn</ci>					  
+	      <apply><times/>					  
+		<ci>g_l</ci>					  
+		<apply><minus/>					  
+		  <ci>V_l</ci>					  
+		  <ci>V</ci>					  
+		</apply>					  
+	      </apply>						  
+	      <apply><csymbol>i_ca</csymbol><ci>V</ci></apply>			  
+	      <apply><csymbol>i_k</csymbol><ci>V</ci><ci>W</ci></apply>		  
+	    </apply>						  
+	    <ci>C</ci>						  
+	  </apply>						  
+	  <SignalLib>						  
+
+	<DiagramLib:ODE>
+	<DiagramLib:Relation name="I_ca">
+	  
+	  <SignalLib xmlns="http://nineml.org/9ML/0.1/SignalLib"> 
+	  <lambda>
+	    <bvar>
+	      <ci>V</ci>
+	      <ci>W</ci>
+	    </bvar>
+	    <apply><times/>
+	      <ci>g_ca</ci>
+	      <apply><csymbol>M_inf</csymbol><ci>V</ci></apply>
+	      <apply><minus/><ci>V_ca</ci><ci>V</ci></apply>
+	    </apply>
+	  </lambda>
+	  <SignalLib>						  
+
+	</DiagramLib:Relation>	
+	...
+	
+      </DiagramLib:Regime>
+    </Binding>
+  </Namespace>
+
+  <Candidate type="NetworkElementModel" name="Morris-Lecar">
+    <Candidate type="Regime">
+
+    </Candidate>
+    <Regime></Regime>
+    <Transitions></Transition>
+    ...
+
+</Candidaite>
+</nineml>
+
+Possibilities conidered for mapping of Class to XML element:
+<Candidate type="NetworkElementModel">
+<NetworkElementModel>
+<NetworkElementModel_Candidate>
+
+Concerns:
+Extensibility, Excessivly verbose gernericity pedandtism, etc.
+NB: SignalLib is a subset of mathML 
+    (namespace prefix search replace compatible)  
+
+
+Using sympy for -> mathml
+from sympy.printing import mathml
+import sympy
+t = sympy.S("(g_l*(V_l - V) + I_ca(V) + I_k(V,W) + Isyn)/C")
+mathml(t)
+
+
+
+
+Objectives by January Stockholm meeting:
+
+- Flesh out the LaTeX spec document.
+- XML roundtrip for Morris-Lecar
+- Padraig XML schema to match Morris-Lecar
+- NEST Code Generation for python lib9ml(Eilif)
+- Octave CG for Native (Ivan)
+- NMODL CG for python lib9ml (Andrew)
+- ConnectivityModel for python lib9ml
+
+As prototypes emerge, cross implement between python lib9ml 
+and chicken to resolve and test outstanding OM differences.
+
+January Stockholm Meeting: 
+
+* Get TF up to speed:
+  - Present the Spec + High-Level Architecture
+  - Present the XML schema for Morris-Lecar.
+  - Present the Object Model
+

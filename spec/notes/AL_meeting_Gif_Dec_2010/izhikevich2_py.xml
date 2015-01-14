@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1">
+  <component name="Izhikevich">
+    <parameter name="a"/>
+    <parameter name="c"/>
+    <parameter name="b"/>
+    <parameter name="d"/>
+    <parameter name="Isyn"/>
+    <parameter name="theta"/>
+    <analog-port symbol="t" mode="send"/>
+    <analog-port symbol="V" mode="send"/>
+    <analog-port symbol="U" mode="send"/>
+    <regime name="subthreshold_regime">
+      <ode independent_variable="t" name="ODE1" dependent_variable="U">
+        <math-inline>a*(b*V - U)</math-inline>
+      </ode>
+      <ode independent_variable="t" name="ODE0" dependent_variable="V">
+        <math-inline>0.04*V*V + 5*V + 140.0 - U + Isyn</math-inline>
+      </ode>
+    </regime>
+    <transition to="subthreshold_regime" from="subthreshold_regime" name="Transition0" condition="V &gt; theta">
+      <assignment to="V" name="Assignment0">
+        <math-inline>c</math-inline>
+      </assignment>
+      <inplace to="U" name="InplaceAdd0" op="+=">
+        <math-inline>d</math-inline>
+      </inplace>
+      <event-port symbol="spike_output" mode="send"/>
+    </transition>
+  </component>
+</nineml>

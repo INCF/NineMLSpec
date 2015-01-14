@@ -1,0 +1,27 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{topaths,positioning}
+\usepackage{signalflowdiagram}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{figure}
+\begin{signalflow}{$\texttt{SENSE}\quad{}signal\quad{}f$}
+\begin{scope}[]
+\node[input](in){$\overrightarrow{X(t)}$};
+\node[node](b)[right from=in]{};
+\textaboveof{b}{$\overrightarrow{X(t)}_{signal}$};
+\node[filter](f)[below right from=b]{$f$};
+\node[output](fout)[right from=f]{$f\;(\;\overrightarrow{X(t)}_{signal}\;)$};
+\node[output](out)[above right from=f]{$\overrightarrow{X(t)}$};
+\path[r>](in) -- (b);
+\path[r>](b) -- (out);
+\path[r>](b) |- (f);
+\path[r>](f) -- (fout);
+\end{scope}\end{signalflow}
+\end{figure}
+
+\end{document}
+

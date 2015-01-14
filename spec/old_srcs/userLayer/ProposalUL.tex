@@ -1,0 +1,2572 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{color}
+
+\definecolor{issuecolor}{rgb}{0.8,0.8,0.8}
+\newcommand{\issue}[1]{%
+\begin{center}
+\colorbox{issuecolor}{\parbox{0.8\linewidth}{\textbf{Issue:} #1}}
+\end{center}%
+}
+
+\newcommand{\suggestion}[2]{%
+\begin{center}
+\colorbox{issuecolor}{\parbox{0.8\linewidth}{\textbf{#1:} #2}}
+\end{center}%
+}
+
+
+\title{INCF Task Force for a Standard Language\\in Neural Network Models\\
+\vskip 0.35in
+\Large{\bf NINeML (9ML) version 0.91 General Description}
+\vskip 0.15in
+\Large{Proposal v.10 ID:AG-YLF-20110116.01}}
+\author{Maintained by Anatoli Gorchetchnikov}
+
+\begin{document}
+\maketitle
+
+\abstract
+This draft intends to describe our effort to develop a standardized language
+for neuronal network modeling using a set of reference models. The aim of this
+first implementation is to design a benchmark for the language using a simple
+model and then adapt the language to more complex networks.
+
+This work currently summarizes the different ideas and propositions elaborated
+during six Task Force meetings through an empirical approach and will serve
+as a basis for further work.
+
+\paragraph{Changes from version 9:}
+\begin{itemize}
+\item Replaced ``node'' with ``component'' as was decided at the Antwerp 2010 meeting.
+\item Replaced references to ``core semantics'' with references to ``abstraction layer''
+because the term ``core semantics'' is no longer used.
+\item Removed the appendix with example models. Please refer to the
+\href{http://www.incf.org/core/programs/modeling/wiki/documentation/user-layer}
+{\underline{User Layer wiki section}} instead.
+\item As Antwerp 2010 decided, properties are represented by a generic tag and specified
+by attribute {\tt name}.
+\item Added the reference to units of measurements dimensionality checking against
+the abstraction layer as was decided in Antwerp 2010.
+\item Added syntax for non-numeric properties (Boolean and enumerated).
+\item Kept the specific tags for properties that are references to other components,
+e.g. space in region component or random distribution in parameter values.
+\end{itemize}
+
+\paragraph{Changes from version 8:}
+\begin{itemize}
+\item added footnotes for some issues raised in Stockholm June meeting
+\item cleaned the {\tt definition} tag syntax according to Stockholm
+decisions
+\item added brief description of interactions between user layer and
+simulation software that does not support abstraction layer
+\item removed random number generator components as decided in Stockholm
+\item added more examples of random distributions in 1, 2 and 3D
+\item added random projection when a probability of projection between any
+cell in source and any cell in target is given
+\item added space, region, and layout components as a first draft of geometrical
+concepts (based on NetworkML proposal by Padraig and Robert as well as
+Stockholm discussions)
+\item removed recurrent projections that can be described on the population
+level
+\item cut out the previous approach to cell positioning within population
+\end{itemize}
+
+\tableofcontents
+
+\section{Introduction}
+
+With the increase of the Computational Neuroscience community and the number of
+work related to neural network modeling, the INCF identified a need for standards
+and guidelines, which will allow optimized model sharing, insure model reproducibility
+throughout the different software and is crucial for the scientific good practice.
+To create such a standard for neuronal network modeling, the INCF created a program
+aiming at developing a common standardized descriptive language for neural models.
+
+The development of such a language is the first mandate of this Task Force. This
+language is developed using the modern descriptive technology including XML and
+possibly UML and should allow an unambiguous definition of the model of network both
+conceptually and mathematically and insure complete software independence.
+In addition this language is designed to be self-consistent and highly
+flexible, allowing addition of new models and mathematical descriptions without
+modification of the previous structure and organization of the language. This
+standard is a two layered language: a user description layer which represents
+the conceptual description of the model in biological terms and an abstraction layer
+that will define the mathematics behind each of the concepts described at the user
+layer level.
+
+User description layer is intended to be primarily machine readable. XML syntax
+defined in this document is designed with considerations of ease of parsing,
+verification, and automatic model construction in mind. This does not prevent the
+advanced user from editing the user layer XML descriptions by hand, but the
+primary means for creation of these descriptions are the software tools that
+will convert the GUI-based or script-based representations of objects and
+properties into a valid XML code.
+
+The roles of two layers are delineated clearly by implementing an object oriented
+type of coding, the mathematical formalism being described in the abstraction layer
+and referenced in the user layer. This approach helps to complete
+the self-consistency requirement as any term used in the user layer is automatically
+linked to its formal definition in the abstraction layer. In this manuscript we focus
+on the organization of the user layer of the language, provide the syntax of linking
+with the abstraction layer, and describe in mathematical terms what the corresponding
+abstraction layer objects are.
+
+In order to achieve the ultimate goals of the Task Force, meaning creating a first
+version of the language and propose it to the community of modelers, we decided
+to constrain our approach by selecting few seminal papers to design a working
+version of the language. The first specification presented here is based on
+several models selected by the Task Force and aim to be further tested by extending
+the network repertoire to more complex networks. This insures that the language
+presents a logical organization, which makes it robust to new additions and further
+modifications.
+
+This manuscript so far only covers modifications of four simple forms of spiking
+neurons: Poisson spiker, two parametrizations of the leaky integrate and fire neuron
+and an Izhikevich neuron. Three types of postsynaptic responses: the delta synapse, the
+alpha synapse and the exponential synapse are covered. One plasticity rule (power
+law STDP) and a case of non-plastic weights, two currents: injected and
+conductance-based, and one conductance (h-conductance) are also covered.
+In addition to that this document covers six random distributions, four
+connectivity patterns, five coordinate systems, five regions of space and seven
+layouts. Throughout the process of verification of this
+first implementation we will then expand the number of models to all the common
+forms of spiking neurons and synapses, widely used in the literature, as well as
+different types of network architectures.
+
+In order to achieve this purpose, we agreed on the need of ontology of the neural
+network, requiring the compilation of all or most of the publication on neural
+network modeling. This work currently in progress will also lead to a better
+definition of terminology the standard should use. We agreed that the use of
+specific names such as `layer' or `neuron' is confusing and we chose to use neutral
+terms such as `component', `set' or `group'. Further refinement of these terms can
+be based on the current state-of-art of the neuronal network modeling. In the same
+time, the current version of the language does
+not cover much of the initialization and run-time specification. NINeML is
+designed to provide network description rather than simulation description,
+although there are cases when initialization of certain variables is indeed
+part of the model rather than of a simulation setup. Drawing the line between
+these two will happen during the development process using an extended library
+of neural networks.
+
+The first part of this document presents descriptions of single components
+(cells, synapses, inputs) with examples of user layer code, abstraction layer
+behind this code, and discussion of important issues. The second part deals with the
+grouping of these individual components while the third part addresses the
+proposition for the connectivity description. For these last two parts the abstraction
+layer should deal with the geometrical representation of cell arrangement as well
+as coordinate systems in the feature space. These two parts of abstraction layer
+are not currently fully implemented and thus are omitted from the current version
+of the manuscript.
+
+\href{http://www.incf.org/core/programs/modeling/wiki/documentation/user-layer}
+{\underline{User Layer wiki section}} includes a number of examples of user layer
+descriptions.
+
+Formal grammar definition shall be provided in the appendix.
+
+\section{Components and Properties}
+
+The basic building block of NINeML is called component. In the user layer description
+component is a reference to an object defined in the abstraction layer.
+Abstraction layer defines the mathematics of the component and is referred
+in the user layer by {\tt definition} tag with language attribute set to ``NINeML'':
+\begin{verbatim}
+<definition language="NINeML">
+  http://www.NINeML.org/neurons/IaF_tau.xml
+</definition>
+\end{verbatim}
+
+For the ease of extensibility of the language the standard
+allows to put references to user space definitions. For example user defines some
+neuron through syntax used by abstraction layer in a separate file and then refers
+to it in the {\tt definition} similar to how references to NINeML database definitions
+are made:
+\begin{verbatim}
+<definition language="NINeML">
+  file://home/someuser/neurons/My_IaF.xml
+</definition>
+\end{verbatim}
+
+Also for the purpose of extensibility, the initial version of the standard allows
+external object definitions. Since these are completely outside of NINeML and
+implementation dependent, the {\tt definition} tag has an attribute {\tt language}
+that has to be recognized by the parser of a specific simulator. No further
+assumptions about the contents of such definitions are made.
+\begin{verbatim}
+<definition language="ndf">
+  ...
+</definition>
+\end{verbatim}
+The procedure shall be established to ensure that these external definitions
+are translated into NINeML definitions that can be used by multiple simulators
+as the time progresses.
+
+Each of the components has a user-given ID or {\tt name} and a set of properties
+that is defined in the above definition and instantiated in the user layer.
+We decided that properties should have generic tags for extensibility purpose
+and further described by {\tt name} attribute. Since these properties are unique
+for every definition, the names that are used for them are predefined by NINeML
+for abstraction layer definitions and by 3rd party for external
+definitions.
+
+\issue{This contradicts our usual policy in making names user-defined,
+maybe this attribute should be called differently.}
+
+The abstraction layer specification or the documentation for the external definition
+provides the mapping between mathematical description of the object and the
+corresponding properties. Here some of these mappings for NINeML abstraction
+layer definitions are also provided.
+
+User can add short notes to each component description. These notes are
+intended to provide a specific reference to the research paper page
+where the component is described and similar kind of information. These
+notes are not intended to duplicate the abstraction layer documentation
+or any other documentation, thus they shall not provide mathematical
+description and other details of the component implementation. Note can
+contain text or link to an Internet resource.
+
+As a result, a complete description of a component in the user layer consists of
+three parts: reference to a definition, a list of properties, and an optional
+note:
+\begin{verbatim}
+<component name="E_ext">
+  <definition language="NINeML">http://www.NINeML.org/neurons/Poisson.xml</definition>
+  <properties>
+    <quantity name="rate">...</quantity>
+  </properties>
+  <note><text>Poisson input (page 185)</text></note>
+</component>
+\end{verbatim}
+The page number in the note above as well as in other note examples
+in this document refer to \cite{brunel-00} unless stated otherwise.
+
+\suggestion{Hugo}{Use identical syntax for name and for other properties,
+does not look good with current syntax, e.g:}
+\begin{verbatim}
+<component>
+  <definition language="NINeML">http://www.NINeML.org/neurons/Poisson.xml</definition>
+  <properties>
+    <string name="name">E_ext</string>
+    <quantity name="rate">...</quantity>
+  </properties>
+  <note><text>Poisson input (page 185)</text></note>
+</component>
+\end{verbatim}
+
+To reduce the size of the resulting network description user can refer to
+already described component by user-given name instead of providing link to
+abstraction layer. In this case the properties of the component that have to be
+redefined are stated explicitly, the properties that are inherited from the
+original description are omitted:
+\begin{verbatim}
+<component name="E_ext2">
+  <reference>E_ext</reference>
+  <properties>
+    <quantity name="rate">...</quantity>
+  </properties>
+</component>
+\end{verbatim}
+In this case the component follows the same description as the one shown in the
+previous listings except for different {\tt rate}. Note that the reference
+is done by the user-deﬁned ID ({\tt name}).
+
+If the simulator only supports user layer, then the simulator developers
+can create mappings directly between the reference to a definition in the user
+layer description of the component and the intrinsic simulator code that implements
+the same mathematics.
+
+\subsection{Property Description}
+\label{secProp}
+
+NINeML uses generic tags for properties combined with the {\tt name} attribute. These
+attributes are provided by the abstraction layer or external definition of the parent
+component. The user can set the value of the property as well as the units of
+measurements. The {\tt name} is checked against the abstraction layer for existence,
+and the units are checked whether they match the dimensionality of the corresponding
+property in the abstraction layer definition. User can add a note to a property in a
+way similar to adding notes to components described above.
+
+There are two kinds of properties: values of the first kind are given to the
+model by the user and stay fixed, values of a second kind are computed within
+the model during simulation. For all practical reasons the syntax of the user
+layer descriptions is identical for both kinds of properties. For example
+\begin{verbatim}
+<quantity name="rate">
+  <value>
+    <scalar>10</scalar>
+    <unit>unit per s</unit>
+  </value>
+</quantity>
+\end{verbatim}
+sets a parameter value to a fixed number, while
+\begin{verbatim}
+<quantity name="voltage">
+  <value>
+    <scalar>-60</scalar>
+    <unit>mV</unit>
+  </value>
+</quantity>
+\end{verbatim}
+sets the initial value of the variable.
+
+\issue{Syntax shall be defined to provide compound descriptions of values, for
+example when value is computed from some other values. An example of a simple
+syntax requiring math parsing:}
+\begin{verbatim}
+<quantity name="weight">
+  <value>
+    <reference>reference.properties.quantity[@name="weight"].value*(-1)</reference>
+  </value>
+</quantity>
+\end{verbatim}
+Note that the tag {\tt reference} above can be replaced with something specifically
+requesting the parsing of math expression and calculating the value:
+\begin{verbatim}
+<quantity name="weight">
+  <value>
+    <calculate>reference.properties.quantity[@name="weight"].value*(-1)</calculate>
+  </value>
+</quantity>
+\end{verbatim}
+
+As NINeML does not provide any default values for properties, it is a job of the
+user to provide initial values for all defined properties. To ensure the integrity
+of the model NINeML requires all initial values to be set in the user layer
+description. For batch simulations and other modifications any of the values
+given in the user layer can be overwritten by a simulation setup description,
+but this is outside of the scope of the current version of NINeML.
+
+In addition to numerical properties for which the generic tag {\tt quantity}
+is appropriate, there are other properties that have different types. An example
+above used tag {\tt string} for the name property if we decide to make it into
+a property. While working with the different models there were two more property
+types that popped out.
+
+The first is enumerated type, for example the random
+connectivity can be calculated as convergent (100 incoming random connections
+to a target neuron), divergent (100 outgoing random connections from a source
+neuron), or fixed probability (for every source-target pair there is a fixed
+chance of connection). Syntax can be the following:
+\begin{verbatim}
+<selection name="direction">convergent</selection>
+\end{verbatim}
+
+The second type is Boolean. Again, in connectivity description important
+Boolean properties are whether self-projections are allowed and whether
+multiple connections between same two neurons are allowed. Syntax can be the
+following:
+\begin{verbatim}
+<boolean name="self-projection">True</boolean>
+\end{verbatim}
+
+Properties described above have fixed values for all instances of the
+respective component and are determined at description level. In addition to that
+some properties may vary between different instances based on some random
+distribution, spatial coordinate, geometry, and other values that are
+determined at the time each instance is created. These can be termed
+instantiation level properties and are discussed in the following
+subsections.
+
+\subsubsection{Properties with Values Drawn from Random Distributions}
+\label{randProp}
+
+These are the simplest out of instantiation level properties because
+they do not depend on some other properties outside of their parent component.
+A reference to a random distribution which is the same for all instances
+of the component is sufficient to set the value for this type of properties:
+\begin{verbatim}
+<quantity name="voltage">
+  <value>
+    <random><reference>uniform_55-65</reference></random>
+    <unit>mV</unit>
+  </value>
+</quantity>
+\end{verbatim}
+Here the property value is set randomly according to a definition defined by a
+reference to an object described elsewhere in the network that defines a uniform
+distribution as discussed in section \ref{randDist}.
+
+\subsubsection{Properties with Values Dependent on Geometry of the Network}
+
+In the simplest case the property of this type refers to a spatial coordinate
+of the particular instance and calculates its value from this coordinate.
+Here the reference to the coordinate system component shall be given. This reference
+should match one of the coordinate systems that this instance is positioned on.
+Also some function has to be described that allows the transformation of one, two,
+or three dimensional coordinate value into a single property value. This
+function can be defined using an inline abstraction layer definition, reference
+to abstraction layer database or MathML definition.
+
+More complex cases can stem from here if coordinate itself is insufficient to
+define the property, for example the distance between this instance and some other
+instance possibly in another population determines the property value. NINeML
+shall insure that both populations are laid out on the same coordinate systems,
+reference to the system used shall be provided as above (but is necessary only
+if multiple systems used for population).
+
+These are preliminary thoughts, until specific examples will be derived no syntax
+can be determined.
+
+\subsection{Random Distribution Components}
+\label{randDist}
+
+This set of components allows to define random distributions with corresponding
+parameters.
+
+\subsubsection{1D Uniform Distribution}
+\label{uniform1D}
+
+Provides 1D uniform distribution.
+
+\paragraph{General Definition}
+This distribution generates random numbers uniformly distributed between
+{\tt lowerBound} and {\tt upperBound}. This number does not need to have
+units of measurements attached as they will be attached to it at the
+point where the distribution is used as shown in section~\ref{randProp}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="uniform_-55-65mV">
+  <definition language="NINeML">
+    http://www.NINeML.org/distributions/Uniform1D.xml
+  </definition>
+  <properties>
+    <quantity name="lowerBound">
+      <value>
+        <scalar>-65</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBound">
+      <value>
+        <scalar>-55</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{2D Uniform Distribution}
+\label{uniform2D}
+
+Provides 2D uniform distribution.
+
+\paragraph{General Definition}
+This distribution generates random numbers uniformly distributed within a 2D
+rectangle defined by {\tt lowerBoundX}, {\tt lowerBoundY} and {\tt upperBoundX},
+{\tt upperBoundY}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="2D uniform">
+  <definition language="NINeML">http://www.NINeML.org/distributions/Uniform2D.xml</definition>
+  <properties>
+    <quantity name="lowerBoundX">
+      <value>
+        <scalar>-65</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBoundX">
+      <value>
+        <scalar>-55</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="lowerBoundY">
+      <value>
+        <scalar>-65</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBoundY">
+      <value>
+        <scalar>-55</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{3D Uniform Distribution}
+\label{uniform3D}
+
+Provides 3D uniform distribution.
+
+\paragraph{General Definition}
+This distribution generates random numbers uniformly distributed within a 3D
+parallelepiped defined by {\tt lowerBoundX}, {\tt lowerBoundY}, {\tt lowerBoundZ}
+and {\tt upperBoundX}, {\tt upperBoundY}, {\tt upperBoundZ}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="2D uniform">
+  <definition language="NINeML">http://www.NINeML.org/distributions/Uniform3D.xml</definition>
+  <properties>
+    <quantity name="lowerBoundX">
+      <value>
+        <scalar>-65</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBoundX">
+      <value>
+        <scalar>-55</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="lowerBoundY">
+      <value>
+        <scalar>-65</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBoundY">
+      <value>
+        <scalar>-55</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="lowerBoundZ">
+      <value>
+        <scalar>-65</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBoundZ">
+      <value>
+        <scalar>-55</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{1D Normal Distribution}
+\label{normal1D}
+
+Provides 1D normal (Gaussian) distribution.
+
+\paragraph{General Definition}
+This distribution generates random numbers according to a 1D normal distribution
+with mean {\tt mean} and standard deviation {\tt stdDev}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="normal_1.3-0.25">
+  <definition language="NINeML">http://www.NINeML.org/distributions/Normal1D.xml</definition>
+  <properties>
+    <quantity name="mean">
+      <value>
+        <scalar>1.3</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="stdDev">
+      <value>
+        <scalar>0.25</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{2D Normal Distribution}
+\label{normal1D}
+
+Provides 2D normal (Gaussian) distribution.
+
+\paragraph{General Definition}
+This distribution generates random numbers according to a 2D normal distribution
+with mean {\tt meanX}, {\tt meanY} and standard deviations {\tt stdDevX}, {\tt stdDevY}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="2D normal">
+  <definition language="NINeML">http://www.NINeML.org/distributions/Normal2D.xml</definition>
+  <properties>
+    <quantity name="meanX">
+      <value>
+        <scalar>1.3</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="stdDevX">
+      <value>
+        <scalar>0.25</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="meanY">
+      <value>
+        <scalar>1.3</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="stdDevY">
+      <value>
+        <scalar>0.25</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{3D Normal Distribution}
+\label{normal1D}
+
+Provides 3D normal (Gaussian) distribution.
+
+\paragraph{General Definition}
+This distribution generates random numbers according to a 3D normal distribution
+with mean {\tt meanX}, {\tt meanY}, {\tt meanZ} and standard deviations {\tt stdDevX},
+{\tt stdDevY}, {\tt stdDevZ}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="normal_1.3-0.25">
+  <definition language="NINeML">http://www.NINeML.org/distributions/Normal3D.xml</definition>
+  <properties>
+    <quantity name="meanX">
+      <value>
+        <scalar>1.3</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="stdDevX">
+      <value>
+        <scalar>0.25</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="meanY">
+      <value>
+        <scalar>1.3</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="stdDevY">
+      <value>
+        <scalar>0.25</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="meanZ">
+      <value>
+        <scalar>1.3</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="stdDevZ">
+      <value>
+        <scalar>0.25</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{More subtypes here}
+
+\subsection{Conductance Components}
+\label{cond}
+
+Conductance components describe the dynamics of channel conductances. So far we ran
+into one description of such conductance in Hill and Tononi model (\cite{hill-tononi-05}).
+
+\subsubsection{h Conductance}
+\label{h-cond}
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="h conductance">
+  <definition language="NineML">
+    http://www.NineML.org/1.0/conductances/h-conductance.9ml
+  </definition>
+  <properties>
+    <quantity name="V_theta">
+      <value>
+        <scalar>-75.0</scalar>
+        <unit>mV</unit>
+      </value>
+    </quantity>
+      ...
+    <quantity name="voltage">
+      <value>external</value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+Note how the value of voltage at the end is set to external. This is the mechanism
+to control this conductance by membrane potential of the neuron it will be inserted
+in later. At the point of insertion the following construct can be used:
+\begin{verbatim}
+<link>
+  <from>parentEntity.properties.voltage.value</from>
+  <to>reference.conductance.quantity[@name="voltage"].value</to>
+</link>
+\end{verbatim}
+
+\subsection{Current Components}
+\label{currents}
+
+Current components describe the dynamics of currents that affect neuronal
+behavior. Note that these currents do not include synaptic currents that
+are grouped separately under the post-synaptic response components (section
+\ref{secSynapse}).
+
+\issue{Some post-synaptic responses are currents, others are not. Currently this
+document describes post-synaptic responses together independently of their nature.
+Shall it stay this way or shall post-synaptic currents be moved here and other
+post-synaptic responses left in a separate section?}
+
+\subsubsection{Injected Current}
+\label{inject}
+
+Currents that are injected in the cell by experimenters during some
+protocols.
+
+\paragraph{General Definition}
+This current does not have internal dynamics and has a single property
+{\tt magnitude}. How to manipulate this current externally (input protocol)
+is under discussion. It appears that onset and offset times are important
+for reproducibility of the results, but on the other hand they belong more
+to the simulation description rather then model description.
+
+\paragraph{User Layer Description}
+Here we include onset and duration for the current, although as mentioned above
+these belong more in the simulation description. Either way they can use the
+same syntax
+\begin{verbatim}
+<component  name="Injection current">
+  <definition language="NineML">
+    http://www.NineML.org/currents/injection.9ml
+  </definition>
+  <properties>
+    <quantity name="magnitude">
+      <value>
+        <scalar>-20</scalar>
+        <unit>uA</unit>
+      </value>
+    </quantity>
+    <quantity name="onset">
+      <value>
+        <scalar>2</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <quantity name="duration">
+      <value>
+        <scalar>3</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{Conductance Based Current}
+\label{cond-curr}
+Conductance-based current is the most common current derived from the equivalent
+circuit.
+
+\paragraph{General Definition}
+
+Conductance-based current follows the equation
+\begin{equation}
+I=(E_r-V_m)\bar g g(t,V_m,...)
+\label{cond-current-eq}
+\end{equation}
+Here the $E_r$ is a reverse potential, $V_m$ is a membrane potential, $\bar g$ is the
+maximal conductance and $g(t,V_m,...)$ is a conductance change function on the range of
+[0,1] that is defined through conductance component as discussed in section~\ref{cond}.
+Correspondence between properties and user layer names:
+\begin{itemize}
+\item[$V_m$] {\tt voltage}
+\item[$\bar g$] {\tt peakConductance}
+\item[$E_r$] {\tt reversePotential}
+\item[$g(...)$] {\tt conductance}
+\end{itemize}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component  name="h current">
+  <definition language="NineML">
+    http://www.NineML.org/1.0/currents/generic_current.9ml
+  </definition>
+  <properties>
+    <quantity name="reversePotential">
+      <value>
+        <scalar>-30.0</scalar>
+        <unit>mV</unit>
+      </value>
+    </quantity>
+    <quantity name="peakConductance">
+      <value>
+        <scalar>1.0</scalar>
+        <unit>mS</unit>
+      </value>
+    </quantity>
+    <quantity name="conductance">
+      <reference>h conductance</reference>
+    </quantity>
+    <quantity name="voltage">
+       <link>
+         <from>value</from>
+         <to>properties.quantity[@name=conductance].reference.properties.quantity[@name="voltage"].value</to>
+       </link>
+       <value>external</value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+Here we link the membrane potential within the current description to the membrane
+potential in the conductance description. This is an example of hierarchical linking,
+since the membrane potential is not defined in the current but rather will be given
+by the neuron in the later description.
+
+\issue{Would it be better to refer to local membrane potential through
+{\tt properties.quantity[@name="voltage"].value}? Usually we provide the path from
+the component level...}
+
+\subsubsection{More subtypes here}
+
+\subsection{Spike-Producing Components}
+
+Spike-producing components are basically neuronal models. They consist of
+a definition of internal dynamics, set of properties plus a block of arbitrary
+number of currents described in section~\ref{currents}.
+
+\subsubsection{Extra Currents In Spike-Producing Nodes}
+
+Here is an example of a spike-producing component from \cite{hill-tononi-05}.
+\begin{verbatim}
+<component name="Example cell">
+  <definition language="NineML">
+    http://www.NineML.org/neurons/hill-tononi.xml
+  </definition>
+  <properties>
+    <quantity name="membraneCapacitance">
+      <value>
+        <scalar>1</scalar>
+        <unit>uF per cm sq</unit>
+      </value>
+    </quantity>
+    <quantity name="voltage">
+      <value>
+        <scalar>-60</scalar>
+        <unit>mV</unit>
+      </value>
+    </quantity>
+  <properties>
+  <currents>
+    <current>
+      <reference>h current</reference>
+      <link>
+        <from>properties.quantity[@name="voltage"].value</from>
+        <to>reference.properties.quantity[@name="voltage"].value</to>
+      </link>
+    </current>
+    <current>
+      <reference>Injection current</reference>
+    </current>
+  </currents>
+</component>
+\end{verbatim}
+This example refers to both injected current and the h-current defined in
+section~\ref{currents}. Note that it links the membrane potential of a neuron
+(property {\tt voltage}) to a membrane potential of an h-current thus
+completing the definition.
+
+\issue{It is probably better to describe injected currents in a fashion similar
+to other inputs, so that the neuronal description only includes internal currents
+specific for the cell type.}
+
+\subsubsection{Simple Poisson Spike-Producing Node}
+
+An approximation of the neuron used as a source of input in many models
+(e.g. \cite{brunel-00},\\ \cite{morrison-etal-07}).
+
+\paragraph{General Definition}
+Poisson generator is described as homogeneous Poisson process where the
+waiting time till each next spike is distributed exponentially
+\begin{equation}
+P(T_{next})=-\nu t
+\label{poisson}
+\end{equation}
+and has a single parameter $\nu$ in the equation (\ref{poisson}) that
+corresponds to user layer name {\tt rate}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="E_ext">
+  <definition language="NineML">
+    http://www.NineML.org/neurons/Poisson.9ml
+  </definition>
+  <properties>
+    <quantity name="rate">
+      <value>
+        <scalar>unclear</scalar>
+        <unit>unit per s</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+This code refers to the abstraction layer definition of the Poisson spiker and
+sets the parameter {\tt rate}.
+
+\subsubsection{Leaky Integrate-and-Fire Defined Through Membrane
+Time Constant}
+\label{IaF_tau_Desc}
+
+\paragraph{General Definition}
+Proposed type name {\begin{verbatim}IaF_tau\end{verbatim}} represents IaF
+component with default dynamics described as
+\begin{equation}
+\tau\frac{dV}{dt}=-V
+\label{IaF_tau}
+\end{equation}
+If voltage $V>\theta$ the neuron emits a spike, resets the voltage to
+$V_r$, and enters a refractory state for $t_r$. Correspondence between
+properties and names:
+\begin{itemize}
+\item[$V$] {\tt voltage}
+\item[$t_r$] {\tt refractoryTime}
+\item[$V_r$] {\tt resetPotential}
+\item[$\theta$] {\tt threshold}
+\item[$\tau$] {\tt membraneConstant}
+\end{itemize}
+Equation (\ref{IaF_tau}) has to be extended to allow addition of all
+currents the neuron might have. Thus the place holders for these currents
+are provided:
+\begin{equation}
+\tau\frac{dV}{dt}=-V+\frac{\tau}{C}\sum_i{I_i}
+\label{IaF_tau_full}
+\end{equation}
+which adds a property
+\begin{itemize}
+\item[$C$] {\tt membraneCapacitance}
+\end{itemize}
+and an arbitrary number of currents.
+
+\issue{Something has to be done with this property to distinguish it
+from properties above that have to be always present. This one is
+only necessary if currents are present, maybe bind it to currents
+block?}
+
+Delta synapses that operate in terms of voltage steps do not produce
+currents, so they have to be added separately. Again, place holders
+are provided in the equation
+\begin{equation}
+V=V+\sum_j{V_j}
+\label{IaF_tau_delta}
+\end{equation}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="E">
+  <definition language="NineML">
+    http://www.NineML.org/neurons/IaF_tau.9ml
+  </definition>
+  <properties>
+    <quantity name="membraneConstant">
+      <value>
+        <scalar>20</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <quantity name="threshold">
+      <value>
+        <scalar>20</scalar>
+        <unit>mV</unit>
+      </value>
+    </quantity>
+    <quantity name="refractoryTime">
+      <value>
+        <scalar>2</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <quantity name="resetPotential">
+      <value>
+        <scalar>10</scalar>
+        <unit>mV</unit>
+      </value>
+    </quantity>
+    <quantity name="voltage">
+      <value>
+        <scalar>-60</scalar>
+        <unit>mV</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+Please note that description of the neuronal component above defines a prototypical
+neuron which can be reused multiple times within the network. As a consequence,
+multiple connectivity patterns can be applied to this neuron, which results in
+a different set of synaptic inputs. Therefore, no description of these
+inputs shall be provided in the spike-producing component, they shall be
+described at the connectivity component. Simulation software shall take care of
+complete construction of each neuron by analyzing both levels of description.
+
+\subsubsection{Leaky Integrate-and-Fire Defined Through Leakage
+Conductance}
+
+\paragraph{General Definition}
+Proposed type name {\begin{verbatim}IaF_gL\end{verbatim}} represents IaF
+component with default dynamics described as
+\begin{equation}
+C_m\frac{dV}{dt}=-g_LV
+\label{IaF_gL}
+\end{equation}
+If voltage $V>\theta$ the neuron emits a spike, resets the voltage to
+$V_r$, and enters a refractory state for $t_r$. Correspondence between
+properties and tag names:
+\begin{itemize}
+\item[$V$] {\tt voltage}
+\item[$C_m$] {\tt membraneCapacitance}
+\item[$t_r$] {\tt refractoryTime}
+\item[$V_r$] {\tt resetPotential}
+\item[$\theta$] {\tt threshold}
+\item[$g_L$] {\tt leakageConductance}
+\end{itemize}
+Equation (\ref{IaF_gL}) has to be extended to allow addition of all
+currents the neuron might have. Thus the place holders for these currents
+are provided:
+\begin{equation}
+C_m\frac{dV}{dt}=g_L(E_L-V)+\sum_i{I_i}
+\label{IaF_gL_full}
+\end{equation}
+
+\issue{I added $E_L$ in this equation but no tag so far is provided for this
+property.}
+
+Delta synapses that operate in terms of voltage steps do not produce
+currents, so they have to be added separately. Again, place holders
+are provided, but this time they have to operate not on the derivative
+of voltage but on voltage itself as in the equation
+\begin{equation}
+V=V+\sum_j{V_j}
+\label{IaF_gL_delta}
+\end{equation}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="E">
+  <definition language="NINeML">http://www.NINeML.org/neurons/IaF_gL.xml</definition>
+  <properties>
+  ...
+  </properties>
+  <currents>
+    ... (if needed)
+  </currents>
+</component>
+\end{verbatim}
+
+\subsubsection{Izhikevich Neuron}
+
+\paragraph{General Definition}
+Fill in.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="Izhikevich">
+  <definition language="NineML">
+    http://www.NineML.org/1.0/neurons/izhikevich.9ml
+  </definition>
+  <properties>
+    <quantity name="a">
+    <value>
+      <scalar>10</scalar>
+      <unit>none</unit>
+    </value>
+    </quantity>
+    <quantity name="b">
+    <value>
+      <scalar>10</scalar>
+      <unit>none</unit>
+    </value>
+    </quantity>
+    <quantity name="c">
+    <value>
+      <scalar>10</scalar>
+      <unit>none</unit>
+    </value>
+    </quantity>
+    <quantity name="d">
+    <value>
+      <scalar>10</scalar>
+      <unit>none</unit>
+    </value>
+    </quantity>
+    <quantity name="V">
+    <value>
+      <scalar>0</scalar>
+      <unit>mV</unit>
+    </value>
+    </quantity>
+    <quantity name="u">
+    <value>
+      <scalar>10</scalar>
+      <unit>none</unit>
+    </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{More subtypes here}
+
+\subsection{Plasticity Components}
+\label{plasticity}
+
+Plasticity components handle the synaptic weight and its possible modification.
+Note that synaptic weight is a dimensionless quantity and as such does not
+include units.
+
+\subsubsection{Static Synapse}
+
+Often the synapses in various models are held at fixed weights. This
+is achieved with static synapse descriptions.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="Excitatory">
+  <definition language="NINeML">
+    http://www.NINeML.org/weights/Static.xml
+  </definition>
+  <properties>
+    <quantity name="weight">
+      <value>
+        <scalar>45.61</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{Power Law STDP Synapse}
+
+\issue {Add discussion of spike sampling regimes (all, nearest N, etc).}
+
+\paragraph{General Definition}
+
+The definition follows \cite{morrison-etal-07}:
+\begin{equation}
+\begin{array}{rclcl}
+\Delta w_+&=&\lambda w_0^{1-\mu}w^{\mu}e^{-\frac{|\Delta t|}{\tau_+}} &if& \Delta t>0\\
+\Delta w_-&=&-\lambda \alpha we^{-\frac{|\Delta t|}{\tau_-}} &if& \Delta t<0
+\end{array}
+\label{powerSTDP}
+\end{equation}
+
+\issue {Add a bit on how it works, what makes it different from
+additive and multiplicative rules.}
+
+Correspondence between properties and tag names:
+\begin{itemize}
+\item[$w$] {\tt weight}
+\item[$w_0$] {\tt referenceWeight}
+\item[$\tau_+$] {\tt potTimeConst}
+\item[$\tau_-$] {\tt depTimeConst}
+\item[$\mu$] {\tt power}
+\item[$\lambda$] {\tt learningRate}
+\item[$\alpha$] {\tt asymmetry}
+\end{itemize}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="Plastic">
+  <definition language="NineML">
+    http://www.NineML.org/synapses/PowerAA_STDP.9ml</definition>
+  <properties>
+    <quantity name="potTimeConst">
+      <value>
+        <scalar>20</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <quantity name="depTimeConst">
+      <value>
+        <scalar>20</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <quantity name="power">
+      <value>
+        <scalar>0.4</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="learningRate">
+      <value>
+        <scalar>0.1</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="asymmetry">
+      <value>
+        <scalar>0.11</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{More subtypes here}
+
+\subsection{Post-synaptic Response (PSR) Components}
+\label{secSynapse}
+
+Post-synaptic response components define the effect imposed on the post-synaptic
+cell dynamics by triggering the synaptic input. This definition includes only
+the shape of this effect and does not include the exact magnitude of the effect.
+The magnitude is described separately through plasticity rules and synaptic
+weights in section \ref{plasticity}. Note though that the units of the
+effect are defined here and synaptic weights are left dimensionless. This
+is done to allow same plasticity rules to operate on different types
+of postsynaptic responses.
+
+\issue{Shall the post-synaptic delay be a property of PSR components or of
+connectivity components?}
+
+NINeML defines the following post-synaptic response components:
+
+\subsubsection{Delta PSR}
+
+This is an approximation of synaptic function by a voltage step.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="Delta PSR">
+  <definition language="NINeML">
+    http://www.NINeML.org/synapses/Delta.xml
+  </definition>
+  <properties>
+    <quantity name="step">
+      <value>
+        <scalar>1</scalar>
+        <unit>mV</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\issue{The actual magnitude of the step here is given by a synaptic weight,
+but the units are set inside delta synapse, since weight is dimensionless.
+As such the {\tt value} tag above does not have any meaning, or does it?
+To take it further, a lot of PSRs describe variable that changes between
+0 and 1...}
+
+\subsubsection{Alpha Current PSR}
+
+This is an approximation of synaptic current by an alpha function.
+
+\paragraph{General Definition}
+This current described as
+\begin{equation}
+I=\frac{e}{\tau_{\alpha}}te^{-\frac{t}{\tau_{\alpha}}}
+\label{alphaC}
+\end{equation}
+where $t$ is the time since presynaptic spike and $\tau_{\alpha}$ is
+a time constant of the synaptic response.
+Correspondence between parameter and tag name is
+\begin{itemize}
+\item[$\tau_{\alpha}$] {\tt timeConstant}
+\item[$t$] {\tt time}
+\end{itemize}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="PSC">
+  <definition language="NINeML">
+    http://www.NINeML.org/synapses/AlphaI.xml
+  </definition>
+  <properties>
+    <quantity name="time">
+      <value>
+        <scalar>0</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <quantity name="timeConstant">
+      <value>
+        <scalar>0.33</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{Exponential Conductance PSR}
+
+This is an approximation of synaptic conductance by an exponential function.
+
+\paragraph{General Definition}
+This conductance described as instantaneously increasing to 1.0 when the spike
+arrives and decaying according to
+\begin{equation}
+g=e^{-\frac{t}{\tau_{\alpha}}}
+\label{expC}
+\end{equation}
+where $t$ is the time since presynaptic spike and $\tau_{\alpha}$ is
+a time constant of the synaptic response.
+Correspondence between parameter and tag name is
+\begin{itemize}
+\item[$\tau_{\alpha}$] {\tt timeConstant}
+\item[$t$] {\tt time}
+\item[$g$] {\tt conductance}
+\end{itemize}
+An additional name {\tt reversalPotential} represents reversal potential $E_R$ of the
+synapse that affects the response according to
+\begin{equation}
+I=g(E_R-V_m)
+\label{expCurRev}
+\end{equation}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="ExcPSR">
+  <definition language="NINeML">
+    http://www.NINeML.org/synapses/ExponentialG.xml
+  </definition>
+  <properties>
+    <quantity name="time">
+      <value>
+        <scalar>0</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <quantity name="conductance">
+      <value>
+        <scalar>0</scalar>
+        <unit>nS</unit>
+      </value>
+    </quantity>
+    <quantity name="timeConstant">
+      <value>
+        <scalar>5.0</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <quantity name="reversalPotential">
+      <value>
+        <scalar>0.0</scalar>
+        <unit>mV</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{More subtypes here}
+
+\subsection{Connectivity Components}
+
+Connectivity components based on the geometry of source and/or target groups shall
+include descriptions of the edge handling. All connectivity components below have
+a property {\tt delay} that sets the axonal delay for the corresponding set
+of projections. Connectivity component definitions in the abstraction layer are
+likely to be based on Connection Set Algebra, but this does not affect
+User Layer instantiations.
+
+\subsubsection{One-to-One Projection}
+
+A simplest way to organize the connectivity. When connecting two
+populations of equal sizes one projection per neuron in both populations
+is created. In the simplest case of indexed populations the projection
+goes from neuron $i$ in source population to neuron $i$ in target
+population.
+
+\issue{Add here descriptions of addressing with shifts, between
+populations of different sizes, maybe geometry based.}
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="input">
+  <definition language="NINeML">
+    http://www.NINeML.org/connections/One-to-one.xml
+  </definition>
+  <properties>
+    <quantity name="delay">
+      <value>
+        <scalar>2</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{Pair-based Random Projection}
+
+\paragraph{General Definition}
+Random projection defined based on the fixed probability of projection for
+each possible pair of cells (one from source set, one from target set).
+
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="random">
+  <definition language="NINeML">
+    http://www.NINeML.org/connections/RandomPair.xml
+  </definition>
+  <properties>
+    <quantity name="probability">
+      <value>
+        <scalar>0.1</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="delay">
+      <value>
+        <scalar>2</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{Number-based Random Projection}
+
+\paragraph{General Definition}
+Random projection defined based on the fixed number of sources/destinations. If
+the {\tt direction} is convergent the parameter {\tt number} defines the fixed
+number of sources that project to each destination cell. If the {\tt direction}
+is divergent the parameter {\tt number} defines the fixed number of destinations
+each source cell is projecting to.
+
+\issue{The discussion was on the mailing list about the exact terminology for
+convergent/divergent, but I am not sure we concluded the issue.}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="random fan-in">
+  <definition language="NINeML">
+    http://www.NINeML.org/connections/NBRP.xml
+  </definition>
+  <properties>
+    <quantity name="number">
+      <value>
+        <scalar>1000</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="delay">
+      <value>
+        <scalar>2</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <selection name="direction">convergent</selection>
+  </properties>
+</component>
+\end{verbatim}
+Here one of the properties is of enumerated type (direction can only be convergent or
+divergent) so the tag {\tt selection} is used instead of {\tt quantity}.
+
+
+\subsubsection{Fraction-based Random Projection}
+
+\paragraph{General Definition}
+Random projection defined based on the fraction of sources/destinations. If
+the {\tt direction} is convergent the parameter {\tt fraction} defines the fraction
+of all source cells (e.g 10\%) that project to each destination cell. If the
+{\tt direction} is divergent the parameter {\tt fraction} defines the fraction of
+destination cells each source cell is projecting to.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="random fan-in">
+  <definition language="NINeML">
+    http://www.NINeML.org/connections/FBRP.xml
+  </definition>
+  <properties>
+    <quantity name="fraction">
+      <value>
+        <scalar>0.1</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="delay">
+      <value>
+        <scalar>2</scalar>
+        <unit>ms</unit>
+      </value>
+    </quantity>
+    <selection name="direction">convergent</selection>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{More subtypes here}
+
+\subsection{Space Components}
+
+Space components define the coordinate systems used to set up the geometry of the
+network. These components can be Cartesian, polar, and maybe some other coordinate
+systems. More than one space components can be defined in the same network, for
+example Cartesian 3D for cortical cells and polar 2D for retinal space.
+
+\issue{In case we need rotated, translated, or scaled versions of the same
+coordinate system, shall we define a new space component?}
+
+\issue{In case user combines two models how shall the space be handled?}
+
+\subsubsection{1D Cartesian Space}
+
+Sets a coordinate line in 1D space.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my 1D space">
+  <definition language="NINeML">http://www.NINeML.org/spaces/Cartesian1D.xml</definition>
+  <properties>
+    ...
+  </properties>
+</component>
+\end{verbatim}
+
+\issue{Could not think of any properties yet. Later we might add
+rotation/translation/scale here...}
+
+\subsubsection{2D Cartesian Space}
+
+Sets a coordinate plane in 2D space.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my 2D space">
+  <definition language="NINeML">http://www.NINeML.org/spaces/Cartesian2D.xml</definition>
+  <properties>
+    ...
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{3D Cartesian Space}
+
+Sets a coordinate axes in 3D space.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my 3D space">
+  <definition language="NINeML">http://www.NINeML.org/spaces/Cartesian3D.xml</definition>
+  <properties>
+    ...
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{2D Polar Space}
+
+Sets a polar coordinate plane in 2D space.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my 2D polar space">
+  <definition language="NINeML">http://www.NINeML.org/spaces/Polar2D.xml</definition>
+  <properties>
+    ...
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{3D Polar Space}
+
+Sets a polar coordinate system in 3D space.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my 3D polar space">
+  <definition language="NINeML">http://www.NINeML.org/spaces/Polar3D.xml</definition>
+  <properties>
+    ...
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{more subtypes here}
+
+\subsection{Region Components}
+
+Region component defines a finite region given a coordinate system (space). A reference to a
+corresponding coordinate system as well as boundaries of a region constitute
+the properties of a region component.
+
+\subsubsection{Line Segment}
+
+Sets a line segment in 1D space.
+
+\paragraph{General Definition}
+Properties include reference to coordinate system {\tt space}, and boundaries
+{\tt lowerBound} and {\tt upperBound}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my line">
+  <definition language="NINeML">
+    http://www.NINeML.org/regions/Line.xml
+  </definition>
+  <properties>
+    <space><reference>my 1D space</reference></space>
+    <quantity name="lowerBound">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBound">
+      <value>
+        <scalar>500</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+Note that the reference to coordinate system still uses a specific rather than a
+generic tag.
+
+\subsubsection{Axes Aligned Rectangle}
+
+Sets a rectangle parallel to axes in 2D space.
+
+\paragraph{General Definition}
+Properties include reference to coordinate system {\tt space}, and boundaries
+{\tt lowerBoundX}, {\tt lowerBoundY}, {\tt upperBoundX} and {\tt upperBoundY}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my square">
+  <definition language="NINeML">
+    http://www.NINeML.org/regions/AARectangle.xml
+  </definition>
+  <properties>
+    <space><reference>my 2D space</reference></space>
+    <quantity name="lowerBoundX">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBoundX">
+      <value>
+        <scalar>500</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="lowerBoundY">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="upperBoundY">
+      <value>
+        <scalar>500</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{Axes Aligned Parallelepiped}
+
+Sets a parallelepiped aligned with the axes in 3D space.
+
+\paragraph{General Definition}
+Properties include reference to coordinate system {\tt space}, and boundaries
+{\tt lowerBoundX}, {\tt lowerBoundY}, {\tt lowerBoundZ}, {\tt upperBoundX},
+{\tt upperBoundY}  and {\tt upperBoundZ}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my block">
+  <definition language="NINeML">http://www.NINeML.org/regions/AAPPD.xml</definition>
+  <properties>
+    <space><reference>my 3D space</reference></space>
+    <quantity name="lowerBoundX">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    ...
+  </properties>
+</component>
+\end{verbatim}
+
+\issue{The last two only work if space is Cartesian, they will fail for polar
+spaces, but it is not shown anywhere...}
+
+\subsubsection{Circle}
+
+Sets a circle with center and radius in 2D space.
+
+\paragraph{General Definition}
+Properties include reference to coordinate system {\tt space}, coordinates of
+the center {\tt centerX} {\tt centerY}, and {\tt radius}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="fovea">
+  <definition language="NINeML">http://www.NINeML.org/regions/Circle.xml</definition>
+  <properties>
+    <space><reference>my 2D polar space</reference></space>
+    <quantity name="centerX">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="centerY">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="radius">
+      <value>
+        <scalar>500</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{Sphere}
+
+Sets a sphere with center and radius in 3D space.
+
+\paragraph{General Definition}
+Properties include reference to coordinate system {\tt space}, coordinates of
+the center {\tt centerX}, {\tt centerY}, {\tt centerZ}, and {\tt radius}.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="nucleus">
+  <definition language="NINeML">http://www.NINeML.org/regions/Sphere.xml</definition>
+  <properties>
+    <space><reference>my 3D space</reference></space>
+    <quantity name="centerX">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="centerY">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="centerZ">
+      <value>
+        <scalar>100</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+    <quantity name="radius">
+      <value>
+        <scalar>500</scalar>
+        <unit>um</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{more subtypes here}
+
+\subsection{Layout Components}
+\label{layout}
+
+Layout components define how neurons or groups of neurons are positioned within
+a given region of space. Note that both discrete grids and continuous
+mappings can operate on the same region, so it is possible to create a 3D
+grid of neurons for one population as well randomly distributed set of
+neurons from other population within the same region.
+
+Declaring the existence of a population implicitly introduces a notion of
+indexing for its elements. In general, a layout is simply a mapping from these
+indices to generalized positions. For spatial layouts it should reference an
+existing {\tt region} which in turn will reference some coordinate system.
+
+\subsubsection{Unstructured Spaceless Layout}
+
+A pseudo-layout for populations where space and ordering of cells does not matter
+at all (like in \cite{brunel-00}).
+
+\paragraph{General Definition}
+This layout has no properties.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="unstructured">
+  <definition language="NINeML">
+    http://www.NINeML.org/layouts/Unstructured.xml
+  </definition>
+  <properties/>
+</component>
+\end{verbatim}
+
+\subsubsection{1D Spaceless Grid Layout}
+
+Sets a uniformly spaced layout. Here the space still does not matter, but
+the ordering of the cells become important.
+
+\paragraph{General Definition}
+Since only the order of the cells matters here, and the number of the cells
+is defined in the population that uses this layout, there are no properties.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my uniform1D">
+  <definition language="NINeML">
+    http://www.NINeML.org/layouts/Grid1D.xml
+  </definition>
+  <properties/>
+</component>
+\end{verbatim}
+
+\subsubsection{1D Grid Layout}
+
+Sets a uniformly spaced layout in 1D region of space.
+
+\paragraph{General Definition}
+Since there is only one dimension, the cell number and the region fully define
+the spacing between cells, thus {\tt region} is the only necessary property.
+We might consider the case when region and spacing are given and the cell count
+is calculated in the population based on this information.
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my uniform1D">
+  <definition language="NINeML">
+    http://www.NINeML.org/layouts/Grid1D.xml
+  </definition>
+  <properties>
+    <region>my 1D region</region>
+  </properties>
+</component>
+\end{verbatim}
+
+\issue:{At this point I have nothing against lumping the previous two into a single !D
+grid layout, and simply providing a ``fake'' region similar to how we provide ``none''
+as unit for dimensionless quantities. I think it might also allow merging multiple
+populations in a single ``pseudo-space where multiple grids overlap, whether it
+is useful is unclear.}
+
+\subsubsection{2D Grid Layout}
+
+Sets a uniformly spaced layout in 2D region of space.
+
+\paragraph{General Definition}
+Here the cell count given as the property of the population that refers to this layout
+has to be a product of {\tt xCount} and {\tt yCount}.
+
+\issue{If it is not we need to clearly define what to do with the extra neurons or spaces
+in the grid.}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my uniform2D">
+  <definition language="NINeML">http://www.NINeML.org/layouts/Grid2D.xml</definition>
+  <properties>
+    <region><reference>my 2D region</reference></region>
+    <quantity name="xCount">
+      <value>
+        <scalar>50</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    <quantity name="yCount">
+      <value>
+        <scalar>25</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{3D Grid Layout}
+
+Sets a uniformly spaced layout in 3D region of space.
+
+\paragraph{General Definition}
+Here the cell count count given as the property of the population that refers to this layout
+has to be a product of {\tt xCount}, {\tt yCount}, and {\tt zCount}.
+
+\issue{If it is not we need to clearly define what to do with the extra neurons or spaces
+in the grid.}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my uniform3D">
+  <definition language="NINeML">
+    http://www.NINeML.org/layouts/Grid3D.xml
+  </definition>
+  <properties>
+    <region><reference>my 3D region</reference></region>
+    <quantity name="xCount">
+      <value>
+        <scalar>50</scalar>
+        <unit>none</unit>
+      </value>
+    </quantity>
+    ...
+</properties>
+</component>
+\end{verbatim}
+
+\subsubsection{1D Random Uniformly Distributed Layout}
+
+Sets a uniformly distributed random layout in 1D region of space.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my uniform1D">
+  <definition language="NINeML">
+    http://www.NINeML.org/layouts/Uniform1D.xml
+  </definition>
+  <properties>
+    <region><reference>my 1D region</reference></region>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{2D Random Uniformly Distributed Layout}
+
+Sets a uniformly distributed random layout in 2D region of space.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my uniform2D">
+  <definition language="NINeML">
+    http://www.NINeML.org/layouts/Uniform2D.xml
+  </definition>
+  <properties>
+    <region><reference>my 2D region</reference></region>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{3D Random Uniformly Distributed Layout}
+
+Sets a uniformly distributed random layout in 3D region of space.
+
+\paragraph{General Definition}
+
+\paragraph{User Layer Description}
+\begin{verbatim}
+<component name="my uniform3D">
+  <definition language="NINeML">
+    http://www.NINeML.org/layouts/Uniform3D.xml
+  </definition>
+  <properties>
+    <region><reference>my 3D region</reference></region>
+  </properties>
+</component>
+\end{verbatim}
+
+\subsubsection{more subtypes here}
+
+\section{Grouping}
+\label{grouping}
+
+One of the issues the Task Force faced was to define standardized terms
+to describe network and network topology. It appeared that the use of words
+such as layer, population, and such is confusing. The term `population' is
+still used below to designate a collection of identical elements because
+it appears the most common use of it within the Task Force.
+
+Grouping can apply not only to cells but also to synapses, currents, and all
+other components defined in the previous sections. Technically, the grouping of objects
+is of two major types: \emph{\bf constructive} grouping used to {\bf create} objects
+and \emph{\bf access} grouping used to define the subgroups of {\bf already created}
+objects for the purposes of connectivity or monitoring.
+
+To eliminate access groups that fully replicate corresponding constructive groups any
+constructive group can be used for the access purposes. Both types of grouping allow
+hierarchical build of larger groups from smaller groups. Rather than having a deep
+hierarchy, however, the structure is kept flat by referencing. A group does not
+contain the description of the elements that are repeated, but only refers to their
+original description.
+
+The rules of construction provided by constructive groups shall not be
+executed immediately on occurrence of such a group within the description.
+The process of construction shall proceed from top-most group in the hierarchy
+down to component groups. This allows the flexibility of defining one constructive
+group in the description and reusing it multiple times within the network.
+This also allows the inclusion of developed networks in the larger models
+as sub-components. The top-most group in the hierarchy is not marked anywhere
+in the description, it is rather selected by the user through the software
+interface. This way the user can simulate individual components of the network
+for debugging and tuning purposes without modifying the rest of the model.
+
+\subsection{Constructive Group ({\tt group})}
+\label{group}
+
+This is a two-layered structure including of a set of populations on the lower level
+and connectivity between these populations together with access groups (section
+\ref{accessGroup}) on the upper level. Each population describes a collection of
+\emph{identical} elements. Both the number of populations and the number of elements
+within population can be set to one. Processing of a constructive group by a
+NINeML-compliant software shall lead to creation of instances for all elements,
+define the spatial layout of the group, and provide internal connectivity if necessary.
+Constructive groups use tag {\tt group} in user layer descriptions.
+
+A group contains a user-given ID ({\tt name}). The scoping rules for these names
+are described in section \ref{scope}.
+
+An user layer description example of a three population group with 90000 cells of
+the first type ({\tt E} marked by {\tt prototype} tag here), 22500 cells of the second
+type ({\tt I}), and 112500 cells of the third type ({\tt E\_ext}):
+\begin{verbatim}
+<group name="Network">
+  <population name="Exc">
+    <prototype><reference>E</reference></prototype>
+    <layout><reference>unstructured</reference></layout>
+    <number>90000</number>
+  </population>
+  <population name="Inh">
+    <prototype><reference>I</reference></prototype>
+    <layout><reference>unstructured</reference></layout>
+    <number>22500</number>
+  </population>
+  <population name="Ext">
+    <prototype><reference>E_ext</reference></prototype>
+    <layout><reference>unstructured</reference></layout>
+    <number>
+      <calculate>population[@name="Exc"].number+population[@name="Inh"].number</calculate>
+    </number>
+  </population>
+  <projection>...</projection>
+  ...
+  <projection>...</projection>
+</group>
+\end{verbatim}
+In all three populations {\tt prototype} tag refers to a user-given ID ({\tt name})
+of the prototypical component. Note also that {\tt prototype}s in different populations
+can use the same prototypical component, for example in the code above another population
+consisting of a number of inhibitory cells of type {\tt I} can be added if the user
+wants to define two populations of interneurons with different connectivity or
+with different positional distribution.
+
+The line
+\begin{verbatim}
+<number>
+  <calculate>population[@name="Exc"].number+population[@name="Inh"].number</calculate>
+</number>
+\end{verbatim}
+is an example of the syntax that allows definition of properties through
+some calculation based on the values of other properties.
+
+A collection of {\tt projection} entries describes internal connectivity within
+this group according to the rules shown in section \ref{projections}.
+
+Possibility for standard extension: technically, if the prototypes refer to
+definitions of different compartments, {\tt number}s are set to one and projections
+are done based on diffusion currents, this group can implement a multi-compartmental
+cell or a part of such a cell.
+
+\subsection{Hierarchy of Constructive Groups}
+\label{groupHierarchy}
+
+In the previous example group used cells as prototypes, but this is not required.
+To allow the arbitrary complexity of the model, prototypes in constructive groups
+can be other constructive groups. Please note that these have to be groups, not
+populations within a group. An example of a constructive group with
+1000 networks of the same type defined above:
+\begin{verbatim}
+<group name="Mega Network">
+  <population name="Sub Net">
+    <prototype><reference>Network</reference></reference></prototype>
+    <layout><reference>unstructured</reference></layout>
+    <number>1000</number>
+  </population>
+  <projection>...</projection>
+</group>
+\end{verbatim}
+This example will create total of 90 millions of cells of type {\tt E}
+and so forth. The set of {\tt projection} descriptions describes internal for
+this group connectivity according to the rules shown in section \ref{projections}.
+Note, that this connectivity is between {\tt Network}s, since within
+{\tt Network} projections were defined in the description of {\tt Network}.
+
+\subsection{Access Group ({\tt set})}
+\label{accessGroup}
+
+Access group does not define how the cells are created, but rather how they
+shall be selected for the purpose of monitoring of the the activity or building
+the connectivity. The tag used by NINeML for this kind of group is {\tt set}.
+Any constructive group declaration also naturally defines a set of all the
+cells it contains plus one set per each of the populations. Constructive group
+user-given IDs as well as population user-given IDs can be used anywhere set IDs
+can, without explicitly defining a set for each constructive group or its population.
+Declaring a set does not add any objects or components to a model specification: it just
+forms a new, possibly empty, set from those components that have already been declared.
+
+\subsubsection{Selection by Logical Combinations of Criteria}
+
+Within each select statement logical operations are possible. For completeness
+all three (AND, OR, NOT) shall be allowed. In order to make tags more intuitive
+to non-mathematical users the suggested tags are
+\begin{itemize}
+\item[\tt any] {for logical OR operation, where match of any of the given criteria
+is sufficient to select an element;}
+\item[\tt all] {for logical AND operation, where match of all given criteria is
+necessary to select an element;}
+\item[\tt not] {for logical NOT operation, where only elements that do not match
+the criteria are selected.}
+\end{itemize}
+
+\subsubsection{Selection by a User-given ID}
+
+Here is an example of a set where the only matching criteria are user-given IDs
+({\tt name}) that can be found while descending the tree within the parent group
+of the set description. It only selects internal cells and excludes external
+input cells:
+\begin{verbatim}
+<group name="Network">
+  ...
+  <set name="All neurons">
+    <select>
+      <any>
+        <equal>
+          <string>population[@name]</string>
+          <string>Exc</string>
+        </equal>
+        <equal>
+          <string>population[@name]</string>
+          <string>Inh</string>
+        </equal>
+      </any>
+    </select>
+</set>
+  ...
+</group>
+\end{verbatim}
+This set can be used both to record activity of integrate-and-fire cells ignoring the
+Poisson spikers and select the targets of external input to this network.
+
+\issue{Note though that in all recent examples {\tt select} is the only statement in
+{\tt set} so we might just drop the {\tt select} tag:}
+\begin{verbatim}
+<set name="IaF neurons">
+  <any>
+    <equal>
+      <string>population[@name]</string>
+      <string>Exc</string>
+    </equal>
+    <equal>
+      <string>population[@name]</string>
+      <string>Inh</string>
+    </equal>
+  </any>
+</set>
+\end{verbatim}
+
+
+Multiple syntactic constructs were discussed so far with the final choice between
+them left for later discussions. When all matches are exhausted, the union of each
+such binding is constructed and returned.
+
+\subsubsection{Selection by a Cell Property}
+
+This selection only makes sense for cells that do have certain property
+defined in their parameter list. If later the model will be changed and a different
+neuronal component will be used as a prototype, this select statement will become
+invalid. The user shall be notified of this inconsistency by a simulation software
+and resolve the problem manually. Furthermore, if the property in question has
+units of measurements attached to it, the selection shall also include units.
+
+An example syntax for selecting cells in two populations based on their
+membrane potential is:
+\begin{verbatim}
+<select>
+  <less than>
+    <value>population[@name="Pyramidal Neurons"].prototype.property[@name="threshold"].value</value>
+    <value>
+      <scalar>15</scalar>
+      <unit>mV</unit>
+    </value>
+  </less than>
+</select>
+\end{verbatim}
+
+Note that for properties that are assigned values when components are instantiated
+sets only can be created after all cells in the population are instantiated.
+Same is true for the selection by geometry. Therefore any set creation shall
+happen after the network is instantiated. Furthermore, since we do not support
+sets based on properties that change during the simulation, the proper timing
+for set creation is after instantiation and before the simulation start.
+This suggests the following order: instantiate all components, instantiate all
+groups, create all sets, instantiate connectivity, run the simulation.
+
+\subsubsection{Selection by Geometry}
+
+The main issue with this type of selection is that unlike properties, positions
+are never explicitly mentioned in the description. As a result we cannot access
+them using the same syntax as above. Below I show an example syntax how to
+extract coordinate in some space for comparison and leave empty the part where we
+supposed to extract cell coordinate.
+
+\begin{verbatim}
+<select>
+  <less than>
+    <distance>
+      <space>my 2D space</space>
+      <from>
+        <posX>155</posX>
+        <posY>275</posY>
+      </from>
+      <to><position>...</position></to>
+    </distance>
+    <value>150</value>
+    <unit>um</unit>
+  </less than>
+</select>
+\end{verbatim}
+There should also be some mechanism that allows to verify that indeed the cells
+that we are looking at are laid out on the given coordinate system.
+
+\issue{For topographic projections the position of the source within its group
+(population) partially determines the position of the target within a different
+group (population). In this case we need a bit more complicated coordinate
+mapping then a simple reduction to a uniform coordinate space, because we
+might map between populations that are laid out in different coordinate
+systems (e.g. retinal and cortical).}
+
+\section{Projections}
+\label{projections}
+
+A {\tt projection} tag holds a description of the connectivity between two groups
+of cells. Along with a user-given ID ({\tt name}) unique inside the hosting group,
+each projection description contains {\tt source} and {\tt target} elements, each
+of which can reference either individual cell or a set. In the latter case each
+{\tt projection} tag leads to creation of a set of projections rather than a
+single projection.
+
+Projection description also includes references to a plasticity component ({\tt plasticity})
+that controls the synaptic weight and post-synaptic response component ({\tt response})
+that controls the influence of the input through this projection on the post-synaptic
+cell dynamics. Both appear in the description of the projection rather than
+neuron because the same type of neuron can use different synapses when instantiated in
+different populations, similarly the same postsynaptic response can be used in multiple
+projections with different plasticity rules. Instead of providing the user with all
+possible pre-wired combinations, NINeML allows user to combine the
+plasticity$\rightarrow$response$\rightarrow$neuron chain from a set of small
+standard components.
+
+Finally, a connectivity pattern or rule shall be set for a projection through
+reference to a connectivity component. This is done with tag {\tt rule}.
+
+Example description of the projection
+\begin{verbatim}
+<projection name="Inhibitory">
+  <source><reference>Inhibitory cells</reference></source>
+  <target><reference>Input receivers</reference></target>
+  <response><reference>PSR</reference></response>
+  <plasticity><reference>Plastic</reference></plasticity>
+  <rule><reference>random fan-in</reference></rule>
+</projection>
+\end{verbatim}
+
+\section{Structure of a User Layer Description}
+
+In order to simplify the descriptions themselves and the mechanisms for
+combining multiple components of the model the user layer description
+is consisting of multiple files that define various components and
+contains the syntax to import external files. The proposed syntax is
+\begin{verbatim}
+<import>...</import>
+\end{verbatim}
+The filling in the above statement can be a reference to a local file
+\begin{verbatim}
+<import>file://home/someuser/somedirectory/someneurons.xml</import>
+\end{verbatim}
+as well as a reference to some Internet database of models
+\begin{verbatim}
+<import>http://www.modelDB.org/somepath/someneurons.xml</import>
+\end{verbatim}
+
+\issue{Different technical approaches were proposed in Antwerp 2009, such as
+using XPath or Xinclude, but we decided that these technical issues should
+be investigated before the next meeting. They have not been investigated yet.}
+
+\subsection{Scope of User Layer Descriptions}
+\label{scope}
+
+In order to avoid the collisions of user-given IDs as well as to
+provide the user with the ability to redefine some of the imported
+components the following set of rules is suggested:
+\begin{itemize}
+\item{Every identifier is considered unique only within its parent}
+\item{To access the identifier a full path from the point of access
+to this identifier shall be provided, e.g. accessing a threshold
+parameter of a pyramidal cell in a cortical layer II from a top level
+network that includes all six layers of cortex will look similar to
+\begin{verbatim}
+group[@name="layerII"].population[@name="pyramidal"].prototype.property[@name="threshold"].value
+\end{verbatim}
+Here the first level accesses the group ``layer II'', the second level
+accesses the population ``pyramidal'' within the ``layer II'' group, the third
+level accesses the prototypical cell description and the last level
+selects threshold value from this description. The exact syntax remains to be
+defined.}
+\item{Any imported construct can be redefined within the importing
+description by adding a new definition of the same object. For example
+if the file {\tt pyramidal.xml} contains the description of a pyramidal
+cell named {\tt ``Pyramidal Cell''} that the user wants to reuse with a
+different parameter value the following syntax shall be used:
+\begin{verbatim}
+<import>
+  http://www.modelDB.org/somepath/pyramidal.xml
+</import>
+<component name="Pyramidal Cell">
+  <quantity name="threshold">
+    <value>
+      <scalar>-35</scalar>
+      <unit>mV</unit>
+    </value>
+  </quantity>
+</component>
+\end{verbatim}
+In this example all properties of the cell are imported from external
+file and the value of the threshold is redefined in the local description.
+Note that the above example is only valid if a component named {\tt ``Pyramidal
+Cell''} was described in the imported file.}
+\item{If multiple redefinitions of the same entity are found, then the most
+recent one will be used. The most recent is determined by the order of
+parsing of the top level model description file. Here the rule shall be
+enforced that when multiple files are included all components are parsed before
+all groups. This will allow a smooth transition from networks with simple
+components and groups to networks where some components and some groups are redefined.
+A good example is a transition from Brunel's model A to model B in the
+appendix.}
+\item{If several different subfields are redefined, then all of these
+new definitions will be used.}
+\end{itemize}
+
+Simulation software developers can (but at this
+point of time are not obliged to) optimize the NINeML code that is
+output by their software by grouping all redefinitions of properties of
+the same component into a single component description.
+
+\subsection{Replacing Components of a User Layer Description}
+
+\issue{Add here discussion with Hugo about renaming/changing model/prototype
+without the necessity to modify analysis scripts.}
+
+\section{Appendix: Formal Grammar of User Layer Descriptions}
+
+In Antwerp 2009 we decided to add a systematic definition of user layer tags here.
+To be filled.
+
+\bibliographystyle{apalike}
+\bibliography{ProposalUL}
+
+\end{document}
+
+
+Antwerp:
+The composition of the populations in Marino 2005 is based on a percentage of the total
+number of neurons. The language should support this representation. The connectivity
+is based on a probability function dependent on the distance between neurons and includes
+a mapping from cortical to visual field coordinates. We need to have a proper space
+definition as well as a mechanism of conversion between space representations. The
+connectivity needs to be expressed based not only on space but also on other parameters.
+Boundary neurons are defined using a Poissonian mask. Parameter values need to be
+specified relative to each other, like number of incoming (excitatory or inhibitory)
+connections as fractions of all incoming connections. In summary, the current connectivity
+concepts are not sufficient to express this model, and as a consequence the space concepts
+will be re-worked, using this model as a test-case.
+
+
+Padraig:
+1) Specify which group/population is N and which is M (N can = M), and
+the global properties of the network connection (e.g. synapse type/
+global syn properties)
+
+2) Decide which group N or M to generate from. M will ultimately be the
+postsynaptic group (i.e. receive syn input), but the rest of the
+connection is made from one of these, the generate start group S. The
+finish group is F
+Default: S = N
+
+3) Decide on the global subset of cells in S will have some connections
+of this type (I assume that N can be a compound
+population/group/assembly, so this set could be "all pyramidal cells in
+layer 4")
+Default: all
+
+4) Decide on the global subset of cells in F will have some connections
+of this type
+Default: all
+
+5) Decide on number of connections from each cell in S to build
+connections from (k in your mail below)
+Default: 1
+
+6) Decide on iteration method (make one connection on cell i in S, move
+to i+1, etc., come back to i...; alternatively make all conns on cell i
+then move on)
+Default: first option above
+
+For each individual connection:
+7) Decide on subset of cells of F which can take this connection (can be
+function of geometry of layouts of S and F & position of cell i in S)
+Default: all
+
+8) Decide which cell of this subset to pick (e.g. closest)
+Default: random
+
+9) Implement conditions on finish cell (e.g. there are a max number of
+connections from any cell in S allowed, only one connection from each
+cell in S is allowed, autapses aren't allowed, etc). If conditions not
+satisfied, go back to 7).
+
+10) When a connection is made calculate the connection specific
+properties (e.g. weights), possibly in terms of geometry of layouts of S
+and F
+
+Robert:
+However, in the latter case, I'd still vote for not
+using the word "convergent" in connection with the first case above,
+but rather giving it some handy name (or ontology entry) and storing
+the information somewhere else that this constraint can be met with
+a convergent allocation method
+
+Hans:
+In your
+description, two aspects are conflated: the distribution of the **number** n of connections and
+the distribtion of the **location** of sources within A. For the "common" convergent connection
+as in the Brunel paper, n is fixed and sources are chosen with uniform probability.
+
+In some cases, though, as for the Vogel & Abbotts paper, we need to retain procedural elements
+in the description of connectivity, since they explicitly depend on first connecting one group,
+then connecting the next based on the outcome of the first, etc.
+
+I like the idea of a "cheat sheet", i.e., a repository of advice on how to implement certain
+modeling concepts. This has several advantages:
+
+- Modeling concepts in the language core need not be bogged down with implementation constraints.
+
+- Over time, people can add implementation advice without having to modify the description of
+concepts.
+
+- You could have multiple pieces of advice for a single concept, e.g., implementations that are
+optimal under certain conditions only, for specific hardware, etc.
+
+Robert:
+Anyway, pressing on, if, say I have n cells in population A and n in
+population B, and for each cell in A I pick m targets at random, then
+each cell in B receives k connections where k has a binomial distribution
+P(k=r) = Binomial(n,m,r) = n!/r!(n-r)! (m/n)^(r) (1- m/n)^(n-r)
+
+So, for the language we could call this something like a random
+"Delta(m):Binomial(n,m)" network, to
+indicate that the number of outgoing connections per source cell is an
+integer delta function (ie, exactly m for each cell), and the number
+of incoming connections per target cell has a binomial distribution
+with  parameters n and m. (ignoring for now  that the total number of
+outgoing and incoming connections should be the same, so these are not
+entirely independent variables).
+
+But there is something fishy about the term "Delta(m):Binomial(n,m)"
+because the size of the network, n, figures weakly in the probability
+distributions for the number of connections.
+
+In particular, for large n, and m << n, Binomial(n,m,r) ~=
+Poisson(m,r) = exp(-m)m^r/r! so the random convergent network is
+rather close to a more general set of networks that could be called
+"Delta:Poission(m)", which has the nice property that it is
+independent of n.
+
+However, you can't generate such a network by iterating over one
+population and picking targets in the other, but I'm not sure that is
+much of a loss either. Generating a "Delta(m):Binomial(n,m)" network
+that way is a bit like generating binomial variates by repeated
+sampling, which is fine, but not necessarily the fastest method. For
+the Delta:Poisson case, you could, for example, put m tokens for each
+source cell in a list, shuffle it, and then, for each target cell,
+generate a Poisson random variate with some standard method, and take
+that many tokens off the list to use as its source cells.
+
+Now, if we can express "Delta:Poission(m)", connectivity we can
+equally well express "Poission:Poisson(m)" connectivity, and, in
+general, "User_defined_pdf_1:User_defined_pdf_2(params)" connectivity.
+So this could be a way to parameterize the family of random networks
+which includes classic convergent and divergent ones as particular
+instances (particular choices for the forms of the two functions).
+
+
+This all only applies if the elements of a population are
+indistinguishable (targets selected with uniform probability). I don't
+know how or whether it would extend to location dependent connections...
+
+Hill@Stockholm
+
+The discussions were then oriented toward a better understanding of the grid representation for the
+network topology and the possible generalization of this representation, as well as the probability function.
+It was proposed that the grid representation could be extended to a general n-dimensional approach and
+that such a representation could be used for the purpose of the abstraction layer. The hexagonal packing
+was also mentioned during the discussion. It was also made clear that our representation should be able to
+specify that: “the synapse placement should be on segment x”. This need will be more relevant in the
+future when modeling studies will take into account the precise innervations’ pattern and the statistics of
+synapse placement in their models with multicompartments.
+
+Conn Set @ Stockholm
+
+It was made clear that we need a set of operators general enough to describe broad range of connectivity.
+We all agreed that this is a powerful general concept but it needs to be constrained in order to be used in
+the abstraction layer. Mikael Djurfeldt then pointed out the need of expanding the practical examples to be
+able to constrain this general set of operator. For this purpose, the connection set algebra could be bounded
+with NEST to increase the number of different network topology to be represented by the connection set
+algebra. It was also pointed out that the current framework does not cover the possible dynamic
+representation of the connectivity. This can be added by the use of function.

@@ -1,0 +1,61 @@
+Identifiers and access paths ¶
+
+    We refer to values and containers either by identifier (if we are in
+
+the scope of their binding) or via the dot notation, e.g. M.x to refer to the x member of container M. The following definition represents both kinds of references:
+
+Access paths:          p ::= X | p.X
+
+    Since modules can be nested, paths may be arbitrarily long,
+
+e.g. M.N.P.x, which reads ((M.N).P).x. To avoid ambiguity, we require that all member of a container (at the same nesting level) have distinct names. For example, a container C cannot have two members named m, because we would not know which type C.m refers to.
+
+    However, sub-containers can still define members with the same name
+
+as members from an enclosing container, since the path notation distinguishes them. For instance, C can have a m member and a D sub-container with another m type component; the former member m is referred to as C.m, and the latter as C.D.m.
+Components and containers ¶
+
+The main syntactic constructs of the NineML module system are components and containers. A container consists of bindings and containers (called sub-containers) packaged together into a logical unit. A component is an interface, usually thought of as a type for a container: it specifies the names of all the entities provided by the container, as well as signatures for sub-containers.
+
+A container definition introduces a new container name, which can point to a previously existing container, or it can be a structure:
+
+Container definition:    container x = c
+
+Container expressions:   c ::= p | structure s end | ( c : M )
+
+A structure is an ordered collection of bindings and sub-containers. A binding consists of a name and value; the value can refer to a binding preceding the current binding in the current container scope:
+
+container J =
+structure
+  binding x = 5
+  binding y = x + 1
+end
+
+A binding value can also refer to a subcontainer in the current scope:
+
+container K =
+structure
+  container N =
+  structure
+    binding x = 5
+  end
+  binding y = N.x + 1
+end
+
+A component is an interface, usually thought of as a type for a container: it specifies the names of all the entities provided by the structure as well as the types of value components, and components for subcontainers.
+
+Component definitions also consist of names and subcontainers, but instead of values, they specify the type of each member:
+
+Components:              M ::= ε | C; S
+
+Component members:       C ::= binding i : type  | container X : M
+
+For example:
+
+component L =
+  binding x: parameter
+end
+
+container M: L =
+  binding x = 5
+end

@@ -1,0 +1,28 @@
+\documentclass{article}
+
+\usepackage{tikz}
+\usetikzlibrary{topaths,positioning}
+\usepackage{signalflowdiagram}
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{figure}
+\begin{signalflow}{$\texttt{UNION}\quad{}f$}
+\begin{scope}[]
+\node[input](in1){$\overrightarrow{X(t)}$};
+\node[filter](f1)[right from=in1]{$f$};
+\node[output](out1)[right from=f1]{$f\;(\;\overrightarrow{X(t)}\;)$};
+\path[r>](in1) -- (f1);
+\path[r>](f1) -- (out1);
+\end{scope}
+\begin{scope}[yshift=-2cm]
+\node[input](in2){$\overrightarrow{Y(t)}$};
+\node[filter](f2)[right from=in2]{$g$};
+\node[output](out2)[right from=f2]{$g\;(\;\overrightarrow{Y(t)}\;)$};
+\path[r>](in2) -- (f2);
+\path[r>](f2) -- (out2);
+\end{scope}\end{signalflow}
+\end{figure}
+
+\end{document}

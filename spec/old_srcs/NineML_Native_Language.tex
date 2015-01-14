@@ -1,0 +1,455 @@
+\documentclass[10pt]{article}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{color}
+
+%% Text layout
+\topmargin 0.0cm
+\oddsidemargin 0.5cm
+\evensidemargin 0.5cm
+\textwidth 16cm 
+\textheight 21cm
+
+%% Bold the 'Figure #' in the caption and separate it with a period
+%% Captions will be left justified
+\usepackage[labelfont=bf,labelsep=period,justification=raggedright]
+{caption}
+
+%% Remove brackets from numbering in List of References
+\makeatletter
+\renewcommand{\@biblabel}[1]{\quad#1.}
+\makeatother
+
+%% Leave date blank
+\date{}
+
+\pagestyle{myheadings}
+
+\newcommand{\minitab}[2][l]{\begin{tabular}{#1}#2\end{tabular}}
+
+%% double square brackets for semantic definitions
+\newcommand{\lsem}{[\![}
+\newcommand{\rsem}{]\!]}
+
+
+%% end semantic macros
+
+%% END MACROS SECTION
+
+
+\begin{document}
+\begin{flushleft}
+
+{\Large
+{\textbf{The NineML Native Interpreted Language}}\\
+
+}
+%% Insert Author names, affiliations and corresponding author email.
+Ivan Raikov$^{1,2}$
+\\
+{\textbf{1}} {University of Antwerp}\\
+{\textbf{2}} {Okinawa Institute of Science and Technology}\\
+\end{flushleft}
+
+
+\section*{Introduction}
+The NineML native interpreted language is a compact and
+complete domain-specific interpreted language that specifies an exact
+and minimal yet sufficient grammar for populating the NineML object
+model, and therefore can serve as a reference implementation.  It is
+referred to as native in that, in contrast to other NineML
+implementations of the object model which are embedded in existing
+programming languages, the NineML native language implements its own
+language grammer, and thus avoids the common problem of embedded
+languages that the surrogate language can invade the embedded
+language.  Herein we describe the structure of this ``NineML native''
+language. 
+
+\subsection*{Bindings}
+A fundamental aspect of a programming language is how it uses
+names to refer to computational objects.  We refer to NineML names as
+labels and to computational objects as values, and we say that labels
+identify values. 
+
+In the NineML abstraction layer interpreter, values are named
+with the binding construct: \begin{center}
+{\small{}\begin{verbatim}
+binding pi = 3.14159265
+\end{verbatim}
+}\end{center}
+
+
+Once a label has been associated with a value, we can refer to the
+value by its label, thus implementing the basic property of name
+resolution in the NineML interpreter. A binding consists of a label
+and a value. Once a label is declared in a binding, its associated
+value can be reached by other bindings in the program, according to
+the scoping rules of the NineML interpreter, as described in the
+following sections. 
+
+In general, values may have complex structures, and it would not
+be practical to have to construct these structures each time we want
+to use them. Instead, we can use simple labels to refer to compound
+values. Compound values in NineML are constructed by building
+computational objects of increasing complexity as a sequence of
+bindings. 
+
+\subsection*{Expressions}
+The value of a binding can be given as a primitive expression, or
+as the result of a compound expression. One kind of primitive
+expression type is a number. 
+
+Expressions representing numbers may be combined with an
+expression representing a primitive procedure (such as \texttt{+}
+or \texttt{*}) to form compound expressions. For example: \begin{center}
+{\small{}\begin{verbatim}
+binding radius = 1
+binding area   = pi * radius * radius
+\end{verbatim}
+}\end{center}
+
+
+The value of a compound expression is obtained by applying the
+operators specified to the arguments that are the values of the
+operands. In the example above, the value of the binding area is
+obtaining by applying the multiplication operator to the values of pi
+and radius. 
+
+\subsection*{Functions and Local Names}
+Function definitions in the NineML interpreter allow a compound
+operation to be given parameterized as a unit. 
+
+For example, we can declare the following function for squaring
+numbers: \begin{center}
+{\small{}\begin{verbatim}
+binding square = function (x)
+                 binding result = x * x
+                 return result
+\end{verbatim}
+}\end{center}
+
+
+We have here a binding, which has been given the name square. The
+value of the binding is a function that represents the operation of
+multiplying something by itself. The thing to be multiplied is given a
+local name, \texttt{x}. 
+
+The general form of a function definition is: \begin{center}
+{\small{}\begin{verbatim}
+function ( <formal parameters>) = <binding> ... <binding>  return <value>
+\end{verbatim}
+}\end{center}
+
+
+The \texttt{<formal parameters>} are the names used within the
+body of the function to refer to the corresponding arguments of the
+function. The bindings inside the function contain expressions in
+which formal parameters are replaced by the actual arguments to which
+the procedure is applied. The return value of the function can refer
+to the values of the bindings defined in that function. 
+
+Having defined square, we can now use it: \begin{center}
+{\small{}\begin{verbatim}
+binding area = function (radius)
+               binding result = pi * square (radius)
+               return result
+\end{verbatim}
+}\end{center}
+
+
+The meaning of the function is independent of the parameter names
+used by its author. The consequence is that the parameter names of a
+function are local to the body of the function. 
+
+\subsection*{Block Structure and Scoping Rules}
+The possibility of associating values with labels and later
+retrieving them means that the NineML interpreter must maintain some
+sort of memory that keeps track of the label-value pairs. This memory
+is called the environment. A NineML program has a global environment
+associated with it, and every function has a local environment
+associated with it. 
+
+The set of expressions for which a binding defines a label is called
+the scope of that label.  For example, \begin{center}
+{\small{}\begin{verbatim}
+binding a = function (x) =
+
+            binding i = 1
+            binding j = 2
+
+            binding b = function (x)
+
+                // scope a+b
+
+                binding k = x+i
+
+                binding c = function (x)
+                    // scope a+b+c
+                    return x+j
+
+ 
+
+                return k + c(k)
+
+            // scope a
+            return i+b(j)
+\end{verbatim}
+}\end{center}
+
+
+In a function definition, the labels declared as the bindings in that
+function have the body of the function as their scope. 
+
+Such nesting of definitions is called lexical scoping: each use of
+a label in the NineML interpreter is resolved by looking up the label
+in the enclosing block definition, and if not found, in the outer
+blocks enclosing the current block. 
+
+\subsection*{Module Language}
+\subsubsection*{Identifiers and access paths}
+We refer to values and containers either by identifier (if we are in
+the scope of their binding) or via the dot notation, e.g. M.x to refer
+to the x member of container M. The following definition represents
+both kinds of references: \begin{center}
+{\small{}\begin{verbatim}
+Access paths:          p ::= X | p.X
+\end{verbatim}
+}\end{center}
+
+
+Since modules can be nested, paths may be arbitrarily long,
+e.g. \texttt{M.N.P.x}, which reads \texttt{((M.N).P).x}. To
+avoid ambiguity, we require that all member of a container (at the
+same nesting level) have distinct names. For example, a container \texttt{C} cannot have two members named \texttt{m}, because we would not know which type \texttt{C.m} refers to. 
+
+However, sub-containers can still define members with the same name
+as members from an enclosing container, since the path notation
+distinguishes them. For instance, C can have a m member and a D
+sub-container with another m type component; the former member m is
+referred to as C.m, and the latter as C.D.m. 
+
+\subsubsection*{Components and Containers}
+The main syntactic constructs of the NineML module system are
+components and containers. A container consists of bindings and
+containers (called sub-containers) packaged together into a logical
+unit. A component is an interface, usually thought of as a type for a
+container: it specifies the names of all the entities provided by the
+container, as well as signatures for sub-containers. 
+
+A container definition introduces a new container name, which can
+point to a previously existing container, or it can be a structure: \begin{center}
+{\small{}\begin{verbatim}
+Container definition:    container x = c
+Container expressions:   c ::= p | structure s end | ( c : M )
+\end{verbatim}
+}\end{center}
+
+
+A structure is an ordered collection of bindings and
+sub-containers. A binding consists of a name and value; the value can
+refer to a binding preceding the current binding in the current
+container scope: \begin{center}
+{\small{}\begin{verbatim}
+container J =
+structure
+  binding x = 5
+  binding y = x + 1
+end
+\end{verbatim}
+}\end{center}
+
+
+A binding value can also refer to a subcontainer in the current scope: \begin{center}
+{\small{}\begin{verbatim}
+container K =
+structure
+  container N =
+  structure
+    binding x = 5
+  end
+  binding y = N.x + 1
+end
+\end{verbatim}
+}\end{center}
+
+
+A component is an interface, usually thought of as a type for a
+container: it specifies the names of all the entities provided by the
+structure as well as the types of value components, and components for
+subcontainers. 
+
+Component definitions also consist of names and subcontainers, but
+instead of values, they specify the type of each member: \begin{center}
+{\small{}\begin{verbatim}
+Components:              M ::= () | C; S
+
+Component members:       C ::= binding i : type  | container X : M
+\end{verbatim}
+}\end{center}
+
+
+\section*{Semantic Definition}
+Every programming language presents its own conceptual view of
+computation. This view is reflected by the syntactic structure and
+reserved words of the language, which are usually terms such as
+procedure, package, pointer, and so on. These terms have their
+abstract counterparts, which may be called semantic objects, and which
+are what users of the language have in mind when they write programs
+in it. And it is these objects, not the syntax, that define the
+conceptual world of the language. 
+
+Therefore a definition of the language must be in terms of these
+semantic objects. Furthermore, the definition must be in mathematical
+notation that is independent of a programming language and follows a
+set of rules that allow the consistent definition of every semantic
+object. 
+
+\subsection*{Formal Framework}
+Operational semantics is a formal expression of the common
+intuition that program execution can be understood as a step-by-step
+process evolved by the mechanical application of a fixed set of
+rules. 
+
+Sometimes the rules describe how the state of some physical machine is
+changed by executing an instruction. For example, assembly code
+instructions are defined in terms of the effect that they have on the
+architectural elements of a computer: registers, stack, memory,
+instruction stream, etc. 
+
+But the rules may also describe how language constructs affect the
+state of some abstract model for domain-specific computation. 
+
+The key notation of the method takes the form: \begin{equation*}
+C\;\vdash{}\;P\;\Rightarrow{}\;M\end{equation*}
+ and is read as, ``Against the context $C$, the phrase $P$ evaluates to the meaning $M$''. 
+
+This notation underlies the form of operational semantics used in
+this document, which is called big-step operational semantics, and is
+also known as natural semantics. 
+
+\subsection*{Semantic Rules}
+A semantic rule has the form \begin{equation*}
+\frac{antecedents}%
+{consequent}\end{equation*}
+ where the antecedents and the consequent contain formulas with
+variables (described next). Informally, the rule asserts: ``If the
+transitions specified by the antecedents are valid, then the
+transition specified by the consequent is valid.''  A rule that
+contains no antecedents is called an axiom. 
+
+Formulas are divided in two kinds: sequents and conditions.
+Conditions are restriction on the applicability of the rule: a
+variable may not occur free somewhere, a value must satisfy some
+predicate, some relation must hold between two variables.  
+
+A sequent has two parts, an antecedent (on the left) and a
+consequent (on the right), and we use the turnstile symbol $\vdash{}$ to separate these parts. It takes the form: \begin{equation*}
+s_{1}\;\vdash{}\;E\;\Rightarrow{}\;s_{2}\end{equation*}
+ which means that given program state $s_{1}$ the expression $E$ evaluates to program state $s_{2}$. 
+
+\subsection*{Syntax of the Core Language}
+\begin{tabular*}{5cm}{l@{\extracolsep{1cm}}l}
+$Declaration$$\:::=\:$$\texttt{binding}\quad{}I_{val}\quad{}\texttt{=}\quad{}E_{val}$ &[Creates a new binding in the host namespace]\\ ~&~\\
+$Expression$$\:::=\:$$L$ &[Literal (symbolic or numeric constant)]\\ $\qquad\;\bigm\vert\;$
+$I$ &[Identifier]\\ $\qquad\;\bigm\vert\;$
+$\langle{}E_{1},\;\texttt{,},\;E_{2}\rangle{}$ &[Tuple constructor]\\ $\qquad\;\bigm\vert\;$
+$\texttt{function}\quad{}I_{parameter}\quad{}E_{body}$ &[Function constructor]\\ $\qquad\;\bigm\vert\;$
+$\texttt{if}\quad{}E_{1}\quad{}E_{2}\quad{}E_{3}$ &[Conditional]\\ $\qquad\;\bigm\vert\;$
+$E_{proc}\quad{}E_{arg}$ &[Function application]\\ $\qquad\;\bigm\vert\;$
+$\texttt{let}\quad{}I_{lb}\texttt{=}E_{lb}\quad{}\texttt{in}\quad{}E_{body}$ &[Expression with local binding]\\ ~&~\\
+$Literal$$\:::=\:$$N$ &[Numeric Literal]\\ $\qquad\;\bigm\vert\;$
+$I_{symbol}$ &[Symbolic Literal]\\ \end{tabular*}
+\subsection*{Semantics for the Core Language}
+In the Core Language, the evaluation of an  expression always
+yields a value, and all sequents take the form:  $\rho{}\;\vdash{}\;E\;\Rightarrow{}\;\alpha{}$ where $E$ is an expression, $\rho{}$ is an environment, and $\alpha{}$ is the result of the evaluation of $E$
+in $\rho{}$. 
+
+\subsubsection*{Semantic Values and Environments}
+Values in the core language can be one of the following: \begin{enumerate}
+\item integers;
+\item IEEE 754 floating-point numbers;
+\item boolean values $true$ and $false$
+\item closures of the form $\langle{}\lambda{}P.E,\;\rho{}\rangle{}$, where $E$ is an expression and $rho$ is an environment; in other words, a closure is a pair denoting a function and its execution environment; 
+\item predefined primitive functions;
+\item tuples of semantic values of the form $\langle{}alpha\;beta\rangle{}$, which may in turn be tuples, so that trees of semantic values can be constructed. 
+\end{enumerate}
+
+
+An environment $\rho{}$ is an ordered list of pairs ${\mathrm\mathbf{}(}P\;\;\;\rightarrow{}\;\;\;\alpha{}{\mathrm\mathbf{})}$ where $P$ is pattern and a $\alpha{}$ a value. The initial
+environment associates primitive functions to a few predefined
+operators, such as \texttt{+}, \texttt{-} etc. 
+
+\subsubsection*{Semantic Rules}
+Axioms 1 to 4 state that literals are in normal form, i.e. they immediately yield semantic values: 
+
+\begin{equation}
+\rho{}\;\vdash{}\;n\;\Rightarrow{}\;N\end{equation}
+\begin{equation}
+\rho{}\;\vdash{}\;r\;\Rightarrow{}\;R\end{equation}
+\begin{equation}
+\rho{}\;\vdash{}\;\texttt{true}\;\Rightarrow{}\;true\end{equation}
+\begin{equation}
+\rho{}\;\vdash{}\;\texttt{false}\;\Rightarrow{}\;false\end{equation}
+Axiom 5 asserts that an expression of the form $\lambda{}I.E$ is also in normal form. The
+value obtained is a closure, pairing this expression with the
+environment. 
+
+\begin{equation}
+\rho{}\;\vdash{}\;\lambda{}I.E\;\Rightarrow{}\;\langle{}\lambda{}I.E\rho{}\rangle{}\end{equation}
+Axiom 6 states that the value associated with an identifier is to be looked up in the environment $\rho{}$. 
+
+\begin{equation}
+\rho{}\;\vdash{}\;I\;\Rightarrow{}\;\texttt{ident-find}(I,\:\rho{})\end{equation}
+Evaluation of conditional expressions is specified by the next two
+rules, 7 and 8. The rules show that evaluation of $E_{1}$, $E_{2}$ and $E_{3}$ takes place in the same
+environment, and has no side effects. 
+
+\begin{equation}
+\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;true{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}}%
+{\rho{}\;\vdash{}\;\texttt{if}\;E_{1}\;\texttt{then}\;E_{2}\;\texttt{else}\;E_{3}\;\Rightarrow{}\;\alpha{}}\end{equation}
+\begin{equation}
+\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;false{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{3}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}}%
+{\rho{}\;\vdash{}\;\texttt{if}\;E_{1}\;\texttt{then}\;E_{2}\;\texttt{else}\;E_{3}\;\Rightarrow{}\;\alpha{}}\end{equation}
+Rule 9 is the introduction rule for tuples of values. Both components of the tuple must be evaluated. 
+
+\begin{equation}
+\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
+{\rho{}\;\vdash{}\;E_{1}\;\texttt{,}\;E_{2}\;\Rightarrow{}\;\langle{}\alpha{},\;\beta{}\rangle{}}\end{equation}
+The next rule deals with function application. Type-checking must
+ensure that the operator of an application can only evaluate to a
+functional value, i.e. a closure. This closure is taken apart. The
+closure's body is evaluated in the closure's environment, to which a
+parameter association has been added. Since $E_{2}$ is
+evaluated, the Core Language uses call-by-value. 
+
+\begin{equation}
+\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\langle{}\lambda{}I.E,\;\rho{}_{1}\rangle{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}_{1}\cdot{}I\mapsto{}\alpha{}\;\vdash{}\;E\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
+{\rho{}\;\vdash{}\;E_{1}\;E_{2}\;\Rightarrow{}\;\beta{}}\end{equation}
+Rule 11 deals with local bindings. 
+
+\begin{equation}
+\frac{{\mathrm\mathbf{}(}\rho{}\;\vdash{}\;E_{2}\;\Rightarrow{}\;\alpha{}{\mathrm\mathbf{})}\;{\mathrm\mathbf{}(}\rho{}\cdot{}I\mapsto{}\alpha{}\;\vdash{}\;E_{1}\;\Rightarrow{}\;\beta{}{\mathrm\mathbf{})}}%
+{\rho{}\;\vdash{}\;\texttt{let}\;I\;=\;E_{2}\;\texttt{in}\;E_{1}\;\Rightarrow{}\;\beta{}}\end{equation}
+\subsection*{Syntax of the Module Language}
+\begin{tabular*}{5cm}{l@{\extracolsep{1cm}}l}
+$ModExpr$$\:::=\:$$Path$ &[Reference to a module]\\ $\qquad\;\bigm\vert\;$
+$\texttt{structure}\quad{}MDecl_{1}\ldots{}MDecl_{n}\quad{}\texttt{end}$ &[Module structure]\\ ~&~\\
+$MDecl$$\:::=\:$$Declaration$ &[Core language declaration]\\ $\qquad\;\bigm\vert\;$
+$\texttt{module}\quad{}I\quad{}\texttt{=}\quad{}ModExpr$ &[Module declaration]\\ ~&~\\
+$Path$$\:::=\:$$I$ &[Identifier]\\ $\qquad\;\bigm\vert\;$
+$Path\;\cdot{}\;I$ &[Path to an identifier]\\ \end{tabular*}
+\subsection*{Semantics for the Module Language}
+The next two axioms state that the module associated with a path is to be looked up in the environment $\rho{}_{module}$. 
+
+\begin{equation}
+\rho{}_{module}\;\vdash{}\;I\;\Rightarrow{}\;\texttt{ident-find}(I,\:\rho{}_{module})\end{equation}
+\begin{equation}
+\rho{}_{module}\;\vdash{}\;P.I\;\Rightarrow{}\;\texttt{ident-find}(I,\:{\mathrm\mathbf{}(}\rho{}_{module}\;\vdash{}\;P{\mathrm\mathbf{})})\end{equation}
+\begin{equation}
+\frac{\begin{array}{l}\rho{}_{module}\;\vdash{}\;MDecl_{1}\;\Rightarrow{}\;\rho{}_{module}\cdot{}I_{1}\mapsto{}\alpha{}\\
+\rho{}_{module}\cdot{}I_{1}\mapsto{}\alpha{}\;\vdash{}\;MDecl_{2}\;\Rightarrow{}\;\rho{}_{module}\cdot{}I_{1}\mapsto{}\alpha{}\cdot{}I_{2}\mapsto{}\beta{}\end{array}}%
+{\rho{}_{module}\;\vdash{}\;\texttt{structure}\;MDecl_{1}\;MDecl_{2}\;\texttt{end}\;\Rightarrow{}\;\texttt{\{}\;I_{1}\mapsto{}\alpha{}\;\texttt{ ; }\;I_{2}\mapsto{}\beta{}\;\texttt{\}}}\end{equation}
+\end{document}

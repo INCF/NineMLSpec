@@ -1,0 +1,251 @@
+Spec:
+
+LaTeX, putting on wiki
+
+latex2html
+
+Open question of spec documenting platform.
+
+
+Continue process of consolidating wikis into 
+
+Spec is monolithic including AL and UL?
+
+
+Agree on general thrust of building a sepcification document based on
+intro text, etc. from wiki, purpose is by developers for developers
+and is the definitive document for the NineML langauge standard, and
+as such its focus is on completeness and precision of definitions, and
+not on soft introductions.  Introductory material should persist in
+present locations, thought they may be sourced and included in the
+spec document.
+
+
+Templates, Closure ->
+  Template is AL
+  Closure is performed in UL.
+
+
+Discussing the 3 pillars of NineML AL architecture:
+XML schema, Object model, Native Interpreter.
+
+XML schema is schema of object model.
+
+
+Collection of Regimes: Do regimes have to have all 
+
+Such differences in object model need to enter the spec
+
+Version Moulting for Object Modeling
+->
+
+Check point:
+
+Agreed on:
+
+1) Native Interpreter Syntax
+
+2) Object Model
+
+3) XML schema can be on interpreter syntax or object model
+
+Con: for on Object model is it makes verion moulting more challenging
+Pro: for on Object model is that embedded implementations can be more
+light weight because they needn't implement an analog of the interpreter.
+
+So we deciced on for now on standardizing XML schema on Object Model
+
+This doesn't exclude later standardizing the XML schema for the
+interpreter syntax.
+
+This is an important clarification for the emerging python embedded lib9ml,
+i.e. at present it is embedded only, and has no facilities for interpreting
+the NineML native syntax.
+
+
+------------------------------------
+
+Discussion on Specing Code Generation
+
+Ideas:
+  Diagram -> ByteCode -> Scheme ML, Matlab
+  Intermediate standard bytecode for code generation
+
+Let's put this on the queue when we look into
+TagTrigC model, 
+
+code generation for object model
+
+Quesitons: 
+
+My inh_gamma_generator needs 
+multiple transition conditions to be evaluated
+before transitions are triggered.
+
+Ivan allows for nested/chained transitions.
+i.e. source and target of Transition can be a Transition.
+might allow logistic map, and be a simpler approach for
+inh_gamma_generator.
+
+Andrew suggest an additional regime might be another solution.
+
+So we'll look into: inh_gamma_generator, TagTrigC on friday for refining
+object model and starting the standardization of code generation.
+
+----------
+
+Containers in the object model.
+
+Also Closures ... 
+
+break for lunch.
+
+----------
+
+Assignment is not sub-Class of Equation ...
+
+2 to 1 Inplace should be removed from Object Model.
+Make it so.
+
+
+Ivan Presented his idea of Evaluation Environment.
+
+
+Adding to Object Model: Primitives
+Example:
+
+Random.Uniform.
+
+Tuple ('Primitive', ['subtype'], path)
+path example: 'random.uniform'
+i.e. we keep paths/dot notation.
+
+Name Paths for now we explore exlcuding them in Object Model,
+
+Evaluation Environment -> Namespaces, nested Namespaces
+(Object Model analogy to Container in the Native Interpreter)
+
+
+Closures:
+
+The user layer is closing the closure.
+
+A Component is a closed closure? No.
+
+
+
+Modification to Python Component?
+- 
+
+
+------
+
+Revisiting question of what is the XML schema:
+Native syntax or Object Model?
+
+
+Object Model: After validation step, read-only?
+
+In Python it will be difficult.
+
+Conclusion: Once in the Object Model, assumed to be valid.
+
+Back to XML ... XML is not direct serialization of the object model
+in a purist sense, but the 9ML XML schema is 9ML embedded in XML.
+So the XML schema certainly has a validation step on de-serialization,
+has perhaps custom XML-specific name resolution solutions, type checking,
+dimension checking, Mathematical expressions:  
+
+
+
+------
+
+
+Regroup: 16pm
+
+List of Objects in the Object Model
+
+Go through each one and define how it is serialized in XML.
+
+LOO
+--------
+
+((
+tuples and consts -> We need to think of extension mechanism such that we don't have to modify libraries and tools ...
+                     hmmmm ....
+))
+
+
+Diagram
+
+
+Regime
+
+
+
+Transition
+
+
+Assignment
+
+
+ODE
+
+
+Relation
+
+
+Something for Constants, Physical Constants
+
+
+Parametrized Binding (still need a name) Relation/Macro/Equivalence
+
+
+
+TODO: Tranistions need to be synced up
+Assignments in Regimes needed more discussion ... Chaining of Transitions
+
+
+Ports
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
+ 
+
+
+
+

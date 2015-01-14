@@ -1,0 +1,543 @@
+<?xml version="1.0" ?>
+
+<toplevel xmlns="mml" xmlns:mml="mml">
+<container_def name="Izhikevich03">
+<structure>
+<value_def name="construct">
+<function formal="t">
+<body>
+<function formal="V">
+<body>
+<function formal="U">
+<body>
+<function formal="k1">
+<body>
+<function formal="k2">
+<body>
+<function formal="k3">
+<body>
+<function formal="theta">
+<body>
+<function formal="a">
+<body>
+<function formal="b">
+<body>
+<function formal="c">
+<body>
+<function formal="d">
+<body>
+<function formal="spike">
+<body>
+<function formal="tspike">
+<body>
+<function formal="Isyn">
+<body>
+<let0 name="subthreshold_eq">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="ODE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<const>
+<label>t</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>V</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>U</label></const></right></apply></left>
+<right>
+<longid>
+<pident name="null"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="k1"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></right></apply></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="k2"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<longid>
+<pident name="k3"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="neg">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="U"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<longid>
+<pident name="Isyn"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="a"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="sub">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="mul">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="b"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></right></apply></left>
+<right>
+<longid>
+<pident name="U"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></value>
+<body>
+<let0 name="threshold_detect">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="ASSIGN">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>spike</label></const></right></apply></left>
+<right>
+<longid>
+<pident name="null"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="gt">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="V"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="theta"></pident></longid></right></apply></right></apply></right></apply></value>
+<body>
+<let0 name="tspike_set">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="ASSIGN">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>tspike</label></const></right></apply></left>
+<right>
+<longid>
+<pident name="null"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="if">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="spike"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="t"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="tspike"></pident></longid></right></apply></right></apply></right></apply></value>
+<body>
+<let0 name="subthreshold_regime">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="SEQUENCE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="subthreshold_eq"></pident></longid></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="SEQUENCE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="threshold_detect"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="tspike_set"></pident></longid></right></apply></right></apply></value>
+<body>
+<let0 name="refractory_eq">
+<value>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="ASSIGN">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>t</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>spike</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>tspike</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>V</label></const></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pident name="cons"></pident></longid></left>
+<right>
+<const>
+<label>U</label></const></right></apply></left>
+<right>
+<longid>
+<pident name="null"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="t"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="boolconst">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<const>
+<bool>#f</bool></const></right></apply></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="UNION">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="tspike"></pident></longid></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="c"></pident></longid></right></apply></right></apply></right></apply></left>
+<right>
+<apply>
+<left>
+<longid>
+<pdot name="PURE">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="add">
+<path>
+<pident name="Signal"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="U"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="d"></pident></longid></right></apply></right></apply></right></apply></right></apply></right></apply></value>
+<body>
+<apply>
+<left>
+<apply>
+<left>
+<apply>
+<left>
+<longid>
+<pdot name="TRANSIENT">
+<path>
+<pident name="Diagram"></pident></path></pdot></longid></left>
+<right>
+<longid>
+<pident name="subthreshold_regime"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="refractory_eq"></pident></longid></right></apply></left>
+<right>
+<longid>
+<pident name="spike"></pident></longid></right></apply></body></let0></body></let0></body></let0></body></let0></body></let0></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></body></function></value_def></structure></container_def></toplevel>

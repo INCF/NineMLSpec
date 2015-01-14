@@ -1,0 +1,1198 @@
+NineML Abstraction Layer: An Introduction
+
+ 
+
+Authors: Ivan Raikov, Sean Hill, Mikael Djurfeldt, Andrew Davison, Hugo Cornelis
+
+ 
+
+ 
+Introduction
+
+ 
+
+ 
+
+ With an increasing number of studies related to large-scale neuronal network modeling, the International Neuroinformatics Coordinating Facility (INCF) has identified a need for standards and guidelines to ease model sharing and facilitate the replication of results across different simulators. To create such standards, the INCF has formed a program on Multiscale Modeling to develop a common standardized description language for neuronal network models. A task force has been assembled to evaluate and implement the recommendations of the oversight committee (see document XX). The task force includes the authors or primary contributors to a wide variety of computational neuroscience efforts including the Blue Brain Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
+
+ 
+Design considerations
+
+This document presents the current draft of a proposed standard language that achieves the goals set by the Multiscale Modeling oversight committee. The name of the proposed standard is Network Interchange for Neuroscience Modeling Language (NineML) and its first version is aimed at descriptions of large networks of spiking neurons.
+
+ 
+
+The key concepts of spiking neuron network modeling are 1) spiking neurons 2) synapses 3) populations of neurons and 4) connectivity patterns across populations of neurons. Accordingly, the INCF Task Force on Multiscale Modeling has identified a set of mathematical abstractions that are capable of representing these concepts in a computer language.  
+User layer and abstraction layer
+
+The design of NineML is divided in two semantic layers: an abstraction layer that provides the core concepts, mathematics and syntax with which model variables and state update rules are explicitly described and a user layer that provides a syntax to specify the instantiation and parameterization of a network model in biological terms. 
+
+ 
+
+As the User Layer provides the mechanism for instantiating and parameterization of the model elements that have been defined in the Abstraction Layer, it is clearly essential that these two layers share a complementary and compatible design philosophy. There must be a clear definition of which aspects of a model are defined in the User Layer and which are defined in the Abstraction Layer. In addition, the mechanisms for naming and addressing Abstraction Layer definitions from the User Layer must be compatible between layers.
+
+ 
+Event handling and spikes
+
+To handle events and spiking dynamics, we propose a flexible block diagram notation. The notation represents continuous and discrete variables, their evolution according to a set of rules such as a system of ordinary differential equations, and the conditions that induce a regime change, such as the transition from subthreshold mode to spiking and refractory modes. The notation we have developed is an explicit formalization of event handling and is an important step in ensuring model simulation consistency.
+
+ 
+Implementation assumptions
+
+One of the goals identified by task force members, was to maintain a clear distinction between the role of NineML and a simulator. NineML should provide only the information necessary for a simulator to instantiate the network models. In addition, for implementation and performance reasons, it is important to keep the language layer -Y´close¡ to the simulator – such that the language layer is not responsible for maintaining separate representations of the instantiated network.
+Language syntax
+
+While for the reference definition of the language a syntax is described, it is envisioned that the language should not require a specific syntax. Rather it is anticipated that the language can be employed by defining the model elements in a variety of different syntaxes including native, Python or Java (for example), and this layer will generate the declarative XML representation.
+
+ 
+Core concepts
+
+ 
+
+A fundamental aspect of a programming language is how it uses names to
+
+refer to computational objects.  We refer to NineML names as labels
+
+and to computational objects as values, and we say that labels
+
+identify values.
+
+ 
+
+In the NineML abstraction layer we name values with the binding
+
+construct:
+
+ 
+
+binding pi = 3.14159265
+
+ 
+
+Once a label has been associated with a value, we can refer to the
+
+value by its label. Bindings are the basic means of abstraction in
+
+NineML. A binding consists of a label and a value. Once a label is
+
+declared in a binding, its associated value can be reached by other
+
+bindings in the program, according to the scoping rules of NineML
+
+(described in the following sections).
+
+ 
+
+  In general, values may have very complex structures, and it would be
+
+extremely inconvenient to have to remember and repeat their details
+
+each time we want to use them. Instead, we can use simple labels to
+
+refer to the results of compound operations, such as the circumference
+
+computed above. Complex values in NineML are constructed by building
+
+computational objects of increasing complexity as a sequence of
+
+bindings.
+
+ 
+Expressions
+
+ 
+
+The value of a binding can be given as a primitive expression, or as
+
+the result of a compound expression. One kind of primitive expression
+
+type is a number.
+
+ 
+
+Expressions representing numbers may be combined with an expression
+
+representing a primitive procedure (such as + or *) to form compound
+
+expressions. For example:
+
+ 
+
+  binding radius = 1
+
+  binding area   = pi * radius * radius
+
+ 
+
+The value of a compound expression is obtained by applying the
+
+operators specified to the arguments that are the values of the
+
+operands. In the example above, the value of the binding area is
+
+obtaining by applying the multiplication operator to the values of pi
+
+and radius.
+
+ 
+Functions and Local Names
+
+ 
+
+Function definitions in NineML allow a compound operation to be given
+
+parameterized as a unit.
+
+ 
+
+For example, we can declare the following function for squaring
+
+numbers:
+
+ 
+
+binding square = function (x)
+
+                   binding result = x * x
+
+                   return result
+
+ 
+
+  We have here a binding, which has been given the name square. The
+
+value of the binding is a function that represents the operation of
+
+multiplying something by itself. The thing to be multiplied is given a
+
+local name, x.
+
+ 
+
+The general form of a function definition is
+
+ 
+
+     function ( <formal parameters>) = <binding> ... <binding>  return <value>
+
+ 
+
+  The <formal parameters> are the names used within the body of the
+
+function to refer to the corresponding arguments of the function. The
+
+bindings inside the function contain expressions in which formal
+
+parameters are replaced by the actual arguments to which the procedure
+
+is applied. The return value of the function can refer to the values
+
+of the bindings defined in that function.
+
+ 
+
+Having defined square, we can now use it:
+
+ 
+
+   binding area = function (radius)
+
+                    binding result = pi * square (radius)
+
+                    return result
+
+ 
+
+ 
+
+  The meaning of the function is independent of the parameter names
+
+used by its author. The consequence is that the parameter names of a
+
+function are local to the body of the function.
+
+ 
+
+  A formal parameter of a procedure has a special role in the
+
+procedure definition, in that it doesn't matter what label the formal
+
+parameter has. We say that the function definition binds its formal
+
+parameters. The meaning of a procedure definition is unchanged if a
+
+bound variable is consistently renamed throughout the definition.
+
+  
+Block Structure and Scoping Rules
+
+ 
+
+  The possibility of associating values with labels and later
+
+retrieving them means that a NineML interpreter must maintain some
+
+sort of memory that keeps track of the label-value pairs. This memory
+
+is called the environment. A NineML program has a global environment
+
+associated with it, and every function in NineML has a local
+
+environment associated with it.
+
+ 
+
+  The set of expressions for which a binding defines a label is called
+
+the scope of that label.
+
+ 
+
+For example,
+
+ 
+
+binding a = function (x) =
+
+ 
+
+   binding i = 1
+
+   binding j = 2
+
+ 
+
+   binding b = function (x)
+
+      // scope a+b
+
+      binding k = x+i
+
+ 
+
+      binding c = function (x)
+
+                    // scope a+b+c
+
+                    return x+j
+
+ 
+
+      return k + c(k)
+
+ 
+
+  // scope a
+
+  return i+j
+
+ 
+
+ 
+
+In a function definition, the labels declared as the bindings in that
+
+function have the body of the function as their scope.
+
+ 
+
+   Such nesting of definitions is called lexical scoping: each
+
+use of a label in NineML is resolved by looking up the label in
+
+the enclosing block definition, and if not found, in the outer
+
+blocks enclosing the current block.
+
+ 
+Components / Interfaces
+
+ 
+
+NineML allows the user to package a collection of bindings into a
+
+single unit, called a component. A NineML component consists of
+
+bindings and subcomponents packaged together into a logical unit.
+
+ 
+
+Bindings can be grouped to form a component by enclosing them in the
+
+keywords component and end. The keyword component must be followed by
+
+a label, which is bound to that component. For example:
+
+ 
+
+ 
+
+component Circle =
+
+ 
+
+  binding pi = 3.14159265
+
+ 
+
+ 
+
+  binding square = function (x)
+
+                   binding result = x * x
+
+                   return result
+
+ 
+
+  binding circumference = function (radius)
+
+                          binding result = 2 * pi * radius
+
+                          return result
+
+ 
+
+  binding area = function (radius)
+
+                    binding result = pi * square(radius)
+
+                    return result
+
+ 
+
+end
+
+ 
+
+After structure Circle has been declared, its components are visible
+
+by compound labels such as Circle.area and
+
+Circle.circumference. Inside the component body, the bindings are
+
+known by their ordinary labels, such as square and pi. Similar to
+
+functions, components have a local scope identified with them. Unlike
+
+functions, components are not values and cannot be passed as arguments
+
+to functions. A component can contain other components
+
+(subcomponents).
+
+ 
+
+ 
+Namespace (scope of namespaces, user/abstraction layers)
+
+ 
+Evaluation Strategy
+
+ 
+
+   As noted in the previous sections, in the NineML abstraction layer
+
+a label must somehow designate a place in which values can be
+
+stored. In the NineML model of evaluation, these places are maintained
+
+in structures called environments.
+
+ 
+
+   An environment is a sequence of frames. Each frame is a table
+
+(possibly empty) of bindings, which associate labels with their
+
+corresponding values. Each frame also has a reference to its enclosing
+
+environment, unless, for the purposes of discussion, the frame is
+
+considered to be global. The value associated with a label in a given
+
+environment is the value given by the binding in the first frame in
+
+the environment that contains a binding for that label. If no frame in
+
+the sequence specifies a binding for the label, then the label is said
+
+to be unbound in the environment.
+
+ 
+
+  In the environment model of evaluation, a function consists of some
+
+code and a pointer to an environment. The code is obtained from the
+
+text of the function declaration and the environment is the
+
+environment in which the function declaration was evaluated to produce
+
+the function.  For example,
+
+ 
+
+  Now that we have seen how functions are created, we can describe how
+
+functions are applied. The environment model specifies: To apply a
+
+function to arguments, create a new environment containing a frame
+
+that binds the parameters to the values of the arguments. The
+
+enclosing environment of this frame is the environment specified by
+
+the procedure. Now, within this new environment, the function body is
+
+evaluated.
+
+ 
+Function parameter values
+
+   
+
+  In the NineML evaluation model, arguments to functions are passed by
+
+value. This means that when the function is called, a copy of the value
+
+of the actual parameter used in the call is passed across to the
+
+environment of the function. Anything that happens inside the function
+
+to this copy of the value of the parameter cannot affect the original
+
+parameter value.
+
+ 
+
+ 
+Language overview
+
+ 
+Primitive values
+
+ 
+
+Primitive values are provided by the NineML abstraction layer as a
+
+basic building block. The allow the expression of numeric and boolean
+
+constants, identifiers, functions and function applications, and
+
+tuples.
+
+ 
+
+    *    labels
+
+ 
+
+   Labels are denoted by the usual sequences of letters (including
+
+   `_') and digits, beginning with a letter. Upper- and lowercase is
+
+   distinct. In the NineML language, identifiers are used to denote
+
+   values and components.
+
+ 
+
+   A label can be "bound" or "free", depending on the
+
+   context in which it occurs. We say that a label is bound in an
+
+   block if it occurs on the left-hand side of a binding in the block.
+
+   Otherwise, the label is free.
+
+ 
+
+    *    real and boolean constants
+
+ 
+
+    *    functions
+
+ 
+
+      The general form of a function definition is
+
+     function ( <formal parameters>) = <binding> ... <binding>  return <value>
+
+    The <formal parameters> are the names used within the body of the
+    function to refer to the corresponding arguments of the function. The
+    bindings inside the function contain expressions in which formal
+    parameters are replaced by the actual arguments to which the procedure
+    is applied. The return value of the function can refer to the values
+    of the bindings defined in that function.
+
+ 
+
+    *    applications
+
+ 
+
+     Applications allow the user to apply one object (the
+
+     "function") to another one (the "argument"). This construct is
+
+     used to denote function calls such as sqrt(2).
+
+     
+
+    *    tuples
+
+ 
+
+   Tuples are complex values that consists of an ordered
+
+   sequence of values. A tuple consisting of elements X1, X2, ..., Xn
+
+   is written as (X1,X2,...,Xn).
+
+ 
+
+ 
+Derived values
+
+ 
+
+ 
+
+    * named tuples
+
+ 
+
+   Named tuples are tuples that contain a label in the first position. Named tuples have a named constructor, e.g.
+
+    ODE(x,y,1+5)
+
+ 
+
+    *  optional values: either the named tuple SOME <value>
+
+    or the constant NONE
+
+ 
+
+    * Equation expressions
+
+ 
+
+  The notion of expressions is an intrinsic part of most, if not all,
+
+  programming languages, including the NineML abstraction layer. In
+
+  most programming languages expressions are merely treated as
+
+  descriptions of computations to be performed in order to obtain the
+
+  value of an expression, which usually belongs to some basic type
+
+  provided by the language. In the NineML language
+
+  equation expressions are objects in their own right which can be
+
+  manipulated  according to computational rules specified by the program
+
+  interpreting the NineML text.
+
+ 
+
+  Expressions are built from certain kinds of basic objects. In the
+
+  NineML language, these are numbers, and function and variable
+
+  symbols. These objects are combined into larger, compound
+
+  expressions by means of applications and tuples.
+
+ 
+
+  NineML expressions are tuples of the following form:
+
+ 
+
+   (function, expression, expression)
+
+ 
+
+   (label)
+
+ 
+
+        function is a label that must resolve to a user-defined
+
+        function, or one of the following operators:
+
+ 
+
+                    + - / * geq neg testEvent
+
+ 
+
+      label must be a locally resolvable name
+
+ 
+
+    *  equations: a named tuple that can be one of:
+
+ 
+
+     ASSIGN (label,expression)
+
+ 
+
+     - represents an assignment to the named variable
+
+     - label must be a locally resolvable name
+
+ 
+
+     ODE (label,label,expression)
+
+ 
+
+     - represents an ordinary differential equation
+
+     - the first label is the dependent variable,
+
+     - second is the independent variable
+
+     - both labels must be locally resolvable names
+
+ 
+
+    *    diagrams: representation of data flow and control flow
+
+    between equations; can be of the following:
+
+ 
+
+                - node: NODE(equation)
+
+                - sequence: a named tuple of the form:
+
+ 
+
+                    SEQUENCE (diagram,diagram)
+
+ 
+
+                    A sequence represents dataflow between two
+
+                    diagrams; in other words, a computation where the
+
+                    values computed by the equations contained in the
+
+                    first diagram are passed to the equations
+
+                    contained in the second diagram.
+
+ 
+
+                - union: a named tuple of the form:
+
+ 
+
+                    UNION (diagram,diagram)
+
+ 
+
+                    A union represents parallel composition between
+
+                    two diagrams; in other words, a computation where
+
+                    the union of equations contained in both diagrams
+
+                    can be computed in parallel.
+
+ 
+
+                - transition: a named tuple of the form:
+
+ 
+
+                    TRANSITION (diagram,diagram,label)
+
+ 
+
+                   A transition represents control flow between two
+
+                   diagrams. A transition can be used to switch into a
+
+                   different set of equations as a particular event
+
+                   occurs, similar to state changes in a finite state
+
+                   machine.
+
+ 
+
+ 
+
+A NineML graph is a collection of nodes (vertices) along with
+identified pairs of nodes (called edges).
+
+In a NineML graph, nodes can be integers or an enumerable container
+created by the simulator.
+
+
+1. Interval notation
+
+Interval notation is a method for specifying an ordered set of
+integers. Interval notation consists of the following operators:
+
+* Interval.closed_interval (lb, ub) :
+
+  Represents the interval that includes all positive integers x: lb <= x <= ub
+
+* Interval.union (interval, interval) :
+
+  Represents the union of two intervals. The union of intervals is a
+  valid operation if and only if they have a non-empty intersection or
+  an open end-point of one interval is a closed end-point of the other.
+
+
+
+2. Nodes
+
+NineML includes several graph generator functions and facilities to
+represent graphs.
+
+A graph can be created by adding one node at a time,
+
+   binding G = Graph.add_node (Graph.empty(), 2)
+
+or specifying an interval of nodes,
+
+   binding G = Graph.add_interval (G, Interval.closed_interval (2,5))
+
+or specifying a number of nodes:
+
+   binding G = Graph.make_nodes(10)
+
+The nodes of the graph can be accessed as a list:
+
+   Graph.node_list (G) -> [1,2,3,4,5,6,6,7,8,9,10]
+
+or as a list of intervals:
+
+   Graph.node_intervals (G) -> interval list
+
+3. Edges
+
+Likewise, G can be grown by adding one edge at a time:
+
+binding G1 = Graph.nodes(10) // create nodes 1-10
+binding G2 = Graph.add_edge (G1, (2, 3)) // make edge from 2 to 3
+
+In addition to constructing graphs node-by-node or edge-by-edge, they
+can also be generated by
+
+   1. Applying standard graph operations, such as:
+
+      Graph.disjoint_union(G1,G2)     - disjoint graph union
+      Graph.union(G1,G2)             - combine graphs identifying nodes common to both
+
+   2. Using a constructive generator for a named graph, e.g.:
+
+     binding K_5 = Graph.complete_graph(5)
+     binding K_3_5 = Graph.complete_bipartite_graph(3,5)
+
+   3. Using a stochastic graph generator, e.g.
+
+     binding ER = Graph.gnp_graph(100,0.1)
+     binding WS = Graph.small_world_graph(30,3,0.1)
+
+   4. The fundamental graph constructor:
+
+     Graph.unfold (P, F, N, STATE) -> graph
+  
+     Where
+ 
+     P: determines when to stop constructing the graph
+     F: maps the current state to a new edge
+     N: maps the current state to the next state
+     STATE: the state value for the constructor
+
+   5. Connection set algebra operations for the given interval of nodes:
+
+    Graph.from_cset (I, cset) -> graph
+ 
+    The intersection with cross (I, I) is taken so that cset can be infinite.
+    The following form transfers value sets from cset into edge attributes:
+
+    Graph.from_cset (I, cset, attr0, ...)
+
+    where attr0, ... are attribute names.
+
+
+4. Node and edge attributes
+
+An attribute for all nodes in an interval can be specified by apply_node_attribute:
+
+     binding G1 = Graph.make_nodes (10)
+     binding I  = Interval.closed_interval (2,8)
+     binding G2 = Graph.apply_node_attribute (G1, I, conductance, 1)
+                               // (graph, interval, label, value)
+
+The above means the 'conductance' attribute is set to be 1 for nodes
+2..8 in graph G2. The attribute of a node can then be accessed as
+follows:
+
+     binding c = Graph.node_attribute (G2, conductance, 2) // (graph, label, node)
+
+Edge attributes can be specified as functions of two nodes:
+
+binding G1 = Graph.nodes (10)
+binding G2 = Graph.add_edge (G1, (2,3))
+
+binding w = (function (G,i,j) = return (2*i+j))
+binding G3 = Graph.apply_edge_attribute (G2, I, weight, w) // (graph, label, function)
+
+The attribute of an edge can be accessed with the edgeAttribute function:
+
+     binding w = Graph.edge_attribute (G3, weight, 2, 3) // (graph, label, source, sink)
+
+ 
+5. a) All-to-all excitatory/inhibitory connectivity:
+
+    // a graph to represent the excitatory population
+    binding G1 = Graph.forall_nodes (Graph.nodes (N_exc),
+                                     synapticPrototype,
+                         make_exc_synapse())
+  
+    // a graph to represent the inhibitory population
+    binding G2 = Graph.forall_nodes (Graph.nodes (N_inh),
+                                     synapticPrototype,
+                                     make_inh_synapse())
+                                        
+    // disjoint union of the two populations
+    binding G3 = Graph.union (G1,G2)
+
+    // random graph G(N,P)
+    binding G4 = Graph.gnp_graph (N_exc+N_inh,P)
+
+    // graph composition: node attributes take precedence from left to right
+    binding G5 = Graph.compose (G3,G4)
+
+    // An edge attribute function that retrieves the
+    // 'synapticPrototype' attribute from the source
+    // node in the edge, and returns it as the edge attribute
+
+    binding G = Graph.forall_edges_function
+                   (function(G,i,j) =
+                     binding synp = Graph.nodeAttribute (G,i,synapticPrototype)
+                     return synp)
+
+   b) Example a) but using CSA for connection pattern generation:
+
+    // keep most of a) above but substitute the following for binding G4
+    // (from_cset implicitly takes the intersection with I x I)
+    binding I = Interval.closed_interval (0, N_exc + N_inh - 1)
+    binding G4 = Graph.from_cset (I, random (P))
+
+   c) Alternative to a) fully based on CSA:
+
+    binding Ie = Interval.closed_interval (0, N_exc - 1)
+    binding Ii = Interval.closed_interval (N_exc, N_exc + N_inh - 1)
+    binding I = Interval.closed_interval (0, N_exc + N_inh - 1)
+
+    binding Ce = cset (cross (Ie, I) * random (P), make_exc_synapse ())
+    binding Ci = cset (cross (Ii, I) * random (P), make_inh_synapse ())
+
+    // the last (optional) argument to from_cset tells it to bind
+    // the first value-set to the edge attribute "synapticPrototype"
+    binding G = Graph.from_cset (I, Ce + Ci, synapticPrototype)
+
+
+ 
+
+ 
+Annotated example
+
+ 
+
+ 
+
+ 
+Implementation specific functions
+
+ 
+
+- Random numbers
+
+- Sets
+
+- Math functions
+
+- Event information
+
+- Simulator requirements
+
+- Population instantiation/management
+
+- Connection instantiation/management
+
+- Numerical methods/solvers
+
+ 
+
+ 
+ Summary
+
+ //
+// Synapse with exponentially decaying synaptic conductance.
+// Synaptic current is (V-E)*g. When a presynaptic action
+// potential is received, the conductance is set to g+delta_g.
+//
+
+component ExponentialPSR =
+
+binding parameters =
+     [
+      tau,
+      t,
+      Isyn,
+      V,
+      e,
+      deltag,
+      g,
+      spike,
+      inputEvent
+     ]
+
+
+binding make_diagram =
+ function ( tau,t,Isyn,V,Erev,deltag,g,spike,inputEvent )
+
+    binding check_event = ASSIGN(spike,testEvent(inputEvent))
+
+    binding input_summation = ASSIGN(g,g + deltag)
+
+    binding decay_equation = ODE(g,t,-g/tau)
+
+    binding current_equation = ASSIGN(Isyn,(V - Erev) * g)
+
+    binding decay_regime = UNION (decay_equation, current_equation)
+
+    binding check_regime = UNION (check_event, decay_node)
+
+    binding spike_transition = TRANSITION (decay_regime, check_regime, spike)
+
+    binding return_transition = TRANSITION (check_regime, decay_regime, true)
+
+    return UNION(spike_transition, return_transition)
+
+
+
+
+// Leaky integrate-and-fire neuron
+
+component VogelsAbbottIAF  =
+
+binding parameters =
+    [
+     V,
+     t,
+     spike,
+     t_spike,
+     refractory_end,
+     tau,
+     g_ex,
+     tau_ex,
+     E_ex,
+     g_inh,
+     tau_inh,
+     E_inh,
+     V_rest,
+     threshold,
+     t_refractory
+    ]
+
+
+binding make_diagram =
+   function ( V,t,spike,t_spike,refractory_end,tau,Isyn,V_rest,threshold,t_refractory )
+   
+     binding subthreshold_eq        = ODE (t, V, (- gL) * (V - vL[+] + Isyn) / C)
+
+     binding threshold_detect       = ASSIGN (spike, (theta <= V))
+
+     binding tspike-assignment      = ASSIGN (tspike, (if spike t tspike))
+
+     binding subthreshold_regime    = DUP (subthreshold_eq, DUP(threshold_detect,tspike_assignment))
+        
+     binding refractory_eq          = ASSIGN (V, Vreset)
+
+     binding check_refractory_time  = ASSIGN (refractory_end, (t >= (tspike + trefractory)))
+
+     binding refractory_regime      = UNION (refractory_eq, check_refractory_time)
+
+     binding spike_transition       = TRANSITION (subthreshold_regime, refractory_regime, spike)
+
+     binding return_transition      = TRANSITION (refractory_regime, subthreshold_regime, refractory_end)
+
+     return  UNION (spike_transition, return_transition)
+
+end
+
+//
+// Vogels-Abbott-style neuronal population model.
+//
+// In this population model, we assume that the population of neurons
+// is divided in inhibitory and excitatory.
+// Correspondingly, the make_population function takes the following
+// arguments:
+//
+//    R_exc  : fraction of excitatory neurons
+//    P_exc  : prototype neuron for excitatory population
+//    R_inh  : fraction of inhibitory neurons
+//    P_inh  : prototype neuron for inhibitory population
+
+
+component VogelsAbbottPopulation =
+
+
+  binding population_prototype =
+   function (iaf_parameters) =
+     binding make_iaf = VogelsAbbottIAF.make_diagram
+     return (make_iaf (iaf_parameters))
+              
+  // Population constructor function
+  binding population_constructor =
+   function (N, R_exc, P_exc, R_inh, P_inh) =
+     // We create the excitatory and inhibitory populations as sets
+     // which contain references to instances returned by make_prototype.
+     // The members of the excitatory population are tagged with the
+     // EXC constructor, and the member of the inhibitory population
+     // are tagged with the INH constructor.
+     // These tags come in use when the connections are created, in
+     // order to distinguish the cases with excitatory-to-inhibitory,
+     // excitatory-to-excitatory and so on connections.
+
+
+    binding N_exc = N * (R_exc / (R_exc + R_inh))
+    binding N_inh = N * (R_inh / (R_exc + R_inh))
+
+    // a graph to represent the excitatory population
+    binding G_exc1 = Graph.nodes (N_exc)
+    // set the synaptic prototype of the excitatory neurons
+    // to be an excitatory synapse
+    binding G_exc2 = Graph.forall_nodes (G_exc1
+                                         synapticPrototype,
+                             P_exc)
+   
+    // a graph to represent the inhibitory population
+    binding G_inh1 = Graph.nodes (N_inh)
+    // set the synaptic prototype of the inhibitory neurons
+    // to be an inhibitory synapse
+    binding G_inh2 = Graph.forall_nodes (G_inh1
+                                         synapticPrototype,
+                             P_inh)
+
+    // disjoint union of the two populations
+    return (Graph.union (G_inh2, G_exc2))
+
+
+end
+
+// Vogels-Abbott connectivity model.
+//
+
+component VogelsAbbottConnectivity
+
+
+   function network_constructor (G, N, p) =
+
+    // random graph G(N,P)
+    binding Gnp = Graph.gnp_graph (N,p)
+
+    // graph composition: node attributes take precedence from left to right
+    binding G = Graph.compose (G,Gnp)
+
+    // An edge attribute function that retrieves the
+    // 'synapticPrototype' attribute from the source
+    // node in the edge, and returns it as the edge attribute
+
+    binding G = Graph.forall_edges_function
+                   (function(G,i,j) =
+                     binding synp = Graph.nodeAttribute (G,i,synapticPrototype)
+                     return synp())
+
+
+
+end
+
+
+component VogelsAbbottModel =
+
+   // first, we define a set of parameters for our excitatory and inhibitory synapses
+    binding exc_syn_parameters =
+    [
+     5,   // tau
+     0,   // t
+     0,   // Isyn
+     0,   // V
+     -80, // E
+     0.1  // deltag
+     0,   // g
+     false, // spike
+     false  // inputEvent
+     ]
+
+    binding inh_syn_parameters =
+    [
+     10,   // tau
+     0,   // t
+     0,   // Isyn
+     0,   // V
+     -80, // E
+     0.1  // deltag
+     0,   // g
+     false, // spike
+     false  // inputEvent
+     ]
+
+   // next, we define a set of parameters the integrate-and-fire dynamics
+    binding iaf_parameters =
+    [
+     -65,    // V
+     0,      // t
+     false,  // spike
+     0,      // t_spike
+     false,  // refractory_end
+     20,     // tau
+     -60,    // V_rest
+     -50,    // threshold
+     5       // t_refractory
+    ]
+
+   // next, we create the population and connection prototype
+   binding pp = VogelsAbbottPopulation.population_prototype (iaf_parameters)
+
+   // next, we create the connection prototypes
+   binding exc_syn_proto =
+     (function () =
+        return (VogelsAbbottConnectivity.make_prototype (exc_syn_parameters)))
+   binding inh_syn_proto =
+     (function () =
+       return (VogelsAbbottConnectivity.make_prototype (inh_syn_parameters)))
+
+   // next, we create a population of 10000 and excitatory to
+   // inhibitory ratio of 4:1
+
+   binding population = VogelsAbbottPopulation.make_population (10000, 4, exc_syn_proto, 1, inh_syn_proto)
+
+   // next, we create the connections; we want 2% of the neurons to be connected
+
+   binding G = VogelsAbbottConnectivity.network_constructor (population, 0.02)
+
+   // finally, we set the neuronPrototype property for all nodes in the graph
+
+   binding G = Graph.forall_nodes (G, neuronPrototype, pp)
+
+   return G
+
+end

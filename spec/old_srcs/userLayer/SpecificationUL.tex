@@ -1,0 +1,610 @@
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{color}
+
+\definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
+
+\definecolor{issuecolor}{rgb}{0.8,0.8,0.8}
+\newcommand{\issue}[1]{%
+\begin{center}
+\colorbox{issuecolor}{\parbox{0.8\linewidth}{\textbf{Issue:} #1}}
+\end{center}%
+}
+
+\newcommand{\suggestion}[2]{%
+\begin{center}
+\colorbox{issuecolor}{\parbox{0.8\linewidth}{\textbf{#1:} #2}}
+\end{center}%
+}
+
+\begin{document}
+
+\pagestyle{empty}
+
+\begin{center}
+\includegraphics[width=0.7\columnwidth]{./incf.png}
+\end{center}
+
+\vspace*{1cm}
+
+\noindent\rule{\columnwidth}{1pt}
+\noindent\rule{\columnwidth}{2pt}
+
+\vspace*{1cm}
+
+\begin{center}
+
+\noindent{\Huge \bf Specification:}\\
+
+\vspace{0.5cm}
+\noindent{\Large \bf Network Interchange format for NEuroscience (NineML): \\ User Layer}\\
+\vspace{0.5cm}
+\noindent{\large INCF Task Force on Multi-Scale Modeling}\\
+\vspace{0.5cm}
+
+\noindent{\large Version: 0.94}\\
+
+\end{center}
+
+\vspace*{0.75cm}
+
+\noindent\rule{\columnwidth}{2pt}
+\noindent\rule{\columnwidth}{1pt}
+
+\vspace*{3cm}
+\noindent{\Large
+
+\begin{center}
+{\bf Authors (in alphabetical order): }
+\end{center}
+
+\noindent Anatoli Gorchetchnikov \\
+
+%\vspace*{0.5cm}
+
+\noindent {\bf Date:} \today
+
+}
+
+
+\title{NineML (9ML) User Layer Specification}
+
+\newpage
+\pagestyle{plain}
+
+\tableofcontents
+\newpage
+
+\abstract
+This draft intends to describe our current opinions on User Layer concepts
+of NineML.
+
+This work currently summarizes the different ideas and propositions elaborated
+during eight Task Force meetings and User Layer group discussions. It might
+contain some misrepresentations or omissions of important issues and shall be
+updated in finalizing for public release at CNS 2011.
+
+\vskip 1in
+
+\paragraph{Changes from version 0.93:}
+\begin{itemize}
+\item Cut out the group and set sections since they are not part of the release
+\end{itemize}
+
+\paragraph{Changes from version 0.92:}
+\begin{itemize}
+\item Adapted the format similar to the Abstraction layer specification.
+I think this document shall essentially become user layer section of the
+general specification document.
+\item Attempted to reorganize and adapt the text to be more like ``Object
+Model'' for the User Layer.
+\end{itemize}
+
+\paragraph{Changes from version 0.91:}
+\begin{itemize}
+\item Replaced ``node'' with ``component'' as was decided in Antwerp 2010
+meeting.
+\item Replaced references to ``core semantics'' with references to
+``abstraction layer''
+because the term ``core semantics'' is no longer used.
+\item As Antwerp 2010 decided, properties are represented by a generic
+tag and specified
+by attribute {\tt name}.
+\item Added the reference to units of measurements dimensionality checking
+against
+the abstraction layer as was decided in Antwerp 2010.
+\item Moved edge effect descriptions from connectivity components to layout
+components. Also
+noted that some layouts might require complex masks.
+\end{itemize}
+
+\paragraph{Changes from version 0.9:}
+\begin{itemize}
+\item added footnotes for some issues raised in Stockholm June meeting
+\item added brief description of interactions between user layer and
+simulation software that does not support abstraction layer
+\item removed random number generator nodes as decided in Stockholm
+\item added space, region, and layout nodes as a first draft of geometrical
+concepts (based on NetworkML proposal by Padraig and Robert as well as
+Stockholm discussions)
+\item removed recurrent projections that can be described on the population
+level
+\item cut out the previous approach to cell positioning within population
+\end{itemize}
+\newpage
+
+\section{Introduction}
+
+With an increasing number of studies related to large-scale neuronal
+network modeling, the International Neuroinformatics Coordinating
+Facility (INCF) has identified a need for standards and guidelines to
+ease model sharing and facilitate the replication of results across
+different simulators. To create such standards, the INCF has formed a
+program on Multiscale Modeling to develop a common standardized
+description language for neuronal network models.
+
+The name of the proposed standard is NineML (Network Interchange for
+Neuroscience Modeling Language) and its first version is aimed at
+descriptions of large networks of spiking neurons.
+
+\subsection{Language syntax}
+
+It is envisioned that the language should not require a
+specific syntax or rely on any given technology or platform.
+Rather it is anticipated that the language can be
+employed by defining the model elements in a variety of different
+syntaxes including a native (domain specific) language, Python, Java,
+and XML (for example).
+
+\subsection{Scope of the User Layer}
+
+The user layer provides the syntax for specifying the model and parameters to
+be used to instantiate the key elements of a spiking neuronal network in terms
+that are directly linked to the biological counterparts of the model. This
+includes descriptions of individual elements (cells, synapses, inputs).
+
+The remainder of this document summarizes the concepts that underlie user
+layer design.
+
+\section{Core Concepts}
+
+User layer has five key elements: data types, property, definition,
+component, and projection. The following subsections
+discuss each of these elements.
+
+\subsection{Data types}
+
+Data types are the objects that allow the encapsulation of necessary data
+and are not intended as standalone objects but rather as parts of composite
+objects like {\tt property}.
+
+\subsubsection{Dimension}
+
+Dimension is an object that provides physical dimension like length,
+mass, or time. A set of predefined dimensions is provided in the
+NineML library and the user can derive compound dimensions from these
+(for example velocity is derived from length and time). A special case
+of a {\tt Dimension} is a predefined empty dimension for dimensionless
+quantities.
+
+\subsubsection{Number}
+
+Number is a object that represents numerical values. It is not designed for
+a direct use, but rather as a component of the {\tt Quantity} type that
+additionally includes the units of measurements for each specific quantity.
+
+\subsubsection{String}
+
+String is an object that contains a string of text. It is used for labeling
+elements as well as for optional textual {\tt note}s that annotate these
+elements.
+
+\subsubsection{URL}
+
+URL is an object that contains a reference to an internet resource in a form
+of a URL. It is used for abstraction layer or external definitions as well as
+for links in optional {\tt note}s that annotate these elements.
+
+\subsubsection{Enumerated}
+
+Enumerated is an object that is used for properties that can only take
+a few predefined by abstraction layer values.
+
+\subsubsection{Boolean}
+
+Boolean is an object that contains a binary true-false value or a logical
+expression that can be evaluated into such a value.
+
+\subsubsection{Function}
+
+Function is an object that returns a value of a {\tt Number} type resulting
+from calculation that can be deterministic or based on random number
+distribution.
+
+\subsubsection{Quantity}
+
+Quantity is a compound data type object that encapsulates a numerical value
+and a unit of measurements. Unit has to be of one of the {\tt Dimension} type.
+Any numeric quantity in the language (except counters) has to be of this type,
+dimensionless quantities shall use predefined empty {\tt Dimension}.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Quantity \\
+\hline
+\hline
+{\em unit}: {\tt Dimension} \\
+\hline
+{\em value}: \{{\tt Number}$|${\tt Function}$|$%
+{\tt Component->Random Distribution}\} \\
+\hline
+\end{tabular}
+\end{table}
+
+There are two kinds of quantities: values of the first kind are given to the
+model by the user and stay fixed, values of a second kind are computed within
+the model during simulation. For all practical reasons the syntax of the user
+layer descriptions is identical for both kinds of quantities. Furthermore,
+because NineML does not provide any default values for quantities, it is a
+job of the user to provide initial values for all defined quantities. To
+ensure the integrity of the model NineML requires all initial values to be
+set in the user layer description. For batch simulations and other
+modifications any of the values given in the user layer can be overwritten
+by a simulation setup description, but this is outside of the scope of the
+current version of NineML.
+
+Some quantities can have values drawn from random distribution. In this case
+user layer description of the quantities includes a reference to a random
+distribution component (section \ref{randDist}) instead of a numeric value.
+Other quantities might be calculated according to some function dependent on
+some other quantities. These can be defined through the type {\tt Function} by
+including inline abstraction layer definitions or MathML.
+
+\subsection{Property}
+
+Property is a construct that combines a value of one of the data types
+defined in the previous subsection, an indicator of the used type, and a
+label. The label should match the corresponding label in the Abstraction
+Layer definition.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Property \\
+\hline
+\hline
+{\em label}: {\tt String} \\
+\hline
+{\em value}: \{{\tt Quantity}$|${\tt Boolean}$|${\tt Enumerated}\} \\
+\hline
+{\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
+\hline
+\end{tabular}
+\end{table}
+
+The user can set the value of the property and (when applicable for the data
+type, e.g. {\tt Quantity}) the units of measurement. These units are also
+checked against the dimensionality of the corresponding property definition
+in the abstraction layer.
+
+User can add a note to a property. These notes are
+intended to provide a specific reference to the research paper page
+where the component is described and similar kind of information. These
+notes are not intended to duplicate the abstraction layer documentation
+or any other documentation, thus they shall not provide mathematical
+description and other details of the component implementation. Note can
+contain text (type {\tt String}) or link to an Internet resource (type
+{\tt URL}).
+
+\subsection{Definition}
+
+All constructs in the user layer have their mathematical or algorithmical
+definitions in the abstraction layer. Definition is an object that
+establishes a link between user layer and abstraction layer. The initial
+version of NineML allows to put references to external (including user
+space abstraction layer) definitions.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Definition \\
+\hline
+\hline
+{\em language}: {\tt String} \\
+\hline
+{\em link}: {\tt URL}\\
+\hline
+\end{tabular}
+\end{table}
+
+The language should be flexible enough to allow representation of concepts
+that do not yet exist, as it is developed to serve the forefront of research.
+A simple mechanism to add concepts that are not part of the standard is
+provided through external (other than abstraction layer based) definitions.
+It is the choice of a simulator developer to support these definitions during
+initial stage of NineML development. Future
+maturation of NineML shall eliminate the need to support simulator-specific
+definitions.
+
+\subsection{Reference}
+
+Reference is an object that can replace {\tt Definition} object in situations
+where user needs to reuse the same definition for multiple instances of
+objects. In this case the first instance shall be described using
+{\tt Definition} and the rest can use the first one through {\tt Reference}.
+Label in the {\tt Reference} must match a label in a previously defined
+object.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Reference \\
+\hline
+\hline
+{\em label}: {\tt String} \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Component}
+
+The basic building block of NineML is called component. In the user layer
+description component is a reference to an object defined in the abstraction
+layer. Abstraction layer defines the mathematics of the component and this
+definition is then referred in the user layer through an object of type
+{\tt Definition}.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Component \\
+\hline
+\hline
+{\em label}: {\tt String} \\
+\hline
+{\em definition}: \{{\tt Definition}$|${\tt Reference}\}\\
+\hline
+{\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
+\hline
+\colorbox{issuecolor}{\parbox{0.4\linewidth}
+{\center Set of {\tt Property} objects}} \\
+\hline
+\end{tabular}
+\end{table}
+
+In addition to the {\tt Definition} object, the component encapsulates
+user-given ID or label, and a set of {\tt Property} objects. The composition
+of this set of properties is defined in the abstraction layer (or externally)
+and instantiated in the user layer description of component. The mapping
+between mathematical description of the object in the abstraction
+layer and the corresponding properties labels in the user layer are
+provided in this specification.
+
+User can add short notes to each component's description similar to
+notes described above for properties.
+
+To reduce the size of the resulting model description user can refer to
+already described component by referencing their label instead of providing
+a link to the abstraction layer or external definition. In this case the
+properties of the component that have to be redefined are stated explicitly,
+the properties that are inherited from the original description are omitted.
+
+If the simulator only supports user layer, then the simulator developers
+can create mappings directly between the reference to a definition in the
+user layer description of the component and the intrinsic simulator code
+that implements the same mathematics.
+
+\subsubsection{Random Distribution Components}
+\label{randDist}
+
+This component allows to define random distribution with corresponding
+parameters. These component allows the reuse of the same distribution
+multiple times similar to reuse of all other components.
+
+\subsubsection{Neuronal Components}
+\label{neuron}
+
+The description of the neuronal component defines a prototypical neuron
+which can be reused multiple times within the network. As a consequence,
+multiple connectivity patterns can be applied to this neuron, which
+results in a different set of synaptic inputs. Therefore, no description
+of these inputs shall be provided at the component level, they shall be
+described at the projection level (Section \ref{projections}). Simulation
+software shall take care of complete construction of each neuron by
+analyzing both levels of description.
+
+\subsubsection{Plasticity Components}
+\label{plasticity}
+
+Plasticity components handle the synaptic weight and its possible
+modification. Note that synaptic weight is a dimensionless quantity and
+as such always have units of the predefined empty {\tt Dimension}. This
+is done to allow same plasticity rules to operate on
+different types of postsynaptic responses. Synaptic weight defined in the
+plasticity component determines only the magnitude of the response, the
+shape and physical properties are defined in the corresponding post-synaptic
+response node (section \ref{secSynapse}).
+
+\subsubsection{Post-synaptic Response (PSR) Components}
+\label{secSynapse}
+
+Post-synaptic response components define the effect imposed on the
+post-synaptic cell dynamics by triggering the synaptic input. This
+definition includes only the shape of this effect and does not include the
+exact magnitude of the effect. The magnitude is described separately through
+plasticity rules and synaptic weights in section \ref{plasticity}. Note
+though that the units of the effect are defined here and synaptic weights in
+plasticity nodes are left dimensionless.
+
+\subsection{Projection}
+\label{projections}
+
+A projection holds a description of the connectivity between two
+cells. The projection does not create any new components. The purpose of
+projection object is to bind source and destination components using
+a certain plasticity rule and post-synaptic response.
+
+\begin{table}[htb]
+\center
+\begin{tabular}{|c|}
+\hline
+\hline
+Projection \\
+\hline
+\hline
+{\em label}: {\tt String} \\
+\hline
+{\em source}: {\tt Component->Neuron} \\
+\hline
+{\em destination}: {\tt Component->Neuron} \\
+\hline
+{\em synapse}: {\tt Component->PSR} \\
+\hline
+{\em plasticity}: {\tt Component->Plasticity} \\
+\hline
+{\em note}: \{{\tt String}$|${\tt URL}\} (optional)\\
+\hline
+\end{tabular}
+\end{table}
+
+Projection description includes references to a plasticity component
+that controls the synaptic weight (section \ref{plasticity}) and
+post-synaptic response node that controls the influence of the input
+through this projection on the post-synaptic cell dynamics (section
+\ref{secSynapse}). Both appear in the description of the projection
+rather than neuron because the same type of neuron can use different
+synapses, similarly the same postsynaptic response can be used in
+multiple projections with different plasticity rules. Instead of providing
+the user with all possible pre-wired combinations, NineML allows user
+to combine the plasticity$\rightarrow$response$\rightarrow$neuron
+chain from a set of small standard components.
+
+\section{Structure of a User Layer Description}
+
+In order to simplify the descriptions themselves and the mechanisms for
+combining multiple components of the model the user layer description
+is consisting of multiple files that define various components and
+contains the syntax to import external files.
+
+\subsection{Scope of User Layer Descriptions}
+\label{scope}
+
+In order to avoid the collisions of user-given IDs as well as to
+provide the user with the ability to redefine some of the imported
+components the following set of rules is suggested:
+\begin{itemize}
+\item{Every identifier is considered unique only within its parent}
+\item{To access the identifier a full path from the point of access
+to this identifier shall be provided.}
+\item{Any imported construct can be redefined within the importing
+description by adding a new definition of the same object. All properties
+of the imported object are imported from external file and the values of
+some (or even all) of them are overwritten by the local description.}
+\item{If multiple redefinitions of the same entity are found, then the most
+recent one will be used. The most recent is determined by the order of
+parsing of the top level model description file. Here the rule shall be
+enforced that when multiple files are included all nodes are parsed before
+all groups. This will allow a smooth transition from networks with simple
+nodes and groups to networks where some nodes and some groups are redefined.}
+\item{If several different subfields are redefined in different places of the
+description, then all of these new definitions will be used. Please note that
+this is not the optimal way, and the better way to achieve the same effect is
+to provide all redefinitions in a unique location. Simulation software
+developers can (but at this point of time are not obliged to) optimize the
+NineML code that is output by their software by grouping all redefinitions
+of components of the same node into a single node.}
+\end{itemize}
+
+\newpage
+\appendix
+
+\part*{Appendix}
+\addcontentsline{toc}{part}{Appendix}
+
+\section{INCF Task Force}
+
+An oversight committee has been setup to guide the direction and
+objectives of the initiative with membership as follows:
+
+\begin{itemize}
+
+    \item Chair: Erik De Schutter, Okinawa Institute of Science and Technology, Japan
+    \item Ad Aertsen, Bernstein Center, Freiburg, Germany
+    \item Upinder Bhalla, National Center for Biological Sciences, Bangalore, India
+    \item Nicolas Brunel, CNRS-Université René Descartes, Paris, France
+    \item Sharon Crook, Arizona State University, Tempe, USA
+    \item Gustavo Deco, Universitat Pompeu Fabra, Barcelona, Spain
+    \item Markus Diesmann, RIKEN, Wako, Japan
+    \item Tomoki Fukai, RIKEN, Wako, Japan
+    \item Wulfram Gerstner, LCN, EPFL, Lausanne, Switzerland
+    \item Stephen Grossberg, Boston University, MA, USA
+    \item Rolf Kötter, Radboud University, Nijmegen, The Netherlands
+    \item Anders Lansner, Royal Institute of Technology (KTH), Stockholm, Sweden
+    \item Peter Latham, Gatsby Computational Neuroscience Unit, London, UK
+    \item Christiane Linster, Cornell University, Ithaca, NY, USA
+    \item Wolfgang Maass, Technische Universität Graz, Austria
+    \item Ernst Niebur, Johns Hopkins University, Baltimore, MD, USA
+    \item Felix Schürmann, EPFL, Lausanne, Switzerland
+    \item Simon Thorpe, Faculté de Médecine de Rangueil, Toulouse, France
+    \item Alessandro Treves, International School for Advanced Studies (SISSA), Trieste, Italy
+    \item Shiro Usui, RIKEN, Wako, Japan
+    \item Mark van Rossum, University of Edinburgh, UK
+    \item Xiao-Jing Wang, Yale University, New Haven, CT, USA
+
+\end{itemize}
+
+
+A task force has been assembled to evaluate and implement the
+recommendations of the oversight committee with membership as follows:
+
+\begin{itemize}
+
+    \item Lead: Sean Hill, BMI, EPFL, Lausanne, Switzerland
+    \item Lead: Anatoli Gorchetchnikov, Boston University, USA
+    \item Lead: Ivan Raikov, Okinawa Institute of Science and Technology, Japan
+    \item Board Secretary: Yann Le Franc, University of Antwerp, Belgium
+    \item Robert Cannon, Textensor Limited, Edinburgh, UK
+    \item Robert Clewley, Georgia State University, Atlanta, USA
+    \item Hugo Cornelis, University of Texas Health Science Center, San Antonio, USA
+    \item Andrew Davison, CNRS, Gif-sur-Yvette, France
+    \item Erik De Schutter, Okinawa Institute of Science and Technology, Okinawa, Japan
+    \item Mikael Djurfeldt, INCF Secretariat and PDC,
+Royal Institute of Technology, Stockholm, Sweden
+    \item Padraig Gleeson, University College London, UK
+    \item Michael Hines, Yale University, New Haven, CT, USA
+    \item Birgit Kriener, Max Planck Institute for Dynamics and Self-Organization,
+Göttingen, Germany
+
+    \item Chung-Chuan Lo, National Tsing Hua University, Hsinchu, Taiwan
+    \item Abigail Morrison, Bernstein Center Freiburg, Germany
+    \item Eilif Muller, LCN, EPFL, Lausanne, Switzerland
+    \item Hans Ekkehard Plesser, Norwegian University of Life Sciences, Aas, Norway
+    \item Subhasis Ray, National Center for Biological Sciences, Bangalore, India
+    \item Lars Schwabe, University of Rostock, Germany
+    \item Botond Szatmary, Neurosciences Institute, San Diego, CA, USA
+
+\end{itemize}
+
+and thus includes the authors or primary contributors to a wide
+variety of computational neuroscience efforts including the Blue Brain
+Project, GENESIS-3, KInNeSS, MOOSE, NEURON, NEST, PyNN and NeuroML.
+
+\bibliographystyle{apalike}
+\bibliography{CondensedUL}
+
+\end{document}

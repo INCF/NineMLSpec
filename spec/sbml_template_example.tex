@@ -1,0 +1,1237 @@
+\documentclass{ninemlspec}
+\usepackage{microtype}
+
+%% ============================================================================
+%% Description:  Documentation for sbmlpkgspec.cls
+%% First author: Michael Hucka <mhucka@caltech.edu>
+%% Organization: California Institute of Technology
+%% Date created: September 2011
+%% https://sbml.svn.sourceforge.net/svnroot/sbml/trunk/project/tex/sbmlpkgspec
+%%
+%% Copyright (C) 2011-2014 California Institute of Technology, Pasadena, CA.
+%%
+%% SBMLPkgSpec is free software; you can redistribute it and/or modify it
+%% under the terms of the GNU Lesser General Public License as published by
+%% the Free Software Foundation.  A copy of the license agreement is provided
+%% in the file named "LICENSE.txt" included with this software distribution.
+%% ============================================================================
+
+% Here we list common SBML entities, to get consistent font & appearance.
+
+\newcommand{\AlgebraicRule}{\textbf{\class{AlgebraicRule}}\xspace}
+\newcommand{\Annotation}{\textbf{\class{Annotation}}\xspace}
+\newcommand{\AssignmentRule}{\textbf{\class{AssignmentRule}}\xspace}
+\newcommand{\Compartment}{\textbf{\class{Compartment}}\xspace}
+\newcommand{\Constraint}{\textbf{\class{Constraint}}\xspace}
+\newcommand{\Delay}{\textbf{\class{Delay}}\xspace}
+\newcommand{\EventAssignment}{\textbf{\class{EventAssignment}}\xspace}
+\newcommand{\Event}{\textbf{\class{Event}}\xspace}
+\newcommand{\FunctionDefinition}{\textbf{\class{FunctionDefinition}}\xspace}
+\newcommand{\InitialAssignment}{\textbf{\class{InitialAssignment}}\xspace}
+\newcommand{\KineticLaw}{\textbf{\class{KineticLaw}}\xspace}
+\newcommand{\ListOfCompartments}{\textbf{\class{ListOfCompartments}}\xspace}
+\newcommand{\ListOfConstraints}{\textbf{\class{ListOfConstraints}}\xspace}
+\newcommand{\ListOfEventAssignments}{\textbf{\class{ListOfEventAssignments}}\xspace}
+\newcommand{\ListOfEvents}{\textbf{\class{ListOfEvents}}\xspace}
+\newcommand{\ListOfFunctionDefinitions}{\textbf{\class{ListOfFunctionDefinitions}}\xspace}
+\newcommand{\ListOfInitialAssignments}{\textbf{\class{ListOfInitialAssignments}}\xspace}
+\newcommand{\ListOfLocalParameters}{\textbf{\class{ListOfLocalParameters}}\xspace}
+\newcommand{\ListOfModifierSpeciesReferences}{\textbf{\class{ListOfModifierSpeciesReferences}}\xspace}
+\newcommand{\ListOfPackages}{\textbf{\class{ListOfPackages}}\xspace}
+\newcommand{\ListOfParameters}{\textbf{\class{ListOfParameters}}\xspace}
+\newcommand{\ListOfReactions}{\textbf{\class{ListOfReactions}}\xspace}
+\newcommand{\ListOfRules}{\textbf{\class{ListOfRules}}\xspace}
+\newcommand{\ListOfSpeciesReferences}{\textbf{\class{ListOfSpeciesReferences}}\xspace}
+\newcommand{\ListOfSpecies}{\textbf{\class{ListOfSpecies}}\xspace}
+\newcommand{\ListOfUnitDefinitions}{\textbf{\class{ListOfUnitDefinitions}}\xspace}
+\newcommand{\ListOfUnits}{\textbf{\class{ListOfUnits}}\xspace}
+\newcommand{\ListOf}{\class{ListOf\rule{0.3in}{0.5pt}}\xspace}
+\newcommand{\LocalParameter}{\textbf{\class{LocalParameter}}\xspace}
+\newcommand{\Message}{\textbf{\class{Message}}\xspace}
+\newcommand{\Model}{\textbf{\class{Model}}\xspace}
+\newcommand{\ModifierSpeciesReference}{\textbf{\class{ModifierSpeciesReference}}\xspace}
+\newcommand{\Notes}{\textbf{\class{Notes}}\xspace}
+\newcommand{\Package}{\textbf{\class{Package}}\xspace}
+\newcommand{\Parameter}{\textbf{\class{Parameter}}\xspace}
+\newcommand{\Priority}{\textbf{\class{Priority}}\xspace}
+\newcommand{\RateRule}{\textbf{\class{RateRule}}\xspace}
+\newcommand{\Reaction}{\textbf{\class{Reaction}}\xspace}
+\newcommand{\Rule}{\textbf{\class{Rule}}\xspace}
+\newcommand{\SBML}{\textbf{\class{SBML}}\xspace}
+\newcommand{\SBase}{\textbf{\abstractclass{SBase}}\xspace}
+\newcommand{\SimpleSpeciesReference}{\textbf{\class{SimpleSpeciesReference}}\xspace}
+\newcommand{\SpeciesReference}{\textbf{\class{SpeciesReference}}\xspace}
+\newcommand{\Species}{\textbf{\class{Species}}\xspace}
+\newcommand{\StoichiometryMath}{\textbf{\class{StoichiometryMath}}\xspace}
+\newcommand{\Trigger}{\textbf{\class{Trigger}}\xspace}
+\newcommand{\UnitDefinition}{\textbf{\class{UnitDefinition}}\xspace}
+\newcommand{\Unit}{\textbf{\class{Unit}}\xspace}
+
+
+% Macros just for this document:
+
+\newcommand{\ninemlpkg}{\texorpdfstring{%
+    \textls[-25]{\textsc{SBMLPkgSpec}}}{%
+    \textsc{SBMLPkgSpec}}\xspace}
+\newcommand{\ninemlpkghead}{\texorpdfstring{%
+    \textls[-50]{\textsc{SBMLPkgSpec}}}{%
+    \textsc{SBMLPkgSpec}}\xspace}
+\newcommand{\ninemlpkgfile}{\literalFont{sbmlpkgspec.cls}\xspace}
+\newcommand{\latex}{\LaTeX{}\xspace}
+\newcommand{\tex}{\TeX{}\xspace}
+\newcommand{\distURL}{http://sourceforge.net/projects/sbml/files/specifications/tex}
+\newcommand{\srcURL}{https://sbml.svn.sourceforge.net/svnroot/sbml/trunk/project/tex/sbmlpkgspec}
+\newcommand{\webURL}{http://sbml.org/Documents/Specifications/The_SBMLPkgSpec_LaTeX_class}
+\newcommand{\cmd}[1]{\literalFont{\textbackslash #1}}
+
+% Custom latex listing style, for use with the listings package.  The default
+% highlights far too many things, IMHO.  This keeps it simple and only adjusts
+% the appearance of comments within listings.
+
+\lstdefinelanguage{mylatex}{%
+  morekeywords={},%
+  sensitive,%
+  alsoother={0123456789$_},%$
+  morecomment=[l]\%%
+}[keywords,tex,comments]
+
+\lstdefinestyle{latex}{language=mylatex}
+
+% -----------------------------------------------------------------------------
+% Start of document
+% -----------------------------------------------------------------------------
+
+\begin{document}
+
+\packageTitle{\latex Class for SBML Package Specifications}
+\packageVersion{Version 1.6.0}
+\packageVersionDate{10 August 2014}
+
+\title{\ninemlpkghead: A \latex Class for SBML Level~3
+  \texorpdfstring{\\[3pt]}{}\mbox{Package Specification Documents}}
+
+\author{Michael Hucka\\[0.25em]
+  \mailto{mhucka@caltech.edu}\\[0.25em]
+  Computing and Mathematical Sciences\\
+  California Institute of Technology\\
+  Pasadena, CA, USA
+}
+
+\maketitlepage
+\maketableofcontents
+
+
+% -----------------------------------------------------------------------------
+\section{Introduction}
+% -----------------------------------------------------------------------------
+
+The \ninemlpkg document class for \latex provides a standard format for SBML
+Level~3 \emph{package specification} documents.  In this document, I explain
+how to use \ninemlpkg.  I assume readers are familiar with \latex.  (There are
+many tutorials and books available on \latex, and readers should have no
+trouble finding resources if needed.)
+
+The document before you is itself formatted using the \ninemlpkg class, with a
+minor change to omit some SBML Level~3 package-specific text normally placed
+on the front page.  (For example, the front page of this document does not
+announce it is an ``SBML Level 3 Package Specification''.)  In other
+respects, ``what you see is what you get''---this is the appearance of an
+SBML Level~3 package specification document when it is formatted with
+\ninemlpkg.
+
+
+\subsection{Prerequisites and installation}
+
+\tab{where} lists the Internet locations from where you may obtain
+\ninemlpkg. The class itself consists of one file, \ninemlpkgfile, and a
+subdirectory named ``\texttt{logos}''.  It also comes with some accompanying
+documentation (specifically, the file you are reading, along with the source
+files used to produce it).
+
+\begin{table}[hb]
+  \begin{edtable}{tabular}{ll}
+    \toprule
+    \textbf{Item} & \textbf{Location} \\
+    \midrule
+    Distribution archive & \url{\distURL}\\
+    Web page		 & \url{\webURL}\\
+    Source tree (SVN)    & \url{\srcURL}\\
+    \bottomrule
+  \end{edtable}
+  \caption{Where to find \ninemlpkg on the Internet.}
+  \label{where}
+\end{table}
+
+The use of \ninemlpkg should require only a recent and relatively complete
+installation of \LaTeXe.  I developed and tested this document class with the
+TeX Live 2011 distribution on a Mac~OS~X 10.6.x system, and it is has been
+reported to work with TeX Live on Windows and Ubuntu Linux.  (For Ubuntu,
+make sure to install the following packages: ``\texttt{texlive}'',
+``\texttt{texlive-latex-extra}'', ``\texttt{texlive-humantities}'', and
+``\texttt{texlive-fonts-extra}''.)  To use \ninemlpkg, you will need to inform
+your copy of \latex where to find the file \ninemlpkgfile and its accompanying
+subdirectory ``\texttt{logos''}.  This can be done in a variety of ways.
+Here are two common ones:
+
+\begin{itemize}
+
+\item \emph{Per-document installation}.  This is arguably the simplest
+  approach.  Download \ninemlpkg from a distribution site (see \tab{where}),
+  copy the contents (specifically, \ninemlpkgfile and the folder named
+  ``\texttt{logos}'') to the folder where you keep the other files for the
+  SBML Level~3 package specification you are authoring, and you are done.
+  The next time you run \latex in that folder (assuming you declare the
+  document class as explained in \sec{usage}), it will find the \texttt{.cls}
+  file in the current directory and be on its merry way.
+
+\item \emph{``Central'' installation}.  In this approach, you install
+  \ninemlpkgfile in a folder where you keep other \latex class files, and
+  configure your copy of \latex to find things there.  Configuring a \tex
+  system in this way on Unix-type systems (Linux, etc.)\ usually requires
+  setting the environment variable \texttt{TEXINPUTS} and possibly others.
+  Please consult the documentation for your \tex installation to determine
+  how to do this.
+
+\end{itemize}
+
+
+\subsection{Special notation in this document}
+
+Some paragraphs \notice in this document include a hand pointer in the
+left margin (illustrated at the left).  These are meant to call attention
+to paragraphs containing significant points that may be too easily missed
+during the first reading.  Readers may wish to revisit those paragraphs
+once they are actually using \ninemlpkg in practice.
+
+
+\subsection{Where to send bug reports and feedback}
+
+Please report problems you encounter with \ninemlpkg.  You can contact the
+author directly, at the email address given on the cover page, or you can
+file a bug report using the tracker at \url{http://sbml.org/issue-tracker}.
+
+
+% -----------------------------------------------------------------------------
+\section{Creating documents with \ninemlpkghead}
+\label{usage}
+% -----------------------------------------------------------------------------
+
+This section provides a summary of the main features and capabilities of
+\ninemlpkg, and serves as a guide to getting started with this \latex class.
+
+
+\subsection{Basic document structure}
+\label{basic-structure}
+
+The following fragment illustrates the basic structure of a simple input
+file.
+
+\begin{example}[style=latex]
+\documentclass{sbmlpkgspec}
+\begin{document}
+
+\packageTitle{Example}
+\packageVersion{Version 1 (Draft)}
+\packageVersionDate{14 August 2011}
+\packageGeneralURL{http://sbml.org/Documents/Specifications/Example}
+\packageThisVersionURL{http://sbml.org/Documents/Specifications/Example_14_August_2011}
+
+\author{Michael Hucka\\[0.25em]
+  \mailto{mhucka@caltech.edu}\\[0.25em]
+  Computing and Mathematical Sciences\\
+  California Institute of Technology\\
+  Pasadena, CA, USA
+}
+
+\maketitlepage
+\maketableofcontents
+
+\section{...}
+...
+\end{document}
+\end{example}
+
+The fragment above illustrates the general structure expected by \ninemlpkg.
+First, several commands all beginning with the characters \cmd{package} set
+various internal variables that are used by \ninemlpkg to produce the final
+package specification document.  For example, there is a title for the
+package (\cmd{packageTitle\{\}}), a version number for the package
+(\cmd{packageVersion\{\}}), and more.  Next, the author is declared.  After
+that, the commands \cmd{maketitlepage} and \cmd{maketableofcontents} instruct
+\latex to produce a title page and table of contents, respectively.  Then
+comes the real body of the document, with section headings and so on.
+Finally, the document is closed with the standard \latex command
+\cmd{end\{document\}}.
+
+If \notice your document is a draft version, make sure to add the special
+argument \texttt{[draftspec]} to the \cmd{documentclass} command.  This
+causes the front page of your document to have the word ``DRAFT'' printed
+on it in large gray type, and for every page footer to mention ``(DRAFT)''
+in it.  Here is an example of how to use this option:
+
+\begin{example}[style=latex]
+\documentclass[draftspec]{sbmlpkgspec}
+\end{example}
+
+Not shown here, but useful to know, is that \ninemlpkg also provides a command
+for putting a prominent notice on the front page.  Writing
+\cmd{frontNotice\{}\emph{text}\texttt{\}} will put \emph{text} in the middle
+of the front page, in red.  It is useful for warning readers of your document
+about known issues, for example if the document is a work in progress.
+
+\ninemlpkg does not define special commands for formatting author information
+beyond the \cmd{author} command (which is actually a standard \latex command
+from the \texttt{article} document class).  It does, however, provide the
+command \cmd{mailto}, which is designed to turn email addresses into
+\texttt{mailto:} hyperlinks.  Any additional formatting of author and
+affiliation information is up to you, using standard \latex commands.  Of
+course, there are many times when multiple authors \emph{are} involved, so it
+is useful to have an approach for handling that situation.  An easy approach
+is to embed a \texttt{tabular} environment inside the \cmd{author} command.
+The following is an example taken directly from an actual SBML Level~3
+package specification document:
+
+\begin{example}[style=latex]
+\author{%
+  \begin{tabular}{c>{\hspace{20pt}}c}
+    Lucian P. Smith                     & Michael Hucka\\[0.25em]
+    \mailto{lpsmith@u.washington.edu}   & \mailto{mhucka@caltech.edu}\\[0.25em]
+    Department of Bioengineering        & Computing and Mathematical Sciences\\
+    University of Washington            & California Institute of Technology\\
+    Seattle, WA, US                     & Pasadena, CA, US\\
+  \end{tabular}}
+\end{example}
+
+A final point about \ninemlpkg is worth mentioning right at the outset.  When
+you run \latex (typically using the \texttt{pdflatex} variant) and look at
+the output, you will often find that section references, page references, and
+line numbers do not get refreshed correctly after one invocation of the
+command.  With \ninemlpkg, you will typically have to run the command not
+twice, but \notice \emph{three} times, to get the correct, final numbers,
+because it uses the \texttt{varioref} package.  This is typically not a
+problem during actual writing; the edit-run-preview cycle is such that you
+usually only care to see the results of content changes, and for that,
+running \latex only once is enough, even if it leaves reference unadjusted.
+However, when you \emph{are} interested in checking (e.g.) figure and table
+references, then it is important to keep in mind the fact that you need to
+run \latex three times in succession to get all the reference updates to
+propagate through.  The rule of thumb is: if you run \latex and the
+references look wrong, run it again.
+
+
+\subsection{Tables and figures}
+\label{about-tables}
+
+\ninemlpkg preloads the \latex \texttt{graphicx} and \texttt{xcolor}
+packages, giving authors immediate access to the functionality of these
+extensions without having to include them manually.  For example, if you
+had an illustration in a file named ``\texttt{example.pdf}'', the following
+fragment would generate a simple figure containing it:
+
+\begin{example}[style=latex]
+\begin{figure}
+  \includegraphics{example}
+  \caption{The figure caption.}
+  \label{fig:example}
+\end{figure}
+\end{example}
+
+The \latex \texttt{graphicx} package is extremely powerful; it offers many
+options for controlling the size/scale and other characteristics of
+graphics files.  Please refer to its documentation for help on how to use
+it fully.
+
+To produce pleasing-looking documents, I suggest you create your figures
+using 8~point Helvetica for the text font.  \ninemlpkg redefines figures and
+tables to use Helvetica as the font family and an 8~point size by default, so
+creating figures with matching characteristics will lead to more
+consistent-looking documents.  The stylistic choices here were made not
+solely for aesthetic reasons; the tighter letter spacing of the sans serif
+font, and the smaller font size, makes it easier for authors to fit material
+into tables and figures.  The specific choice of Helvetica is also driven in
+part by consideration of the tools available to authors.  In particular, it
+is today common to find online drawing tools that offer Helvetica (or at
+least the similar-looking, albeit inferior, Arial) as a font choice.
+
+\ninemlpkg also preloads the \texttt{booktabs} package.  This provides
+\cmd{toprule}, \cmd{midrule} and \cmd{bottomrule} (among others), which can
+be used to produce attractive tables.  The following text is what produced
+\fig{where}:
+
+\vspace*{-0.25ex}
+\begin{example}[style=latex]
+\begin{table}[hb]
+  \begin{edtable}{tabular}{ll}                 % From the lineno package; see text, Section 2.2
+    \toprule                                   % From booktabs -- generates line at top
+    \textbf{Item}        & \textbf{Location} \\
+    \midrule                                   % From booktabs -- generates middle line
+    Distribution archive & \url{\distURL} \\
+    Web page             & \url{\webURL} \\
+    Source tree (SVN)    & \url{\srcURL} \\
+    \bottomrule                                % From booktabs -- generates line at bottom
+  \end{edtable}
+  \caption{Where to find \ninemlpkg on the Internet.}
+  \label{where}
+\end{table}
+\end{example}
+
+In the case of long tables, readability is often enhanced by adding a
+background color to every other row.  Once again, \ninemlpkg preloads a
+\latex package (in this case, \texttt{xcolor} with the \texttt{[table]}
+option) that provides a convenient facility for automatically coloring
+alternate rows in a table.  Although many variations are possible, for
+consistency between SBML package specification documents, I recommend using
+one in particular:
+
+\begin{example}[style=latex]
+\rowcolors{2}{ninemlrowgray}{}
+\end{example}
+
+Simply insert the text above after the opening \cmd{begin\{table\}} of your
+table, and proceed as usual.  The result is demonstrated in \fig{sbmlcore},
+which was produced using the following sequence:
+
+\begin{example}[style=latex]
+\begin{table}[hbt]
+  \rowcolors{2}{ninemlrowgray}{}
+  \begin{edtable}{tabular}{ll}|\vspace*{-0.4ex}|
+  ...|\vspace*{-0.4ex}|
+  \end{edtable}
+\end{table}
+\end{example}
+  
+Note \notice that tables are \emph{not} defined by \ninemlpkg to use
+alternate-row background coloring by default, because in some situations
+(such as short tables, or tables containing color), alternate row coloring is
+unnecessary and distracting.  You must add the \cmd{rowcolors} command
+manually, where it's appropriate.
+
+Finally, \ninemlpkg redefines the table and figure environments to place
+contents inside a \latex \texttt{centering} environment, causing the content
+to be centered on the page.  You do not need to add centering commands
+yourself.
+
+
+\subsection{Cross-references to tables, figures and sections}
+\label{references}
+
+To refer to figures, tables, sections and other elements in your document,
+please use the special commands listed in \tab{ref-commands} instead of
+writing the usual idioms ``Figure\textasciitilde\textbackslash
+\texttt{ref\{...\}}''.  The commands in \tab{ref-commands} will produce
+\emph{both} item number and page references that are automatically
+hyperlinked to the appropriate locations in the finished document; they will
+also take care of adding ties in the appropriate places for you, and they use
+the \texttt{vref} command from the package \texttt{varioref} (instead of the
+regular \latex \texttt{ref}) to vary the text description used in page
+references.
+
+\begin{table}[h]
+  \vspace*{-1ex}
+  \begin{edtable}{tabular}{lll}
+    \toprule
+    \textbf{Command} & \textbf{Purpose} & \textbf{Example output}\\
+    \midrule
+    \texttt{\textbackslash fig\{}\emph{label\,}\texttt{\}}
+    & Figure reference
+    & Figure X on page Y\\
+    \texttt{\textbackslash tab\{}\emph{label\,}\texttt{\}}
+    & Table reference
+    & Table X on page Y\\
+    \texttt{\textbackslash sec\{}\emph{label\,}\texttt{\}}
+    & Section reference
+    & Section X on page Y\\
+    \texttt{\textbackslash apdx\{}\emph{label\,}\texttt{\}}
+    & Appendix reference
+    & Appendix X on page Y\\
+    \bottomrule
+  \end{edtable}
+  \caption{Commands for referring to figures and other entities in an
+    \ninemlpkg document.  Use the commands with an argument consisting of the
+    label being referenced.  For example: \cmd{fig\{myfig\}}.}
+  \label{ref-commands}
+\end{table}
+
+The \ninemlpkg class also defines starred versions of the commands, that is,
+\texttt{\textbackslash fig*\{}\emph{label\,}\texttt{\}},
+\texttt{\textbackslash tab*\{}\emph{label\,}\texttt{\}},
+\texttt{\textbackslash sec*\{}\emph{label\,}\texttt{\}}, and
+\texttt{\textbackslash apdx*\{}\emph{label\,}\texttt{\}}.  These are useful
+when the item being referenced is located on another page, and you want to
+refer to it more than once from the text of the same paragraph. The regular
+version of the commands such as ``\texttt{\textbackslash
+  fig\{}\emph{label\,}\texttt{\}}'' will always produce a page reference
+(e.g., ``see Figure~2.5 on the following page''), which becomes rather
+tedious to read if there is more than one occurrence of it in the same
+paragraph.  \notice To avoid that, use the normal version of the command the
+first time you need it in a paragraph, and then use the starred version on
+all subsequent occasions within the same paragraph.
+
+It is worth noting that all the commands are clever enough to avoid writing
+``... on page Y'' when the item in question is on the same page as the
+reference.  The commands will write only ``Figure~X'' in that situation
+automatically.
+
+To state a range (e.g., to produce the text ``Section X to Y''), use the
+command \texttt{\textbackslash
+  vrefrange\{}\emph{label1\,}\texttt{\}\{}\emph{label2\,}\texttt{\}}, where
+\emph{label1} and \emph{label2} are the labels of the starting and ending
+items.  These can be figures, sections, etc.
+
+
+\subsection{Hyperlinks}
+\label{hyperlinks}
+
+In the example of \sec{about-tables}, you may have noticed the use of the
+command \cmd{url\{\}}.  That command comes as part of the \latex
+\texttt{hyperref} package, and like the other packages mentioned in this
+section, it is also preloaded by \ninemlpkg.  It provides a number of
+facilities that are used to implement features of \ninemlpkg.  \tab{hyperref}
+lists some commands you may find useful in writing SBML specification
+documents.
+
+\begin{table}[h]
+  \begin{edtable}{tabular}{lll}
+    \toprule
+    \textbf{Command}		 & \textbf{Purpose} \\
+    \midrule
+    \cmd{url\{}\emph{URL\,}\texttt{\}}
+    &  Produce a hyperlinked reference to \emph{URL}\\
+    \cmd{nolinkurl\{}\emph{URL\,}\texttt{\}}
+    & Format \emph{URL} in the same way as \texttt{\textbackslash url}, without making it a hyperlink\\
+    \cmd{href\{}\emph{URL\,}\texttt{\}\{}\emph{text}\texttt{\}} 
+    & Make \emph{text} a hyperlink to \emph{URL}\\
+    \bottomrule
+  \end{edtable}
+  \caption{Commands provided by \texttt{hyperref} for creating hyperlinks.}
+  \label{hyperref}
+\end{table}
+
+
+\subsection{Examples and literal text}
+\label{example-env}
+
+A document about file formats and programming often includes passages meant
+to be literal text.  Conventionally, these are typeset in a monospaced type
+face resembling the output of typewriter.  There are two ways of
+accomplishing this for SBML package specifications.  The first is to use
+\latex's standard \mbox{\texttt{\textbackslash
+    texttt\{}\emph{text}\texttt{\}}} command.  This causes ``\emph{text}'' to
+be output in a fixed-width font, like so: ``\texttt{text}''.
+
+The second method is to use an environment defined by \ninemlpkg and
+implemented using the \latex package \texttt{listings}.  This environment is
+called \texttt{example}.  Wrapping any text with \cmd{begin\{example\}} and
+\cmd{end\{example\}} will cause the text to be output by itself with a gray
+box behind it, as in this example:
+
+\begin{example}
+This is an example of content placed within an "example" environment.
+\end{example}
+
+The \texttt{example} environment is particularly powerful.  Anything placed
+inside it will be taken literally---even \latex commands will be ignored,
+except for \cmd{end\{example\}}.  In fact, the entire contents of the
+document fragment shown in \sec{basic-structure}, including the
+\cmd{begin\{document\}} and \cmd{end\{document\}}, were all left unchanged
+within the \texttt{example} environment used to produce the example.  Of
+course, sometimes you \emph{do} want an embedded \latex command to be
+interpreted inside the \texttt{example} environment.  For those situations,
+surround the \latex sequence with vertical bar (\texttt{|}) characters.  The
+vertical bar is defined as the escape character for the \texttt{example}
+environment.
+
+Finally, for those cases when it is more convenient to put the example
+contents in a separate file, \ninemlpkg provides the command
+\mbox{\cmd{exampleFile\{}\emph{file}\texttt{\}}}.  It will insert the
+contents of \emph{file} at the point where it is invoked in the text, and
+format the contents in the same style as the \texttt{example} environment.
+
+
+\subsection{Color}
+
+To increase consistency between SBML specification documents, \ninemlpkg
+defines custom color names that may be used with commands such as
+\texttt{color}, \texttt{colorbox}, etc.  \tab{colors} lists these color
+names.  Some of the colors in \tab*{colors} are used by \ninemlpkg itself, for
+design elements such as section dividers and background colors.  Others
+sometimes prove useful in different contexts of a specification document, and
+still others are colors that were used in past SBML documentation and are
+retained in case they prove useful again in the future.
+
+When \notice a specification document is a revision of a previous document,
+it is the convention in SBML documentation to indicate text changes by
+coloring them in red.  For this purpose, \ninemlpkg defines a command and an
+environment.  The command \mbox{\texttt{\textbackslash
+    changed\{}\emph{text}\texttt{\}}} causes \emph{text} to be written in red
+(or more precisely, the color named \val{sbmlchangedcolor}, which is defined
+by \ninemlpkg as a maroon red), \changed{like this}.  It can be used for long
+stretches of text and include embedded spaces and formatting
+commands. Alternatively, for coloring even longer stretches of text and
+multiple paragraphs, you may prefer to use the environment
+\texttt{blockChanged}.
+
+\newcommand{\drawcol}[1]{\colorbox{#1}{\color{#1}\rule{10ex}{1ex}}}
+
+\begin{table}[hbt]
+  \renewcommand{\arraystretch}{1.05}
+  \begin{edtable}{tabular}{lllll}
+    \toprule
+    \textbf{Color name}		& \textbf{Color sample} 	& \multicolumn{3}{c}{\textbf{RGB color value}} \\
+    \midrule
+    \texttt{ninemlblue}		& \drawcol{ninemlblue}		& red = 0.08	& blue = 0.51	& green = 0.77 \\
+    \texttt{ninemlgray}		& \drawcol{ninemlgray}		& red = 0.7	& blue = 0.7	& green = 0.7 \\
+    \texttt{ninemlrowgray}	& \drawcol{ninemlrowgray}		& red = 0.94	& blue = 0.94	& green = 0.94 \\
+    \texttt{sbmlchangedcolor}	& \drawcol{sbmlchangedcolor}	& red = 0.69	& blue = 0.19	& green = 0.376 \\
+    \texttt{sbmlnormaltextcolor}& \drawcol{sbmlnormaltextcolor}	& red = 0.27	& blue = 0.27	& green = 0.27 \\
+    \texttt{extremelylightgray}	& \drawcol{extremelylightgray}	& red = 0.97	& blue = 0.97	& green = 0.97 \\
+    \texttt{veryverylightgray}	& \drawcol{veryverylightgray}	& red = 0.95	& blue = 0.95	& green = 0.95 \\
+    \texttt{verylightgray}	& \drawcol{verylightgray}	& red = 0.9	& blue = 0.9	& green = 0.9 \\
+    \texttt{lightgray}		& \drawcol{lightgray}		& red = 0.8	& blue = 0.8	& green = 0.8 \\
+    \texttt{mediumgray}		& \drawcol{mediumgray}		& red = 0.5	& blue = 0.5	& green = 0.5 \\
+    \texttt{darkgray}		& \drawcol{darkgray}		& red = 0.3	& blue = 0.3	& green = 0.3 \\
+    \texttt{almostblack}	& \drawcol{almostblack}		& red = 0.22	& blue = 0.22	& green = 0.22 \\
+    \texttt{darkblue}		& \drawcol{darkblue}		& red = 0.1	& blue = 0.4	& green = 0.55 \\
+    \texttt{mediumgreen}	& \drawcol{mediumgreen}		& red = 0.1	& blue = 0.6	& green = 0.3 \\
+    \texttt{lightyellow}	& \drawcol{lightyellow}		& red = 0.98	& blue = 0.94	& green = 0.7 \\
+    \texttt{verylightyellow}	& \drawcol{verylightyellow}	& red = 0.97	& blue = 0.95	& green = 0.85 \\
+    \bottomrule
+  \end{edtable}
+  \caption{Color names defined by \ninemlpkg.  These names may be used in
+    addition to the names of colors defined by the \latex package
+    \texttt{xcolor}.}
+  \label{colors}
+\end{table}
+
+The insertion of new sections in old documents presents another challenge:
+the section \emph{numbers} of all sections after the inserted text will end
+up changed even if the text of those sections is unchanged.  This produces
+misleading results: section $X.Y$ may appear in both the old and new versions
+of a document, but may not have the same content because the old $X.Y$ became
+$X.(Y+1)$ in the new version.  For this situation, \ninemlpkg defines special
+sectioning commands that format only the section numbers in red, leaving the
+rest of the heading unchanged.  The commands have the suffix
+\texttt{Changed}, e.g., \mbox{\texttt{\textbackslash
+    sectionChanged\{}\emph{text}\texttt{\}}}, \mbox{\texttt{\textbackslash
+    subsectionChanged\{}\emph{text}\texttt{\}}}, etc.  They should be used
+for all (sub/subsub)section headings \emph{after} a new section.  In other
+words, for every subsection after a newly-inserted section $X.Y$, use
+\mbox{\texttt{\textbackslash subsectionChanged\{}\emph{text}\texttt{\}}}
+until the next higher-level \mbox{\texttt{\textbackslash
+    section\{}\emph{text}\texttt{\}}}.
+
+
+\subsection{Commands for SBML constructs}
+
+SBML defines a number of commands for referring to objects defined in the
+main SBML specifications, such as \Species, \Reaction, etc.  Within a given
+main SBML specification document---which are all in PDF format---the mention
+of an object name is hyperlinked to the definition of that object elsewhere
+in the document, such that clicking on the name causes the PDF reading
+program to jump to the definition in the file.  Unfortunately, while it is
+technically possible to hyperlink from SBML package documents to specific
+parts within an external PDF file located somewhere on the Internet, the
+result is more confusing and annoying than helpful.
+
+\ninemlpkg therefore defines two sets of commands: one set predefines each of
+the SBML Level~3 Core object names, but without hyperlinking, and the second
+set lets package authors define new object names, with hyperlinking.  The
+result is that references to Core SBML objects are displayed in black and
+without linking, while package objects appear in blue, as hyperlinks.  The
+linking is implemented using the standard \latex \texttt{hyperref} package.
+
+In addition to these commands, \ninemlpkg provides other commands for
+typesetting primitive type names (such as \primtype{SId}, \primtype{double},
+and so on) and other entities and XML fragments.  They are described in
+\vrefrange{primtype}{formatting-xml}.  The need for using these occurs
+routinely when writing SBML specifications.
+
+\subsubsection{Predefined SBML Core object and type names}
+\label{predefined-classes}
+
+\tab{sbmlcore} lists the commands to typeset the names of SBML Level~3 Core
+objects.  They are designed to be as convenient to use as possible,
+requiring only one additional character (i.e., the leading backslash
+character) to be typed beyond the name of the object itself.
+
+\begin{table}[htb]
+  \rowcolors{2}{ninemlrowgray}{}
+  \renewcommand{\arraystretch}{1.05}
+  \begin{edtable}{tabular}{ll}
+    \toprule
+    \textbf{Command}                      & \textbf{Object} \\
+    \midrule
+    \cmd{AlgebraicRule}                   & \AlgebraicRule \\
+    \cmd{Annotation}                      & \Annotation \\
+    \cmd{AssignmentRule}                  & \AssignmentRule \\
+    \cmd{Compartment}                     & \Compartment \\
+    \cmd{Constraint}                      & \Constraint \\
+    \cmd{Delay}                           & \Delay \\
+    \cmd{EventAssignment}                 & \EventAssignment \\
+    \cmd{Event}                           & \Event \\
+    \cmd{FunctionDefinition}              & \FunctionDefinition \\
+    \cmd{InitialAssignment}               & \InitialAssignment \\
+    \cmd{KineticLaw}                      & \KineticLaw \\
+    \cmd{ListOfCompartments}              & \ListOfCompartments \\
+    \cmd{ListOfConstraints}               & \ListOfConstraints \\
+    \cmd{ListOfEventAssignments}          & \ListOfEventAssignments \\
+    \cmd{ListOfEvents}                    & \ListOfEvents \\
+    \cmd{ListOfFunctionDefinitions}       & \ListOfFunctionDefinitions \\
+    \cmd{ListOfInitialAssignments}        & \ListOfInitialAssignments \\
+    \cmd{ListOfLocalParameters}           & \ListOfLocalParameters \\
+    \cmd{ListOfModifierSpeciesReferences} & \ListOfModifierSpeciesReferences \\
+    \cmd{ListOfPackages}                  & \ListOfPackages \\
+    \cmd{ListOfParameters}                & \ListOfParameters \\
+    \cmd{ListOfReactions}                 & \ListOfReactions \\
+    \cmd{ListOfRules}                     & \ListOfRules \\
+    \cmd{ListOfSpeciesReferences}         & \ListOfSpeciesReferences \\
+    \cmd{ListOfSpecies}                   & \ListOfSpecies \\
+    \cmd{ListOfUnitDefinitions}           & \ListOfUnitDefinitions \\
+    \cmd{ListOfUnits}                     & \ListOfUnits \\
+    \cmd{LocalParameter}                  & \LocalParameter \\
+    \cmd{Message}                         & \Message \\
+    \cmd{Model}                           & \Model \\
+    \cmd{ModifierSpeciesReference}        & \ModifierSpeciesReference \\
+    \cmd{Notes}                           & \Notes \\
+    \cmd{Package}                         & \Package \\
+    \cmd{Parameter}                       & \Parameter \\
+    \cmd{Priority}                        & \Priority \\
+    \cmd{RateRule}                        & \RateRule \\
+    \cmd{Reaction}                        & \Reaction \\
+    \cmd{Rule}                            & \Rule \\
+    \cmd{SBML}                            & \SBML \\
+    \cmd{SBase}                           & \SBase \\
+    \cmd{SimpleSpeciesReference}          & \SimpleSpeciesReference \\
+    \cmd{SpeciesReference}                & \SpeciesReference \\
+    \cmd{Species}                         & \Species \\
+    \cmd{StoichiometryMath}               & \StoichiometryMath \\
+    \cmd{Trigger}                         & \Trigger \\
+    \cmd{UnitDefinition}                  & \UnitDefinition \\
+    \cmd{Unit}                            & \Unit \\
+    \bottomrule
+  \end{edtable}
+  \caption{Commands for the names of object classes defined in the SBML Level~3
+    Core specification.} 
+  \label{sbmlcore}
+\end{table}
+
+\subsubsection{Defining new object names and types in package specifications}
+\label{defining-classes}
+
+When an SBML package specification document defines new object classes, it is
+useful to make all mentions of the class name be hyperlinks to the class
+definition in the document.  To this end, \ninemlpkg provides commands that can
+be used to create new \latex commands to define hyperlinked name references.
+The purpose of these commands is to let package authors define commands of
+the form \cmd{\emph{ObjectName}} that print the name of the class and
+simultaneously make it a hyperlink to the sections in the document where
+\class{ObjectName} is defined.  These commands are best used conjunction with
+\latex's \cmd{newcommand} command, to define custom macros in your document.
+
+The first two commands in this category are \cmd{defRef} and \cmd{absDefRef}:
+
+\begin{description}[font=\normalfont\ttfamily,style=nextline]
+
+\item[\color{black}\textbackslash defRef\{\emph{name}\}\{\emph{section}\}]
+  Create a hyperlinked reference to the section labeled \emph{section} and
+  call it \emph{name}.  The reference is inserted at the point in the text
+  where the \texttt{\textbackslash defRef} command is invoked.  This command
+  is intended for references to regular (not abstract) classes; see the next
+  command for abstract classes.
+
+\item[\color{black}\textbackslash absDefRef\{\emph{name}\}\{\emph{section}\}]
+  Create a hyperlinked reference to the section labeled \emph{section} and
+  call it \emph{name}.  The reference is inserted at the point in the text
+  where the \texttt{\textbackslash defRef} command is invoked.  This command
+  is intended for references to abstract classes; see the previous command
+  for the corresponding command for non-abstract classes.
+
+\end{description}
+
+The following is an example of how the commands above may be used; this is
+taken straight from the source files of the SBML Level~3 Version~1 Core
+specification document:
+
+\begin{example}[style=latex]
+\newcommand{\SBase}{\absDefRef{SBase}{sec:sbase}\xspace}
+\newcommand{\SBML} {\defRef{SBML}{sec:sbml}\xspace}
+\newcommand{\Model}{\defRef{Model}{sec:model}\xspace}
+\end{example}
+
+In these particular cases, the section labels ``\texttt{sec:base}'',
+``\texttt{sec:sbml}'', etc., are defined using \latex's \cmd{label} command
+at the beginning of each section of the specification document where the
+corresponding objects are defined.  (In other words, everywhere a
+``\cmd{section}'' or ``\cmd{subsection}'' or similar command is used in the
+SBML Level~3 Version~1 Core document, it is followed with a ``\cmd{label}''.)
+The command \cmd{xspace} is discussed in \sec{included-classes}.
+
+Sometimes \notice it is desirable to write the names of object classes
+\emph{without} introducing hyperlinks.  A common situation is when mentioning
+the names of the object classes or types in section headings.  In these
+situations, instead of using the \cmd{ObjectName} commands, you may use the
+following commands provided by \ninemlpkg:
+
+\begin{description}[font=\normalfont\ttfamily,style=nextline]
+
+\item[\cmd{class\{\emph{name}\}}] Typesets \emph{name} in the same font style
+  as used by \texttt{\textbackslash
+    defRef\{}\emph{name}\texttt{\}\{}\emph{section}\texttt{\}}, without a
+  hyperlink.
+
+\item[\cmd{abstractclass\{\emph{name}\}}] Typesets \emph{name} in the same
+  font style as used by \texttt{\textbackslash
+    absDefRef\{}\emph{name}\texttt{\}\{}\emph{section}\texttt{\}}, without a
+  hyperlink.
+
+\end{description}
+
+
+
+\subsubsection{Commands for formatting the names of primitive data types}
+\label{primtype}
+
+A convention that has evolved over the years of writing SBML specifications
+is to typeset the names of primitive data types (such as \primtype{SId}) in a
+monospaced, typewriter-like type face, without hyperlinks.  SBML packages may
+define their own new primitive types.  To format the names of these types in
+a style consistent with the SBML Level~3 Core specification document, package
+authors should use the \cmd{primtype} and \cmd{primtypeNC} commands:
+
+\begin{description}[font=\normalfont\ttfamily,style=nextline]
+
+\item[\cmd{primtype\{\emph{name}\}}] Typesets the name of a primitive data
+  type \emph{name}.  SBML Level~3 Core also defines and uses a number of
+  primitive data types, but these do not have separate commands in \ninemlpkg.
+  Instead, they should be written using the command
+  \mbox{\cmd{primtype\{\emph{type}\}}}, where \emph{type} is one of the
+  following names:
+
+  \begin{center}\ttfamily\color{black}
+    \begin{edtable}{tabular}{llllll}
+      boolean	& ID	& positiveInteger & SId  	& string	& UnitSIdRef\\
+      double	& int	& SBOTerm	  & SIdRef	& UnitSId \\
+    \end{edtable}
+  \end{center}
+
+\item[\cmd{primtypeNC\{\emph{name}\}}] Like \cmd{primtype}, but does not
+  force the color of the text to be black.  The main use of this variant of
+  the command is when writing the names of primitive types in the arguments
+  to \latex sectioning commands (e.g., \cmd{section}, \cmd{subsection} and
+  the like), to avoid the change in color that would otherwise occur in the
+  document's table of contents.  (The \cmd{primtype} command sets the color
+  of the text to pure black, to make the text stand out more in the document
+  body.  The change of color would occur because the entries in the table of
+  contents are all hyperlinks to the beginning of the sections, and
+  hyperlinks are colored blue.)
+
+\end{description}
+
+For example, the sequence ``\cmd{primtype\{SId\}}'' written somewhere in the
+body of a document will produce ``\primtype{SId}'' in the formatted output;
+by contrast, the following illustrates how to write a type name in a section
+heading:
+
+\begin{example}[style=latex]
+\subsection{This is the documentation for \primtypeNC{MySpecialSId}}
+\end{example}
+
+A \warning small spacing problem can occur when \cmd{primtypeNC} is used in
+\cmd{subsubsection} and \cmd{paragraph} titles: the content of the
+\cmd{primtypeNC} may end up too close to the preceding text in the section
+title.  The problem occurs because the typeface used for \cmd{subsubsection}
+and \cmd{paragraph} is slanted whereas the fixed-width typeface of
+\cmd{primtypeNC} is not.  To prevent the unattractive compressed-looking
+result, add a small amount of space (usually 1 point is sufficient) using
+\cmd{hspace}, like so:
+
+\begin{example}[style=latex]
+\subsubsection{This is the documentation for \hspace*{1pt}\primtypeNC{SomeOtherId}}
+\end{example}
+
+The above is typically not necessary in \cmd{section} or \cmd{subsection},
+nor when the invocation of \cmd{primtypeNC} occurs as the first thing in a
+\cmd{subsubsection}.
+
+
+\subsubsection{Commands for formatting in-text XML descriptions}
+\label{formatting-xml}
+
+In addition to formatting the names of SBML object classes and primitive
+data types, \ninemlpkg provides commands for formatting text meant to be
+literal examples of XML.  These special commands are provided so in-text
+descriptions of XML constructs can be formatted in a way and attractive
+way:
+
+\begin{description}[font=\normalfont\ttfamily\color{black},style=nextline]
+
+\item[\cmd{token\{\emph{text}\}}] Formats literal XML tokens, such as
+  attribute names.  Do not use this to format text with embedded spaces;
+  instead, use multiple \texttt{\textbackslash token} commands separated by
+  spaces.
+
+\item[\cmd{tokenNC\{\emph{text}\}}] Like \texttt{\textbackslash token}, but
+  does not force the color of the text to be black.  The main use of this
+  variant of the command is when writing the names of primitive types in the
+  arguments to \latex sectioning commands (e.g., \cmd{section} and the like),
+  to avoid the change in color that would otherwise occur in the document's
+  table of contents.
+
+\item[\cmd{val\{\emph{text}\}}] Format the value of an attribute.  This is
+  essentially \cmd{token} but surrounded by double quotes.
+
+\item[\cmd{uri\{\emph{text}\}}] Format a URI.  This is essentially \cmd{val};
+  it's provided make the formatting of URIs in documents more consistent.
+
+\end{description}
+
+The command \cmd{token} and others above are only meant for single in-text
+mentions of tokens and XML attribute-value pairs.  They are not suitable
+for longer content; for those cases, use the \texttt{example} environment
+(see \sec*{example-env}), which is intended for multiline literal content.
+
+
+\subsection{Line numbers}
+\label{about-lineno}
+
+\ninemlpkg preloads the \latex package \texttt{lineno} and configures it to
+produce the line numbers in the right column of every page.  The numbers are
+important for specification documents because they allow discussion and bug
+reports to refer to specific portions of the text.  Crucially, lists of
+issues recognized \emph{after} a specification is released need ways of
+referring to precise locations in the document, and line numbers are
+invaluable for that purpose.
+
+For \notice the most part, you do not need to do anything in your document to
+get line numbers to appear.  There are exceptions: certain content such as
+tabular material and floats are not handled by \texttt{lineno} very well, and
+require manual intervention.  Some cases cannot be fixed at all, notably
+figures incorporated from external files, but tabular material is fixable.
+To get line numbers to be displayed in tables, wrap all uses of
+\texttt{tabular} with the special environment \texttt{edtable}.  The basic
+idiom is the following:
+
+\begin{example}[style=latex]
+\begin{edtable}{tabular}{|\color{gray}\emph{...normal tabular column specifiers...}|}
+  |\color{gray}\emph{...tabular content...}|
+\end{edtable}
+\end{example}
+
+The \texttt{edtable} environment is able to wrap a number of standard
+\latex environments, of which \texttt{tabular} is probably the most useful
+for most kinds of tables.  Practical examples of using \texttt{edtable}
+appear elsewhere in this document.
+
+
+\subsection{SBML validation rules}
+\label{validation-rules}
+
+A convention developed for the main SBML specification documents is to define
+validation and consistency rules that must or should be satisfied by
+documents that conform to the specification.  SBML package specifications
+should likewise define their own validation and consistency rules.
+
+The SBML convention identifies different degrees of strictness.  The
+differences are expressed in the statement of a rule: either a rule states a
+condition \emph{must} be true, or a rule states that it \emph{should} be
+true.  Rules of the former kind are SBML validation rules---a model encoded
+in SBML must conform to all of them in order to be considered valid.  Rules
+of the latter kind are consistency rules.  To help highlight these
+differences, the SBML specification documents and \ninemlpkg provide commands
+to format the three kinds of rules, with three different symbols:
+
+\begin{description}
+
+\item[\hspace*{6.5pt}\vSymbol\vsp] A \vSymbolName indicates a
+  \emph{requirement} for conformance. If a model fails to follow this rule,
+  it does not conform to the specification.  (Mnemonic intention behind the
+  choice of symbol: ``This must be checked.'')
+
+\item[\hspace*{6.5pt}\cSymbol\csp] A \cSymbolName indicates a
+  \emph{recommendation} for model consistency.  If a model does not follow
+  this rule, it is not considered strictly invalid as far as the
+  specification is concerned; however, it indicates that the model contains
+  a physical or conceptual inconsistency.  (Mnemonic intention behind the
+  choice of symbol: ``This is a cause for warning.'')
+
+\item[\hspace*{6.5pt}\mSymbol\msp] A \mSymbolName indicates a strong
+  recommendation for good modeling practice.  This rule is not
+  strictly a matter of SBML encoding, but the recommendation comes
+  from logical reasoning.  As in the previous case, if a model does
+  not follow this rule, it is not strictly considered an invalid SBML
+  encoding.  (Mnemonic intention behind the choice of symbol: ``You're
+  a star if you heed this.'')
+
+\end{description}
+
+\ninemlpkg defines three commands for writing these rules in SBML package
+specifications documents:
+
+\begin{description}[font=\normalfont\ttfamily,style=nextline]
+
+\item[\cmd{validRule\{\emph{number}\}\{\emph{text}\}}] Format \emph{number}
+  as a validation rule with the description \emph{text}.
+
+\item[\cmd{consistencyRule\{\emph{number}\}\{\emph{text}\}}] Format \emph{number}
+  as a consistency rule with the description \emph{text}.
+
+\item[\cmd{modelingRule\{\emph{number}\}\{\emph{text}\}}] Format \emph{number}
+  as a modeling rule with the description \emph{text}.
+
+\end{description}
+
+SBML specifications typically gather all such rules into an appendix at the
+end of the document.
+
+
+\subsection{Document flags and notes}
+\label{document-notes}
+
+Sometimes it is useful to flag content in a document to draw readers'
+attention to it.  It is also sometimes useful during the development of a
+document to be able to leave coments for coauthors and readers.  \ninemlpkg
+provides a few commands for these purposes.
+
+\begin{description}[font=\normalfont\ttfamily,style=nextline]
+
+\item[\cmd{notice}] Puts \notice a hand pointer in the left margin
+  (illustrated at the left).  The symbol will always be displayed.
+
+\item[\cmd{warning}] Puts \warning a warning sign in the left margin
+  (illustrated at the left).  The symbol will always be displayed.
+
+\item[\cmd{draftnote\{\emph{text}\}}] Writes \draftnoteInternal{The note
+    text will only appear for documents in draft mode.} the \emph{text} as a
+  yellow margin note (illustrated at the left), but only if the document
+  flag \texttt{[draftspec]} is given to the \cmd{documentclass} command.
+  If the flag is not given, nothing is displayed in the margin.
+
+\end{description}
+
+The commands \cmd{notice} and \cmd{warning} are intended to be used for
+things that should be left in all versions of a specification document,
+whether draft or final.  The command \cmd{draftnote}, on the other hand, is
+for content that is only meant to be included in draft versions of the
+document.
+
+
+% -----------------------------------------------------------------------------
+% \section{Additional conventions for SBML specification documents}
+% \label{conventions}
+% -----------------------------------------------------------------------------
+
+
+
+% -----------------------------------------------------------------------------
+% \section{What \ninemlpkg provides: a concise reference}
+\section{Additional features of \ninemlpkghead}
+\label{provides}
+% -----------------------------------------------------------------------------
+
+% This section describes the commands and features provided by \ninemlpkg.
+
+This section describes some additional aspects of \ninemlpkg.
+
+
+\subsection{Options understood by \ninemlpkghead}
+\label{pkg-options}
+
+A number of options may be given to \ninemlpkg in the \cmd{documentclass}
+command that begins a document.  Here follows a complete list:
+
+\begin{description}[font=\normalfont\ttfamily\color{black},style=nextline]
+
+\item[draftspec] This option causes the front page of the document to contain
+  the word ``DRAFT'' in large gray letters, and the footer of every page of
+  the document to contain the word ``(DRAFT)''.  Authors should use this
+  option until such time as the specification document is considered a
+  release candidate or a final release.
+
+\item[finalspec] (Default) This option causes the large ``DRAFT'' on the
+  front page and ``(DRAFT)'' in the footers to be omitted.  It is the
+  opposite of the \texttt{draftspec} option.
+
+\item[toc] (Default) This option causes \ninemlpkg to include a table of
+  contents as the second page of the document.  Whether the table has one
+  wide column or two narrow columns is then controlled by the options
+  \texttt{twocolumntoc} and \texttt{singlecolumntoc}, described below.
+
+\item[notoc] This option causes the table of contents to be omitted.  (It
+  is unclear under what circumstances one would want to omit the table of
+  contents, but since some other \latex classes include this feature,
+  \ninemlpkg follows suit.)
+
+\item[twocolumntoc] This option causes \ninemlpkg to produce a two-column table
+  of contents rather than the default one-column version.  (That is, unless
+  the \texttt{notoc} option is also given, in which case, no table of
+  contents is produced.)  This is useful when a document is long, with many
+  sections, because the two-column version is more compact.  (However, beware
+  that since the columns are narrower than the single-column version, long
+  section names may become wrapped, leading to an aesthetically less pleasing
+  result.  If you need to use two column output, you may alway want to
+  examine whether you can shorten your section titles.)
+
+\item[singlecolumntoc] (Default) This option is the opposite of
+  \texttt{twocolumntoc}; it causes \ninemlpkg to produce a single column table
+  of contents as the second page of the document.  (Again, if \texttt{notoc}
+  is also given, then no table of contents is produced at all.)
+
+\end{description}
+
+
+
+% \subsection{Commands defined by \ninemlpkg}
+% \label{cmds-defined}
+
+% notice
+% address
+% package* commands
+
+
+\subsection{Notable \latex packages preloaded by \ninemlpkghead}
+\label{included-classes}
+
+As mentioned above, \ninemlpkg preloads many common \latex packages.  Some are
+used to implement the features of \ninemlpkg itself; others are preloaded so
+that authors do not have to load them explicitly.  Knowing what \ninemlpkg
+provides upfront also makes it easier to explain how to write SBML
+specification documents.
+
+The following is a list of the \latex packages preloaded by \ninemlpkg.  It is
+beyond the scope of this document to explain their features and capabilities
+in detail; readers are urged to consult the documentation for each one to
+learn more about them.  Documentation is available at CTAN
+(\url{http://www.tug.org/ctan.html}).
+
+
+\begin{itemize}
+
+\item \texttt{amssymb}: This package defines many symbols and special
+  characters.  In \ninemlpkg, it is used to get the symbols defined by the
+  validation rule commands \cmd{validRule}, \cmd{consistencyRule} and
+  \cmd{modelingRule} described in \sec{validation-rules}.
+
+\clearpage
+
+\item \texttt{amsmath}: This package defines many additional symbols and
+  macros for mathematics.  It is not actually used in \ninemlpkg, but it is
+  popular, and to make it work properly in combination with \ninemlpkg, some
+  corrections to delimiter sizes need to be introduced.  Therefore,
+  \texttt{amsmath} is included too.
+
+\item \texttt{array}: This provides a new and extended implementation of
+  the \latex \texttt{array} environment and \texttt{tabular}
+  environments.  It is particularly useful for the column formatting
+  options it provides for the \texttt{tabular} environment. 
+
+\item \texttt{bbding}: A font set that provides a variety of symbol glyphs.
+
+\item \texttt{booktabs}: Mentioned in \sec*{about-tables}, this \latex
+  package defines the commands \cmd{toprule}, \cmd{bottomrule}, and
+  \cmd{midrule} for produced more attractive and professional-looking
+  tables.
+
+\item \texttt{enumitem}: This relatively new package adds facilities for more
+  easily adjusting the look of \latex list environments, including the
+  \texttt{description} environment---something that is difficult to do in
+  plain \latex.  (Oh sure, there \emph{are} variables and commands for doing
+  it in \latex, but they are limited and sometimes produce unexpected
+  consequences elsewhere in a document.)
+
+\item \texttt{graphicx}: A powerful and rich system for working with
+  external graphics files in \latex documents. 
+
+\item \texttt{hyperref}: Mentioned in \sec{hyperlinks}, this package defines
+  commands for creating hyperlinks within and between documents.  \ninemlpkg
+  uses it to define commands such as \cmd{fig} and \cmd{tab}.
+
+\item \texttt{lineno}: Used by \ninemlpkg to implement line numbers on the
+  page.  As mentioned in \sec{about-lineno}, not all line numbering can be
+  accomplished completely without user intervention; in some cases, authors
+  must add special commands to get line numbers into content on the page.
+
+\item \texttt{listings}: Used by \ninemlpkg to implement the \texttt{example}
+  environment and \cmd{exampleFile} command.
+
+\item \texttt{multicol}: This provides an environment for putting multiple
+  columns of text on a page.  In \ninemlpkg, it is used to produce two-column
+  table of contents when the \texttt{[twocolumntoc]} option is given as
+  described in \sec{pkg-options}.
+
+\item \texttt{natbib}: This reimplements the normal \latex \cmd{cite} command
+  to work with author-year citations and add a number of useful features.  It
+  provides variants of \cmd{cite} such as \cmd{citep} and \cmd{citeauthor}.
+  The features of \texttt{natbib} are worth learning and using.
+
+\item \texttt{overpic}: The \texttt{overpic} package provides the ability
+  to write \latex content on top of a figure.  This is particularly handy
+  when including graphics in PDF format and you need to insert, for
+  example, section references or other information that is generated
+  dynamically.
+
+\item \texttt{rotating}: The \texttt{rotating} package provides commands for
+  rotating figures on a page.  This is particularly useful for rotating large
+  tables on a page by 90\textdegree.
+
+\item \texttt{varioref}: This defines commands such as \cmd{vref}, which is
+  similar to \cmd{ref} but includes a page reference such as ``on the next
+  page'' or ``on page 27'' when the corresponding \cmd{label} is not on the
+  same page.  (The way that the page references are generated requires
+  multiple passes of running \latex, which is one of the reasons why using
+  \ninemlpkg requires 2--3 runs of \latex to generate final cross-references.)
+
+\item \texttt{varwidth}: This defines a \texttt{varwidth} environment that
+  acts much like \texttt{minipage}, but produces output with a width that is
+  the natural width of its contents.
+
+\item \texttt{wasysym}: Similar to \texttt{amssymb}, this \latex package
+  defines another set of symbols and special characters.  
+
+\item \texttt{xcolor}: This package defines a large number of color names and
+  associated commands.
+
+\item \texttt{xspace}: A marvelous little extension that provides just one
+  very useful command, \cmd{xspace}.  The \cmd{xspace} command can be used
+  at the end of a macro designed to be expanded into text; it adds a space
+  unless the macro is followed by a punctuation symbol.  This makes it
+  possible to invoke the macro in text without adding an empty
+  \texttt{\{\}} pair after it---something that would otherwise be a problem
+  because \latex would consume the space character following the macro
+  invocation, leading to a missing space in the final output.  The commands
+  such as \cmd{SBML} are defined using \cmd{xspace}, so that in running
+  text, you can write ``one two \cmd{SBML} three four'' and it will produce
+  ``one two \SBML three four'' rather than ``one two \class{SBML}three
+  four''.
+
+\end{itemize}
+
+
+
+% \subsection{Other potentially useful \latex classes \emph{not} preloaded by \ninemlpkg}
+
+% There are \emph{many} \latex classes available in the world.  It would be
+% impossible to do them all justice here, but authors may find some of the
+% following useful in the current context of SBML specification documents.
+
+% tikz
+% mhchem
+
+
+
+\section{Acknowledgments}
+
+This work was made possible by grant R01 GM070923 from the NIH National
+Institute of General Medical Sciences (USA) for continued development and
+support of SBML and related software infrastructure.
+
+
+\clearpage
+\bibliography{sbmlpkgspec}
+
+
+
+% -----------------------------------------------------------------------------
+% End of document
+% -----------------------------------------------------------------------------
+
+\end{document}

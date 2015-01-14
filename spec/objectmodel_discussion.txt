@@ -1,0 +1,194 @@
+
+
+
+
+
+
+
+
+
+
+
+Intersection of object models
+LEMS/python lib9ml/chicken 9ml
+
+
+
+ComponentType -> Model definition/Template/Class
+(ComponentClass)
+
+Component     -> Model instance/Filled in template/Object
+(ComponentInstance)
+
+CONSENSUS:
+
+ComponentClass
+Component
+
+id attribute for instances
+name for abstraction layer
+
+
+Camel case for classes
+* instances have first letter lower case
+
+py9ml -> Component -> ComponentClass
+
+
+Behaviour <-> Implementation (Ivan conceptually needing later)
+
+* Leave out OnStart from LEMS/9ML intersection
+-> 9ML initial conditions are external
+-> Initial regime is also an initial condition, and should use the 
+   same mechanism
+
+9ML -> Model mixin to ComponentType
+
+Interface includes eventports, 
+-> OnEvent 
+
+Inheritance
+-> Need machanism to Include from a Standard Library of types
+
+
+Transitions become anonymous attributes of Regimes with "to" atrribute only
+
+LEMS: Sequence is important in a Transition
+
+OnCondition & OnEvent seperation in py9ml (coupled to serpation of interface declaration including event ports)
+
+python API as follows:
+On("v>vth", do=, to=)
+On("spikeinput", do, to) 
+
+but difference will be maintained in XML, i.e. declared explicitly.
+
+9ML
+condition="V &gt; theta"
+LEMS
+test="v .gt. threshold"
+-> LEMS will try to converge to 9ML style
+
+
+LEMS
+<TimeDerivative variable="v" value="(current + gleak * (vleak - v)) / capacitance" />
+
+9ML
+<ode independent_variable="t" name="ODE0" dependent_variable="V">
+        <math-inline>0.04*V*V + 5*V + 140.0 - U + Isyn</math-inline>
+      </ode>
+LEMS will try to converge to use 9ML ODE.  9ML name can be dropped.
+9ML ODE should be uppercase.
+
+CONSENSUS:
+
+<ODE independentVariable="t" dependentVariable="V">
+        <MathInline>0.04*V*V + 5*V + 140.0 - U + Isyn</MathInline>
+% or something like
+	<MathML>
+
+	</MathML>
+</ODE>
+<!-- if 'independent_variable' is missing, it should be assumed to be 't' -->
+
+math inline and conditions are C expr without conditionals ( ? :)
+Non-vavlid XML characters (i.e. >) are encoded  
+
+LEMS prototyping found this caveat case: 
+
+        <!-- Not the neatest solution... -->
+        <DerivedVariable name="tauExplicit" dimension="none" select="timeCourse/t" onAbsent="-1"/>
+        <DerivedVariable name="infExplicit" dimension="none" select="steadyState/x" onAbsent="-1"/>
+
+        <DerivedVariable name="inf" dimension="none" exposure="inf" value="infExplicit" valueCondition="infExplicit .geq. 0" valueIfFalse="rf/(rf+rr)"/>
+        
+        <DerivedVariable name="tau" dimension="time" exposure="tau" value="tauExplicit" valueCondition="tauExplicit .geq. 0" valueIfFalse="1/((rf+rr) * rateScale)"/>
+
+
+Bindings, Alias, DerivedVariables
+
+LEMS
+        <DerivedVariable name="a" value="(v - midpoint) / scale"/>
+        <DerivedVariable name="x" exposure="x" value="rate * a / (1 - exp(0 
+
+<DerivedVariable name="q10" exposure="q10" dimension="none" value="q10Factor^((celsius - experimentalTemp)/10)"
+
+<DerivedVariable name="rr" dimension="per_time" select="reverseRate/r" onAbsent="-1"/>
+
+
+CONSENSUS
+<DerivedVariable name="a" value="(v - midpoint) / scale"/>
+exposure="a" seems redundant but
+*Python can check that exposure is same as name, and 
+*emit exposure=name
+
+<Constant name="MVOLT" dimension="voltage" value="1mV"/>
+<StateAssignment variable="U" value="v0 * b / MVOLT"/>
+<Constant name="kte" dimension="voltage" value="25.3mV"/>
+* Python may internally not destinguish between Constant and
+  Derived Variable ... but if Constant should be inherited,
+  it should go in the interface, whereas derived variables 
+  should go in implementation 
+
+<transition to="subthreshold_regime" from="subthreshold_regime" name="Transition0" condition="V &gt; theta">
+      <assignment to="V" name="Assignment0">
+        <math-inline>c</math-inline>
+
+
+Children:
+
+LEMS:
+
+9ML:
+
+<ComponentType name="iaf_4coba" extends="iaf">
+
+<Child name="AMPA" type="CoBa"/>
+<Child name="NMDA" type="CoBaNMDA"/>
+<Child name="GABAa" type="CoBa"/>
+<Child name="GABAb" type="CoBa"/>
+
+<Attachment> <-> AnalogPort(mode=recv)
+
+<Connections>
+
+<Connection from="hh1pop[0]/v" to="hh2pop[0]/v" />
+
+</Connections>
+
+<ReduceVariable name="rr" dimension="per_time" select="AMPA/I+"/>
+
+</ComponentType>
+
+
+-> Gap Junctions 
+-> Connecting Events
+-> Delays
+
+
+
+
+
+
+
+Install LEMS
+
+http://neuroml.org/lems/interpreter.html
+
+export LEMS_HOME=$HOME/src/lems-svn
+export PATH=$PATH:/home/emuller/src/lems-svn
+
+find . -maxdepth 1 -mmin -10 -exec mv {} lems_backup \;
+
+
+
+
+TO Decide:
+ - Shall ew call it 'Port' or 'Exposure'
+ - Is 'Interface' needed?
+
+
+
+
+
+

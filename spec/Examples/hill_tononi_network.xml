@@ -1,0 +1,383 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://www.NineML.org/9ML/1.0" name="Hill and Tononi (2005) Network">
+	<import>
+		file://./hill_tononi_connectivity.9ml
+	</import>
+	<quantity name="N">
+		<value>
+			<expression>GridLayout.height*GridLayout.width</expression>
+		</value>
+	</quantity>
+	<group name="Retina">
+		<population name="InputPop">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>RetinaNode</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+	</group>
+	<group name="Thalamus">
+		<population name="RelayPop">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>TpRelay</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<population name="InterPop">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>TpInter</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<set name="All Tp">
+			<select>
+				<any>
+					<equal>
+						<string>population[@name]</string>
+						<string>RelayPop</string>
+					</equal>
+					<equal>
+						<string>population[@name]</string>
+						<string>InterPop</string>
+					</equal>
+				</any>
+			</select>
+		</set>
+		<projection name="TpInter to TpRelay">
+			<source><reference>InterPop</reference></source>
+			<target><reference>All Tp</reference></target>
+			<rule><reference>Thalamic random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Thalamic weight</reference></plasticity>
+		</projection>
+	</group>
+	<group name="Reticular">
+		<population name="ReticularPop">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>RpNeuron</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<projection name="TpInter to TpRelay">
+			<source><reference>ReticularPop</reference></source>
+			<target><reference>ReticularPop</reference></target>
+			<rule><reference>Reticular random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Thalamic weight</reference></plasticity>
+		</projection>
+	</group>
+	<group name="Cortical">
+		<population name="ExPop L23">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>L23pyr</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<population name="InPop L23">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>L23in</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<population name="ExPop L4">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>L4pyr</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<population name="InPop L4">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>L4in</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<population name="ExPop L56">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>L56pyr</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<population name="InPop L56">
+			<number>
+				<reference>N</reference>
+			</number>
+			<prototype><reference>L56in</reference></prototype>
+			<layout><reference>GridLayout</reference></layout>
+		</population>
+		<set name="All L23">
+			<select>
+				<any>
+					<equal>
+						<string>population[@name]</string>
+						<string>ExPop L23</string>
+					</equal>
+					<equal>
+						<string>population[@name]</string>
+						<string>InPop L23</string>
+					</equal>
+				</any>
+			</select>
+		</set>
+		<set name="All L4">
+			<select>
+				<any>
+					<equal>
+						<string>population[@name]</string>
+						<string>ExPop L4</string>
+					</equal>
+					<equal>
+						<string>population[@name]</string>
+						<string>InPop L4</string>
+					</equal>
+				</any>
+			</select>
+		</set>
+		<set name="All L56">
+			<select>
+				<any>
+					<equal>
+						<string>population[@name]</string>
+						<string>ExPop L56</string>
+					</equal>
+					<equal>
+						<string>population[@name]</string>
+						<string>InPop L56</string>
+					</equal>
+				</any>
+			</select>
+		</set>
+		<set name="All L234">
+			<select>
+				<any>
+					<equal>
+						<string>set[@name]</string>
+						<string>All L23</string>
+					</equal>
+					<equal>
+						<string>set[@name]</string>
+						<string>All L4</string>
+					</equal>
+				</any>
+			</select>
+		</set>
+		<projection name="L23 intralaminar">
+			<source><reference>ExPop L23</reference></source>
+			<target><reference>All L23</reference></target>
+			<rule><reference>Cortical random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Cortical weight</reference></plasticity>
+		</projection>
+		<projection name="L4 intralaminar">
+			<source><reference>ExPop L4</reference></source>
+			<target><reference>All L4</reference></target>
+			<rule><reference>Cortical L4 random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Cortical weight</reference></plasticity>
+		</projection>
+		<projection name="L56 intralaminar">
+			<source><reference>ExPop L56</reference></source>
+			<target><reference>All L56</reference></target>
+			<rule><reference>Cortical random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Cortical weight</reference></plasticity>
+		</projection>
+		<projection name="L4 - L23 interlaminar">
+			<source><reference>ExPop L4</reference></source>
+			<target><reference>All L23</reference></target>
+			<rule><reference>Vertical cortical random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Vertical cortical weight</reference></plasticity>
+		</projection>
+		<projection name="L23 - L56 interlaminar">
+			<source><reference>ExPop L23</reference></source>
+			<target><reference>All L56</reference></target>
+			<rule><reference>Vertical cortical random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Cortical weight</reference></plasticity>
+		</projection>
+		<projection name="L56 - L234 interlaminar">
+			<source><reference>ExPop L56</reference></source>
+			<target><reference>All L234</reference></target>
+			<rule><reference>Cortical random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Cortical weight</reference></plasticity>
+		</projection>
+	</group>
+	<group name="Network">
+		<population name="RetinaP">
+			<number>1</number>
+			<prototype><reference>Retina</reference></prototype>
+			<layout><reference>PointLayout</reference></layout>
+		</population>
+		<population name="ThalamusP">
+			<number>1</number>
+			<prototype><reference>Thalamus</reference></prototype>
+			<layout><reference>PointLayout</reference></layout>
+		</population>
+		<population name="ReticularP">
+			<number>1</number>
+			<prototype><reference>Reticular</reference></prototype>
+			<layout><reference>PointLayout</reference></layout>
+		</population>
+		<population name="Cortex Vertical">
+			<number>1</number>
+			<prototype><reference>Cortical</reference></prototype>
+			<layout><reference>PointLayout</reference></layout>
+		</population>
+		<population name="Cortex Horizontal">
+			<number>1</number>
+			<prototype><reference>Cortical</reference></prototype>
+			<layout><reference>PointLayout</reference></layout>
+		</population>
+		<set name="ExPop L56 HV">
+			<select>
+				<any>
+					<equal>
+						<string>set[@name]</string>
+						<string>Cortex Vertical.ExPop L56</string>
+					</equal>
+					<equal>
+						<string>set[@name]</string>
+						<string>Cortex Horizontal.ExPop L56</string>
+					</equal>
+				</any>
+			</select>
+		</set>
+		<set name="ExPop L4 HV">
+			<select>
+				<any>
+					<equal>
+						<string>set[@name]</string>
+						<string>Cortex Vertical.ExPop L4</string>
+					</equal>
+					<equal>
+						<string>set[@name]</string>
+						<string>Cortex Horizontal.ExPop L4</string>
+					</equal>
+				</any>
+			</select>
+		</set>
+		<projection name="L23 crossHV intralaminar">
+			<source><reference>Cortex Horizontal.InPop L23</reference></source>
+			<target><reference>Cortex Vertical.All L23</reference></target>
+			<rule><reference>Cross cortical random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Inhibitory weight</reference></plasticity>
+		</projection>
+		<projection name="L4 crossHV intralaminar">
+			<source><reference>Cortex Horizontal.InPop L4</reference></source>
+			<target><reference>Cortex Vertical.All L4</reference></target>
+			<rule><reference>Cross cortical random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Inhibitory weight</reference></plasticity>
+		</projection>
+		<projection name="L56 crossHV intralaminar">
+			<source><reference>Cortex Horizontal.InPop L56</reference></source>
+			<target><reference>Cortex Vertical.All L56</reference></target>
+			<rule><reference>Cross cortical random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Inhibitory weight</reference></plasticity>
+		</projection>
+		<projection name="L23 crossVH intralaminar">
+			<source><reference>Cortex Vertical.InPop L23</reference></source>
+			<target><reference>Cortex Horizontal.All L23</reference></target>
+			<rule><reference>Cross cortical random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Inhibitory weight</reference></plasticity>
+		</projection>
+		<projection name="L4 crossVH intralaminar">
+			<source><reference>Cortex Vertical.InPop L4</reference></source>
+			<target><reference>Cortex Horizontal.All L4</reference></target>
+			<rule><reference>Cross cortical random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Inhibitory weight</reference></plasticity>
+		</projection>
+		<projection name="L56 crossVH intralaminar">
+			<source><reference>Cortex Vertical.InPop L56</reference></source>
+			<target><reference>Cortex Horizontal.All L56</reference></target>
+			<rule><reference>Cross cortical random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Inhibitory weight</reference></plasticity>
+		</projection>
+		<projection name="Cortico thalamic">
+			<source><reference>ExPop L56 HV</reference></source>
+			<target><reference>ThalamusP.All Tp</reference></target>
+			<rule><reference>Cortico thalamic random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Cortical weight</reference></plasticity>
+		</projection>
+		<projection name="Cortico reticular">
+			<source><reference>ExPop L56 HV</reference></source>
+			<target><reference>ReticularP.ReticularPop</reference></target>
+			<rule><reference>Cortico thalamic random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>CorticoReticular weight</reference></plasticity>
+		</projection>
+		<projection name="Thalamo cortical L4 V">
+			<source><reference>ThalamusP.RelayPop</reference></source>
+			<target><reference>Cortex Vertical.ExPop L4</reference></target>
+			<rule><reference>Thalamo Cortical L4 V random fan-in</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Thalamo cortical weight</reference></plasticity>
+		</projection>
+		<projection name="Thalamo cortical L4 H">
+			<source><reference>ThalamusP.RelayPop</reference></source>
+			<target><reference>Cortex Horizontal.ExPop L4</reference></target>
+			<rule><reference>Thalamo Cortical L4 H random fan-in</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Thalamo cortical weight</reference></plasticity>
+		</projection>
+		<projection name="Thalamo cortical L56 V">
+			<source><reference>ThalamusP.RelayPop</reference></source>
+			<target><reference>Cortex Vertical.ExPop L56</reference></target>
+			<rule><reference>Thalamo Cortical L56 V random fan-in</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Thalamo cortical weight</reference></plasticity>
+		</projection>
+		<projection name="Thalamo cortical L56 H">
+			<source><reference>ThalamusP.RelayPop</reference></source>
+			<target><reference>Cortex Horizontal.ExPop L56</reference></target>
+			<rule><reference>Thalamo Cortical L56 H random fan-in</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Thalamo cortical weight</reference></plasticity>
+		</projection>
+		<projection name="Thalamo cortical L4 Diffuse">
+			<source><reference>ThalamusP.RelayPop</reference></source>
+			<target><reference>ExPop L4 HV</reference></target>
+			<rule><reference>Thalamo Cortical Gaussian fan-in</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Thalamo cortical weight</reference></plasticity>
+		</projection>
+		<projection name="Thalamo cortical L56 Diffuse">
+			<source><reference>ThalamusP.RelayPop</reference></source>
+			<target><reference>ExPop L56 HV</reference></target>
+			<rule><reference>Thalamo Cortical Gaussian fan-in</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Thalamo cortical weight</reference></plasticity>
+		</projection>
+		<projection name="Thalamo reticular">
+			<source><reference>ThalamusP.RelayPop</reference></source>
+			<target><reference>ReticularP.ReticularPop</reference></target>
+			<rule><reference>Vertical cortical random Gaussian fan-out</reference></rule>
+			<response><reference>AMPA</reference></response>
+			<plasticity><reference>Cortical weight</reference></plasticity>
+		</projection>
+		<projection name="Reticular thalamic">
+			<source><reference>ReticularP.ReticularPop</reference></source>
+			<target><reference>ThalamusP.All Tp</reference></target>
+			<rule><reference>Reticulo thalamic random Gaussian fan-out</reference></rule>
+			<response><reference>GABA_A</reference></response>
+			<plasticity><reference>Inhibitory weight</reference></plasticity>
+		</projection>
+	</group>
+</nineml>
+

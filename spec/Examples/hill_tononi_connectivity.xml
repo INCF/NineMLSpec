@@ -1,0 +1,370 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://www.NineML.org/9ML/1.0" name="Hill and Tononi (2005) Connectivity">
+	<import language="NINeML">
+		http://www.NineML.org/1.0/dimensions.9ml
+	</import>
+	<quantity name="visSize">
+		<value>
+			<scalar>8.0</scalar>
+			<unit>degrees</unit>
+		</value>
+	</quantity>
+	<quantity name="dpc">
+		<value>
+			<expression>visSize/(GridLayout.height-1)</expression>
+		</value>
+	</quantity>
+	<component name="delays">
+		<definition language="NINeML">
+			http://www.NineML.org/distributions/UniformDist.9ml
+		</definition>
+		<properties>
+			<quantity name="min">
+				<value>
+					<scalar>1.75</scalar>
+					<unit>ms</unit>
+				</value>
+			</quantity>
+			<quantity name="max">
+				<value>
+					<scalar>2.25</scalar>
+					<unit>ms</unit>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="CT delays">
+		<definition language="NINeML">
+			http://www.NineML.org/distributions/UniformDist.9ml
+		</definition>
+		<properties>
+			<quantity name="min">
+				<value>
+					<scalar>7.5</scalar>
+					<unit>ms</unit>
+				</value>
+			</quantity>
+			<quantity name="max">
+				<value>
+					<scalar>8.5</scalar>
+					<unit>ms</unit>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="TC delays">
+		<definition language="NINeML">
+			http://www.NineML.org/distributions/UniformDist.9ml
+		</definition>
+		<properties>
+			<quantity name="min">
+				<value>
+					<scalar>2.75</scalar>
+					<unit>ms</unit>
+				</value>
+			</quantity>
+			<quantity name="max">
+				<value>
+					<scalar>3.25</scalar>
+					<unit>ms</unit>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="thalamo cortical V mask">
+		<definition language="NINeML">
+			http://www.NineML.org/1.0/masks/RectangularMask.9ml
+		</definition>
+		<properties>
+			<quantity name="width">
+				<value>
+					<expression>1*dpc</expression>
+				</value>
+			</quantity>
+			<quantity name="height">
+				<value>
+					<expression>4*dpc</expression>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="thalamo cortical H mask">
+		<definition language="NINeML">
+			http://www.NineML.org/1.0/masks/RectangularMask.9ml
+		</definition>
+		<properties>
+			<quantity name="width">
+				<value>
+					<expression>4*dpc</expression>
+				</value>
+			</quantity>
+			<quantity name="height">
+				<value>
+					<expression>1*dpc</expression>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="thalamic mask">
+		<definition language="NINeML">
+			http://www.NineML.org/1.0/masks/SquareMask.9ml
+		</definition>
+		<properties>
+			<quantity name="width">
+				<value>
+					<expression>4*dpc</expression>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="mask">
+		<reference>
+			thalamic mask
+		</reference>
+		<properties>
+			<quantity name="width">
+				<value>
+					<expression>24*dpc</expression>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="L4 mask">
+		<reference>
+			thalamic mask
+		</reference>
+		<properties>
+			<quantity name="width">
+				<value>
+					<expression>14*dpc</expression>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="CT mask">
+		<reference>
+			thalamic mask
+		</reference>
+		<properties>
+			<quantity name="width">
+				<value>
+					<expression>10*dpc</expression>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Thalamic random Gaussian fan-out">
+		<definition language="NINeML">
+			http://www.NineML.org/connections/GaussianRP.9ml
+		</definition>
+		<properties>
+			<quantity name="mean">
+				<value>
+					<scalar>0</scalar>
+					<unit>degrees</unit>
+				</value>
+			</quantity>
+			<quantity name="std_deviation">
+				<value>
+					<expression>7.5*dpc</expression>
+				</value>
+			</quantity>
+			<quantity name="max_probability">
+				<value>
+					<scalar>0.25</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+			<quantity name="cutoff">
+				<reference>thalamic mask</reference>
+			</quantity>
+			<quantity name="direction">
+				<selection>divergent</selection>
+			</quantity>
+			<quantity name="delay">
+				<reference>delays</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Cross cortical random Gaussian fan-out">
+		<reference>
+			Thalamic random Gaussian fan-out
+		</reference>
+		<properties>
+			<quantity name="cutoff">
+				<reference>L4 mask</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Reticulo thalamic random Gaussian fan-out">
+		<reference>
+			Thalamic random Gaussian fan-out
+		</reference>
+		<properties>
+			<quantity name="max_probability">
+				<value>
+					<scalar>0.15</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+			<quantity name="cutoff">
+				<reference>mask</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Reticular random Gaussian fan-out">
+		<reference>
+			Thalamic random Gaussian fan-out
+		</reference>
+		<properties>
+			<quantity name="max_probability">
+				<value>
+					<scalar>0.5</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+			<quantity name="cutoff">
+				<reference>mask</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Cortico thalamic random Gaussian fan-out">
+		<reference>
+			Thalamic random Gaussian fan-out
+		</reference>
+		<properties>
+			<quantity name="max_probability">
+				<value>
+					<scalar>0.5</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+			<quantity name="cutoff">
+				<reference>CT mask</reference>
+			</quantity>
+			<quantity name="delay">
+				<reference>CT delays</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Vertical cortical random Gaussian fan-out">
+		<reference>
+			Thalamic random Gaussian fan-out
+		</reference>
+		<properties>
+			<quantity name="max_probability">
+				<value>
+					<scalar>1.0</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+			<quantity name="cutoff">
+				<reference>thalamic mask</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Cortical random Gaussian fan-out">
+		<reference>
+			Reticular random Gaussian fan-out
+		</reference>
+		<properties>
+			<quantity name="max_probability">
+				<value>
+					<scalar>0.05</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Cortical L4 random Gaussian fan-out">
+		<reference>
+			Cortical random Gaussian fan-out
+		</reference>
+		<properties>
+			<quantity name="cutoff">
+				<reference>L4 mask</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Thalamo Cortical L4 V random fan-in">
+		<definition language="NINeML">
+			http://www.NineML.org/connections/UniformRP.9ml
+		</definition>
+		<properties>
+			<quantity name="probability">
+				<value>
+					<scalar>0.5</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+			<quantity name="cutoff">
+				<reference>thalamo cortical V mask</reference>
+			</quantity>
+			<quantity name="direction">
+				<selection>convergent</selection>
+			</quantity>
+			<quantity name="delay">
+				<reference>TC delays</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Thalamo Cortical L56 V random fan-in">
+		<reference>
+			Thalamo Cortical L4 V random fan-in
+		</reference>
+		<properties>
+			<quantity name="probability">
+				<value>
+					<scalar>0.3</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Thalamo Cortical L4 H random fan-in">
+		<reference>
+			Thalamo Cortical L4 V random fan-in
+		</reference>
+		<properties>
+			<quantity name="cutoff">
+				<reference>thalamo cortical H mask</reference>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Thalamo Cortical L56 H random fan-in">
+		<reference>
+			Thalamo Cortical L4 H random fan-in
+		</reference>
+		<properties>
+			<quantity name="probability">
+				<value>
+					<scalar>0.3</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+		</properties>
+	</component>
+	<component name="Thalamo Cortical Gaussian fan-in">
+		<reference>
+			Thalamic random Gaussian fan-out
+		</reference>
+		<properties>
+			<quantity name="probability">
+				<value>
+					<scalar>0.1</scalar>
+					<unit>none</unit>
+				</value>
+			</quantity>
+			<quantity name="cutoff">
+				<reference>CT mask</reference>
+			</quantity>
+			<quantity name="direction">
+				<selection>convergent</selection>
+			</quantity>
+			<quantity name="delay">
+				<reference>TC delays</reference>
+			</quantity>
+		</properties>
+	</component>
+</nineml>
+

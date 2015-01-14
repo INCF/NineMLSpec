@@ -1,0 +1,36 @@
+
+(*
+   Simple Model of Spiking Neurons, Izhikevich  E
+
+   IEEE Transactions on Neural Networks (2003) 14:1569- 1572
+ 
+*) 
+
+component Izhikevich03 =
+struct
+
+  binding construct t V U k1 k2 k3 theta a b c d spike tspike Isyn =
+
+    binding subthreshold_eq = [ 
+                                [ d (V t) =  (k1 * V * V) + (k2 * V) + k3 + (- U) + Isyn ]
+                                [ d (U t) =  a * ((b * V) - U) ]
+                              ]
+
+    binding threshold_detect  =  [ spike = (V > theta) ]
+
+    binding tspike_set        =  [ tspike = (if spike then t else tspike) ]
+
+    binding subthreshold_regime  = DiagramLib.SEQUENCE subthreshold_eq (DiagramLib.SEQUENCE threshold_detect tspike_set)
+		 
+    binding refractory_eq        = [ 
+                                     [ t      =  t ]
+				     [ spike  = false ]
+				     [ tspike = tspike ]
+				     [ V      = c ]
+				     [ U      = (U + d) ] 
+                                    ]
+
+    return   DiagramLib.TRANSIENT subthreshold_regime refractory_eq spike 
+
+end
+

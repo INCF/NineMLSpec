@@ -1,0 +1,178 @@
+Starting with XML schema prototyping
+
+Summarizing and comparing present chicken and python XML schemas
+
+Chicken
+-------
+
+    <binding name="RS">
+      <value>
+	<tuple>
+	  <left>
+	    <const>
+	      <label>diagram</label></const></left>
+	  <right>
+	    <tuple>
+	      <left>
+		<const>
+		  <label>TRANSIENT</label></const></left>
+
+
+This represents binding RS = Tuple('diagram','TRANSIENT' ... ) 
+#i.e. Tuple('type', 'subtype', args) whereby in the XML, tuples are
+#pairs, which are nested implying concatenation.  This is perhaps
+# a scheme implementation detail, not crucal to official spec.
+
+Native syntax has pre evaluated Closure XML schema, and post-Closure XML.
+
+9ML XML Object Model schema is functionally something inbetween:
+Like former (pre-evaluated closure) in that:
+- it needs to be validated
+- Closure mechanism needs to be mirrored in the XML by some 
+  embedding or encoding of a Referening system (in contrast to XML's
+  native referencing features) ... consult with XML experts in TF.
+- But content should be 
+Like latter (post-evaluted closure) in that:
+- Content and concepts are not verbatim native syntax but
+  already constructed value in the 9ML object model.
+
+Python XML:
+- math-inline is on TODO ... to be come MathML, etc.
+  
+  <diagram:Regime>
+      <diagram:ODE independent_variable="t" name="ODE1" dependent_variable="U">
+        	   			   
+	<math-inline>a*(b*V - U)</math-inline>
+      </diagram:ODE>
+
+
+
+
+Propagator
+- IVP
+- 
+
+Classes of solver ... we are attacking IVPs now.
+
+dv/d(indep variable) = 
+
+V' = F(V)
+
+<diagram:Regime>
+
+<diagram:ODE indepent_variable="t" dependent_variable="V">-V/tau</diagram:ODE>
+
+# name here ... for that derivative matrix ... Jacobian
+# partial to full derivatives
+
+<diagram:Regime>
+
+
+
+Revisiting the ports-events branch changes to the object model:
+Union->Regime
+ 
+Ivan would like a further evaluation period.
+Can we use a namespace system to allow restricted vs general Diagram object models.
+
+lunch
+
+
+--------
+
+Class
+- Has a class name
+- Has polymorphism (it has sub-types which are considered as also having super-type)
+- Has attributes 
+
+E.g. In Chicken "Object System", a Tuple encodes all objects (Not
+Closure, not primitive (constant)).  The first element is the "class
+name", optional sub
+
+
+Attributes:
+
+
+OrderedCollection
+
+Namespace:
+
+- Consists of Bindings, which are Key:Value pairs, unordered.
+- It is analagous to a python dictionary.
+
+A well accepted design pattern/idiom for name protection when many components should work together 
+in a single program.  
+
+- Nesting or namespaces is allowed.
+
+- 
+
+
+c1 = nineml.Namespace(izhikevich=...,
+
+                      x = izhikevitch
+
+                      )
+
+c1.izhikevich = 
+
+
+AL Model construction results in a Namespace as the final product.  
+That is a Namespace is the toplevel "container/collection" for a model specification.
+
+Here we are using "contianer" in a general compuiter science sense that a container may be:
+an ordered collection,
+an unorder collection (set),
+an named collection,
+a named ordered collection.
+
+
+As such, the top level element in an AL XML schema is:
+
+<?xml version='1.0' encoding='UTF-8'?>
+<nineml xmlns="http://nineml.org/9ML/0.1">
+  <A name="Izhikevich">
+    <Regime></Regime>
+    <Regime></Regime>
+    <Transitions></Transition>
+    ...
+
+  </A>
+</nineml>
+
+Lots of stuff on Namespace to Object Model for NetworkEntityModel, ConnectivityModel, and
+Model which contains the latter two.
+
+
+Diagram
+
+
+Regime
+
+
+
+Transition
+
+
+Assignment
+
+
+ODE
+
+
+Relation
+
+
+Something for Constants, Physical Constants
+
+
+Parametrized Binding (still need a name) Relation/Macro/Equivalence
+
+
+
+TODO: Tranistions need to be synced up
+Assignments in Regimes needed more discussion ... Chaining of Transitions
+
+
+Ports
+
