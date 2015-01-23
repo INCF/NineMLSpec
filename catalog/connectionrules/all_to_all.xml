@@ -1,7 +1,0 @@
-<NineML xmlns="http://nineml.net/9ML/1.0">
-  <ComponentClass name="AllToAll">
-    <ConnectionRule>
-      <StandardLibrary>AllToAll</StandardLibrary>
-    </ConnectionRule>
-  </ComponentClass>
-</NineML>

@@ -9,8 +9,8 @@ import os
 import sys
 
 from nineml.exceptions import NineMLRuntimeError
-from nineml.utility import restore_sys_path
-from nineml.utility import LocationMgr
+from nineml.utils import restore_sys_path
+from nineml.utils import LocationMgr
 from nineml.abstraction_layer import DynamicsClass
 
 
@@ -78,7 +78,7 @@ class TestableComponent(object):
         self.mod = load_py_module(filename)
 
         # Get the component functor:
-        if not cls.functor_name in self.mod.__dict__.keys():
+        if cls.functor_name not in self.mod.__dict__.keys():
             err = """Can't load TestableComponnet from %s""" % self.filename
             err += """Can't find required method: %s""" % cls.functor_name
             raise NineMLRuntimeError(err)
@@ -88,10 +88,8 @@ class TestableComponent(object):
         # Check the functor will actually return us an object:
         try:
             c = self.component_functor()
-        except Exception, e:
-            print e
-            raise
-            # raise NineMLRuntimeError('component_functor() threw an exception') @IgnorePep8
+        except Exception:
+            raise NineMLRuntimeError('component_functor() threw an exception')
 
         if not isinstance(c, DynamicsClass):
             raise NineMLRuntimeError('Functor does not return Component Class')

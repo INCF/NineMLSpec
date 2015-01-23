@@ -4,8 +4,6 @@
     <Parameter name="mean"/>
     <Parameter name="covarianceMatrix"/>
     <Parameter name="degreesOfFreedom"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/multivariate-student-t.xml">MultivariateStudentTDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/multivariate-student-t.xml"/>
   </ComponentClass>
 </NineML>

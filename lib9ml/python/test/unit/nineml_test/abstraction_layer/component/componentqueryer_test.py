@@ -4,15 +4,15 @@ import unittest
 from nineml.abstraction_layer import (Regime, On, AnalogSendPort,
                                       AnalogReceivePort, NamespaceAddress,
                                       OutputEvent)
-from nineml.abstraction_layer.dynamics import ComponentClass
+from nineml.abstraction_layer.dynamics import DynamicsClass as ComponentClass
 
 
-class ComponentQueryer_test(unittest.TestCase):
+class ComponentClassQueryer_test(unittest.TestCase):
 
     def test_event_send_recv_ports(self):
         # Signature: name(self)
                 # Get the ``recv`` EventPorts
-        # from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
+        # from nineml.abstraction_layer.component.componentqueryer import ComponentClassQueryer
 
         # Check inference of output event ports:
         c = ComponentClass(
@@ -96,7 +96,7 @@ class ComponentQueryer_test(unittest.TestCase):
                 #
                 # This method returns a d list of tuples of the
                 # the fully-qualified port connections
-        # from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
+        # from nineml.abstraction_layer.component.componentqueryer import ComponentClassQueryer
 
         # Signature: name(self)
                 # Get the namespace address of this component
@@ -139,7 +139,7 @@ class ComponentQueryer_test(unittest.TestCase):
         # Signature: name
                 # Return an iterator over all the port (Event & Analog) in the
                 # component
-        # from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
+        # from nineml.abstraction_layer.component.componentqueryer import ComponentClassQueryer
 
 
         c = ComponentClass(
@@ -175,7 +175,7 @@ class ComponentQueryer_test(unittest.TestCase):
     def test_regime(self):
         # Signature: name(self, name=None)
                 # Find a regime in the component by name
-        # from nineml.abstraction_layer.component.componentqueryer import ComponentQueryer
+        # from nineml.abstraction_layer.component.componentqueryer import ComponentClassQueryer
 
 
         c = ComponentClass(name='cl',

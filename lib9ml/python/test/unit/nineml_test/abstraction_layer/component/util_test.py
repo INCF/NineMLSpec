@@ -3,9 +3,9 @@
 # Automatically Generated Testing Skeleton Template:
 import unittest
 
-
-from nineml.abstraction_layer.dynamics.component.expressions import StrToExpr
-from nineml.maths import MathUtil
+from nineml.abstraction_layer.dynamics import StateAssignment, TimeDerivative
+from nineml.abstraction_layer.expressions import Alias
+from nineml.abstraction_layer.expressions.utils import MathUtil
 
 # Testing Skeleton for function:
 
@@ -48,7 +48,7 @@ class MathUtil_test(unittest.TestCase):
                 # No Docstring
         # from nineml.abstraction_layer.component.util import MathUtil
 
-        e = StrToExpr.alias('a := b*c + d/(e*sin(f+g/e)) + b1 + e_ / exp(12*g)')
+        e = Alias.from_str('a := b*c + d/(e*sin(f+g/e)) + b1 + e_ / exp(12*g)')
 
         rhs_sub = MathUtil.get_rhs_substituted(e, {'b': 'B', 'e': 'E'})
         self.assertEqual(
@@ -79,7 +79,7 @@ class MathUtil_test(unittest.TestCase):
                 # No Docstring
         # from nineml.abstraction_layer.component.util import MathUtil
 
-        e = StrToExpr.alias('a := b*c + d/(e_*sin(f+g/e_)) + b1 + e_ / exp(12*g)')
+        e = Alias.from_str('a := b*c + d/(e_*sin(f+g/e_)) + b1 + e_ / exp(12*g)')
 
         rhs_sub = MathUtil.get_prefixed_rhs_string(e, prefix='U_', exclude=['c', 'e_'])
         self.assertEqual(
@@ -117,17 +117,17 @@ class StrToExpr_test(unittest.TestCase):
         # Signature: name(cls, alias_string)
                 # Returns True if the string could be an alias
         for expr_str, (exp_lhs, exp_rhs) in Aliases:
-            self.assertTrue(StrToExpr.is_alias(expr_str))
+            self.assertTrue(Alias.is_alias_str(expr_str))
 
         for expr_str, (exp_dep, exp_indep, exp_rhs) in TimeDerivatives:
-            self.assertFalse(StrToExpr.is_alias(expr_str))
+            self.assertFalse(Alias.is_alias_str(expr_str))
 
         for expr_str, (exp_lhs, exp_rhs) in Assignments:
-            self.assertFalse(StrToExpr.is_alias(expr_str))
+            self.assertFalse(Alias.is_alias_str(expr_str))
 
     def test_alias(self):
         for expr_str, (exp_lhs, exp_rhs) in Aliases:
-            alias = StrToExpr.alias(expr_str)
+            alias = Alias.from_str(expr_str)
 
             self.assertEqual(alias.lhs, exp_lhs)
             self.assertEqual(alias.rhs, exp_rhs)
@@ -136,7 +136,7 @@ class StrToExpr_test(unittest.TestCase):
         # Signature: name(cls, state_assignment_string)
                 # No Docstring
         for expr_str, (exp_lhs, exp_rhs) in Assignments:
-            ass = StrToExpr.state_assignment(expr_str)
+            ass = StateAssignment.from_str(expr_str)
 
             self.assertEqual(ass.lhs, exp_lhs)
             self.assertEqual(ass.rhs, exp_rhs)
@@ -145,7 +145,7 @@ class StrToExpr_test(unittest.TestCase):
         # Signature: name(cls, time_derivative_string)
                 # Creates an TimeDerivative object from a string
         for expr_str, (exp_dep, exp_indep, exp_rhs) in TimeDerivatives:
-            td = StrToExpr.time_derivative(expr_str)
+            td = TimeDerivative.from_str(expr_str)
 
             self.assertEquals(td.dependent_variable, exp_dep)
             self.assertEquals(td.independent_variable, exp_indep)

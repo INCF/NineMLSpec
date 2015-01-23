@@ -5,9 +5,9 @@ Tests for the user_layer module
 
 import unittest
 from lxml import etree
-from nineml.user_layer.components.interface import Property
+from nineml.user_layer import Property
 from nineml.abstraction_layer import Unit, Dimension
-from nineml.context import Context
+from nineml.document import Document
 
 voltage = Dimension('voltage', m=1, l=2, t=-3, i=-1)
 mV = Unit(name='mV', dimension=voltage, power=-3)
@@ -59,7 +59,7 @@ class ParameterTest(unittest.TestCase):
         p1 = Property("tau_m", 20.0, mV)
         element = p1.to_xml()
         xml = etree.tostring(element, pretty_print=True)
-        p2 = Property.from_xml(element, Context(mV=mV))
+        p2 = Property.from_xml(element, Document(mV=mV))
         self.assertEqual(p1, p2)
 
 

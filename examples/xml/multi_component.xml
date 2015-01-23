@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NineML xmlns="http://nineml.net/9ML/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://nineml.net/9ML/1.0/NineML_v1.0.xsd">
+  <MultiComponent name="HodgkinHuxleyContainer">
+    <SubComponent name="Na">
+      <Component>
+        <Definition>PyramidalNa</Definition>
+        <Property name="gbar" units="uS">
+          <SingleValue>0.0025</SingleValue>
+        </Property>
+      </Component>
+      <ReceiveConnection port="V">
+        <FromSubComponent component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponent>
+    <SubComponent name="K">
+      <Component>
+        <Prototype>PyramidalK</Prototype>
+        <Property name="gbar" units="uS">
+          <SingleValue>0.0036</SingleValue>
+        </Property>
+      </Component>
+      <ReceiveConnection port="V">
+        <FromSubComponent component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponent>
+    <SubComponent name="leak">
+      <Component>
+        <Definition>Leak</Definition>
+        <Property name="g" units="uS">
+          <SingleValue>0.001</SingleValue>
+        </Property>
+        <Property name="e_rev" units="mV">
+          <SingleValue>-21</SingleValue>
+        </Property>
+      </Component>
+      <ReceiveConnection port="V">
+        <FromSubComponent component="membrane" port="V"/>
+      </ReceiveConnection>
+    </SubComponent>
+    <SubComponent name="membrane">
+      <Component>
+        <Definition url="http://nineml.net/9ML/2.0/catalog/basicMembrane.xml"
+          >BasicMembrane</Definition>
+        <Property name="length" units="um">
+          <SingleValue>15.0</SingleValue>
+        </Property>
+        <Property name="axialResistance" units="ohm_per_cm">
+          <SingleValue>100.0</SingleValue>
+        </Property>
+        <Property name="diameter" units="um">
+          <SingleValue>15.0</SingleValue>
+        </Property>
+        <Property name="C" units="uF">
+          <SingleValue>1.0</SingleValue>
+        </Property>
+      </Component>
+      <ReceiveConnection port="i">
+        <FromSubComponent component="Na" name="i"/>
+        <FromSubComponent component="K" name="i"/>
+        <FromSubComponent component="leak" name="i"/>
+      </ReceiveConnection>
+    </SubComponent>
+    <PortExposure name="membraneVoltage" component="membrane" port="V"/>
+    <PortExposure name="membraneCurrent" component="membrane" port="i">
+      <Annotations>
+        <Comment>This can be used to connect current synaptic input</Comment>
+      </Annotations>
+    </PortExposure>
+  </MultiComponent>
+  <Dimension name="time" t="1"/>
+  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="area" l="2"/>
+  <Dimension name="length" l="1"/>
+  <Unit symbol="mV" dimension="voltage" power="-3"/>
+  <Unit symbol="um" dimension="length" power="-3"/>
+  <Unit symbol="ms" dimension="time" power="-3"/>
+  <Unit symbol="cm_square" dimension="area" power="-4"/>
+  <Unit symbol="mS" dimension="conductance" power="-3"/>
+</NineML>

@@ -1,7 +1,0 @@
-<NineML xmlns="http://nineml.org/9ML/0.1">
-  <ComponentClass name="OneToOne">
-    <ConnectionRule>
-      <StandardLibrary>OneToOne</StandardLibrary>
-    </ConnectionRule>
-  </ComponentClass>
-</NineML>

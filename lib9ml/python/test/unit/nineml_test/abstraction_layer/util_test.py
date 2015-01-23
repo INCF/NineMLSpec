@@ -11,5 +11,6 @@ class Testcheck_flat_component(unittest.TestCase):
     def test_check_flat_component(self):
         # Signature: name(func)
                 # No Docstring
-        warnings.warn('Tests not implemented')
+#         warnings.warn('Tests not implemented')
+        pass
         # raise NotImplementedError()

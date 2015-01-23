@@ -1,31 +1,52 @@
 """
-docstring needed
+This file contains the DynamicsValidator class for validating component
 
 :copyright: Copyright 2010-2013 by the Python lib9ML team, see AUTHORS.
 :license: BSD-3, see LICENSE for details.
 """
 
-# from nineml.abstraction_layer.visitors import ActionVisitor
+from .general import (
+    TimeDerivativesAreDeclaredDynamicsValidator,
+    StateAssignmentsAreOnStateVariablesDynamicsValidator,
+    AliasesAreNotRecursiveDynamicsValidator,
+    NoUnresolvedSymbolsDynamicsValidator,
+    RegimeGraphDynamicsValidator, NoDuplicatedObjectsDynamicsValidator,
+    RegimeOnlyHasOneHandlerPerEventDynamicsValidator,
+    CheckNoLHSAssignmentsToMathsNamespaceDynamicsValidator)
+from .namingconflicts import (
+    LocalNameConflictsDynamicsValidator,
+    DimensionNameConflictsDynamicsValidator,
+    DuplicateRegimeNamesDynamicsValidator)
+from .ports import (
+    EventPortsDynamicsValidator, OutputAnalogPortsDynamicsValidator,
+    PortConnectionsDynamicsValidator)
+from .types import (
+    TypesDynamicsValidator)
 
-from ..visitors import ActionVisitor
 
+class DynamicsValidator(object):
 
-class ComponentValidatorBase(object):
+    """Class for grouping all the component-validations tests together"""
 
-    def get_warnings(self):
-        raise NotImplementedError()
-
-
-class ComponentValidatorPerNamespace(ActionVisitor, ComponentValidatorBase):
-
-    def __init__(self, explicitly_require_action_overrides=True):
-        ActionVisitor.__init__(self,
-            explicitly_require_action_overrides=explicitly_require_action_overrides)  # @IgnorePep8
-        ComponentValidatorBase.__init__(self)
-
-    # Over-ride this function, so we can extract out the
-    # namespace, then propogate this as a parameter.
-    def visit_componentclass(self, component, **kwargs):
-        namespace = component.get_node_addr()
-        ActionVisitor.visit_componentclass(self, component,
-                                           namespace=namespace)
+    @classmethod
+    def validate_componentclass(cls, componentclass):
+        """
+        Tests a componentclassclass against a variety of tests, to verify its
+        internal structure
+        """
+        # Check class structure:
+        TypesDynamicsValidator(componentclass)
+        NoDuplicatedObjectsDynamicsValidator(componentclass)
+        DuplicateRegimeNamesDynamicsValidator(componentclass)
+        LocalNameConflictsDynamicsValidator(componentclass)
+        DimensionNameConflictsDynamicsValidator(componentclass)
+        EventPortsDynamicsValidator(componentclass)
+        OutputAnalogPortsDynamicsValidator(componentclass)
+        TimeDerivativesAreDeclaredDynamicsValidator(componentclass)
+        StateAssignmentsAreOnStateVariablesDynamicsValidator(componentclass)
+        AliasesAreNotRecursiveDynamicsValidator(componentclass)
+        NoUnresolvedSymbolsDynamicsValidator(componentclass)
+        PortConnectionsDynamicsValidator(componentclass)
+        RegimeGraphDynamicsValidator(componentclass)
+        RegimeOnlyHasOneHandlerPerEventDynamicsValidator(componentclass)
+        CheckNoLHSAssignmentsToMathsNamespaceDynamicsValidator(componentclass)

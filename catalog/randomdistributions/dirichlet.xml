@@ -2,8 +2,6 @@
 <NineML xmlns="http://nineml.net/9ML/1.0">
   <ComponentClass name="DirichletDistribution">
     <Parameter name="concentration"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/dirichlet.xml">DirichletDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/dirichlet.xml"/>
   </ComponentClass>
 </NineML>

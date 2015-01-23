@@ -284,6 +284,7 @@
 
 % Local color definitions.
 
+\definecolor{incompletered}{rgb}{0.85,0.0,0.0}
 \definecolor{INCFBlue}{rgb}{0.0,0.59,1.0}
 \definecolor{ninemlblue}{rgb}{0.07,0.50,0.78}
 \definecolor{ninemlgray}{gray}{0.7}
@@ -949,8 +950,8 @@
 
 % Misc symbols
 
-\newcommand{\withelem}{{\textcolor{ninemlblue}{$\mathbf{>}$}}}
-\newcommand{\pointto}{$\to$}
+\newcommand{\withelem}{\textcolor{ninemlblue}{$\mathbf{>}${}}}
+\newcommand{\pointto}{\textcolor{ninemlblue}{$\to$}}
 
 % Spacing adjustments when using the symbols inside regular 'description' env.
 % Note: *not* used in \ninemlrule below.

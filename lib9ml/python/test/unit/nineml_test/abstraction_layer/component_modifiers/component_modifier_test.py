@@ -16,7 +16,8 @@ class ComponentModifier_test(unittest.TestCase):
                 # No Docstring
         # from nineml.abstraction_layer.component_modifiers.component_modifier
         # import ComponentModifier
-        warnings.warn('Tests not implemented')
+#         warnings.warn('Tests not implemented')
+        pass
         # raise NotImplementedError()
 
     def test_close_analog_port(self):
@@ -24,7 +25,8 @@ class ComponentModifier_test(unittest.TestCase):
                 # No Docstring
         # from nineml.abstraction_layer.component_modifiers.component_modifier
         # import ComponentModifier
-        warnings.warn('Tests not implemented')
+#         warnings.warn('Tests not implemented')
+        pass
         # raise NotImplementedError()
 
     def test_rename_port(self):
@@ -32,5 +34,6 @@ class ComponentModifier_test(unittest.TestCase):
                 # No Docstring
         # from nineml.abstraction_layer.component_modifiers.component_modifier
         # import ComponentModifier
-        warnings.warn('Tests not implemented')
+#         warnings.warn('Tests not implemented')
+        pass
         # raise NotImplementedError()

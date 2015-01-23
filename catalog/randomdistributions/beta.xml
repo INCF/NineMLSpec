@@ -3,8 +3,6 @@
   <ComponentClass name="BetaDistribution">
     <Parameter name="alpha"/>
     <Parameter name="beta"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/beta.xml">BetaDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/beta.xml"/>
   </ComponentClass>
 </NineML>
