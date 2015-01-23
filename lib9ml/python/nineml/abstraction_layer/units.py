@@ -1,6 +1,6 @@
-from ..base import E
-from .base import BaseALObject
-from nineml.base import annotate_xml, read_annotations
+from nineml.xmlns import E
+from . import BaseALObject
+from nineml.annotations import annotate_xml, read_annotations
 from numpy.core.test_rational import numerator
 
 
@@ -110,8 +110,8 @@ class Unit(BaseALObject):
 
     def to_SI_units_str(self):
         if self.offset != 0.0:
-            raise Exception("Cannot convert to SI units string as offset is not"
-                            " zero ({})".format(self.offset))
+            raise Exception("Cannot convert to SI units string as offset is "
+                            "not zero ({})".format(self.offset))
         return (self.dimension.to_SI_units_str() +
                 ' * 10**({})'.format(self.power) if self.power else '')
 
@@ -149,9 +149,9 @@ class Unit(BaseALObject):
 
     @classmethod
     @read_annotations
-    def from_xml(cls, element, context):
+    def from_xml(cls, element, document):
         name = element.attrib['symbol']
-        dimension = context[element.attrib['dimension']]
+        dimension = document[element.attrib['dimension']]
         power = int(element.get('power', 0))
         offset = float(element.attrib.get('name', 0.0))
         return cls(name, dimension, power, offset)

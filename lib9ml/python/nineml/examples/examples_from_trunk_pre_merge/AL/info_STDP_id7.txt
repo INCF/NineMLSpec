@@ -1,3 +1,0 @@
-The STDP models in Farries & Fairhall (2007) also sometimes include activity dependent homeostasis.
-These weight changes are triggered by the end of each training epoch - there is so far no way to
-express such a signal.

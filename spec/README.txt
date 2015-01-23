@@ -23,11 +23,18 @@ Directives for using LaTeX with version control systems
    9. Add a meaningful and descriptive comment when committing your 
       modifications to the repository.
   10. Use the Subversion client for copying, moving, or renaming files and 
-      folders that are under revision control.
+      folders that are under revision contro.
 
 
 How to build the pdf
 ====================
+
+If running from Ubuntu linux or some other linux flavour it is not enough to simply install the base distribution that comes with a latex editing environment you to compile this document you be required to install the texlive-full package.
+
+ie $sudo apt-get install texlive-full 
+
+
+
 
 Use the Makefile provided as follows
 

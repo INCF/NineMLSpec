@@ -5,8 +5,6 @@
     <Parameter name="varianceScaling"/>
     <Parameter name="shape"/>
     <Parameter name="scale"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/normal-inverse-gamma.xml">NormalInverseGammaDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/normal-inverse-gamma.xml"/>
   </ComponentClass>
 </NineML>

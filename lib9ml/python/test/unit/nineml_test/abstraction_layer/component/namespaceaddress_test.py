@@ -5,7 +5,7 @@ import unittest
 
 from nineml.abstraction_layer import NamespaceAddress as NSA
 from nineml.exceptions import NineMLRuntimeError
-from nineml.abstraction_layer.dynamics import ComponentClass
+from nineml.abstraction_layer.dynamics import DynamicsClass as ComponentClass
 
 
 class NamespaceAddress_test(unittest.TestCase):

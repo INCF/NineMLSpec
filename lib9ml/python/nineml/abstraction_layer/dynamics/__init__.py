@@ -5,11 +5,10 @@ Python module for reading 9ML abstraction layer files in XML format.
 :license: BSD-3, see LICENSE for details.
 """
 
-from .component import (ComponentClass, Regime, On, OutputEvent,
-                        StateAssignment, TimeDerivative, ReducePort,
-                        AnalogSendPort, AnalogReceivePort, AnalogReducePort,
-                        EventSendPort, EventReceivePort, Dynamics, OnCondition,
-                        Condition, StateVariable, NamespaceAddress, RecvPort,
-                        SendPort, Alias, OnEvent, SpikeOutputEvent,
-                        SendEventPort, RecvEventPort, Expression)
-
+from .base import DynamicsClass, Dynamics
+from .regimes import (Regime, TimeDerivative,
+                      StateVariable)
+from .transitions import (EventOut, OnCondition, Trigger, OnEvent,
+                          StateAssignment)
+from .syntactic_sugar import On, DoOnEvent, DoOnCondition
+from .utils.xml import DynamicsClassXMLLoader, DynamicsClassXMLWriter

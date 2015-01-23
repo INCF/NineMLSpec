@@ -11,7 +11,7 @@ Classes
 -------
     Model
     Definition
-    BaseComponent
+    Component
         SpikingNodeType
         SynapseType
         CurrentSourceType
@@ -38,16 +38,34 @@ Classes
 
 :copyright: Copyright 2010-2013 by the Python lib9ML team, see AUTHORS.
 :license: BSD-3, see LICENSE for details.
-"""
 
-import urllib
-from lxml import etree
-from .dynamics import SpikingNodeType, SynapseType, ConnectionType
-from .connectivity import ConnectionRule
+"""
+from .. import BaseNineMLObject
+
+
+class BaseULObject(BaseNineMLObject):
+
+    """
+    Base class for user layer classes
+    """
+
+    def __init__(self):
+        super(BaseULObject, self).__init__()
+        self.from_reference = None
+
+    def __lt__(self, other):
+        if self.__class__.__name__ < other.__class__.__name__:
+            return True
+        else:
+            return self.name < other.name
+
+
+from .network import Network
 from .population import Population, PositionList, Structure
-from .containers import Network, Selection, Concatenate
+from .selection import Selection, Concatenate
 from .projection import Projection, PortConnection, Delay
-from .random import RandomDistribution
-from .components import (PropertySet, Property, BaseComponent as Component,
-                         Definition, Prototype, InitialValue, InitialValueSet)
-from .base import Reference
+from .component import (PropertySet, Property, Component, Definition,
+                        Prototype, DynamicsComponent, ConnectionRuleComponent,
+                        DistributionComponent, resolve_reference,
+                        write_reference, Reference, InitialValue,
+                        InitialValueSet)

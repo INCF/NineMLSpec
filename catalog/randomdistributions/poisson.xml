@@ -2,8 +2,6 @@
 <NineML xmlns="http://nineml.net/9ML/1.0">
   <ComponentClass name="PoissonDistribution">
     <Parameter name="rate"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/poisson.xml">PoissonDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/poisson.xml"/>
   </ComponentClass>
 </NineML>

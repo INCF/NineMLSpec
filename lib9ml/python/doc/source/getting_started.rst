@@ -22,7 +22,7 @@ To read a file containing only abstraction layer elements:
     'time': Dimension(name='time', t=1),
     'voltage': Dimension(name='voltage', i=-1, m=1, t=-3, l=2)}
 
-This gives us a :class:`~nineml.user_layer.Context` instance, a dictionary-like object containing a
+This gives us a :class:`~nineml.Document` instance, a dictionary-like object containing a
 :class:`~nineml.abstraction_layer.ComponentClass` definition of an integrate-and-fire
 neuron model, together with the definitions of the physical dimensions of parameters
 and state variables used in the model.

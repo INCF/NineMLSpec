@@ -12,19 +12,19 @@ class TestComponent(unittest.TestCase):
 
     def test_component_xml_540degree_roundtrip(self):
         test_file = os.path.join(examples_dir, 'HodgkinHuxley.xml')
-        context1 = read(test_file)
-        xml = context1.to_xml()
-        context2 = load(xml, read_from=test_file)
-        self.assertEquals(context1, context2)
+        document1 = read(test_file)
+        xml = document1.to_xml()
+        document2 = load(xml, read_from=test_file)
+        self.assertEquals(document1, document2)
 
     def test_prototype_xml_540degree_roundtrip(self):
         test_file = os.path.join(examples_dir, 'HodgkinHuxleyModified.xml')
-        context1 = read(test_file)
-        xml = context1.to_xml()
-        context2 = load(xml, read_from=test_file)
-        self.assertEquals(context1, context2)
+        document1 = read(test_file)
+        xml = document1.to_xml()
+        document2 = load(xml, read_from=test_file)
+        self.assertEquals(document1, document2)
 
     def test_mismatch_dimension(self):
-        context = read(os.path.join(examples_dir, 'HodgkinHuxleyBadUnits.xml'))
+        document = read(os.path.join(examples_dir, 'HodgkinHuxleyBadUnits.xml'))
         with self.assertRaises(NineMLUnitMismatchError):
-            context['HodgkinHuxleyBadUnits']
+            document['HodgkinHuxleyBadUnits']

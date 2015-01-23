@@ -2,8 +2,6 @@
 <NineML xmlns="http://nineml.net/9ML/1.0">
   <ComponentClass name="ChiSquareDistribution">
     <Parameter name="degreesOfFreedom"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/chi-square.xml">ChiSquareDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/chi-square.xml"/>
   </ComponentClass>
 </NineML>

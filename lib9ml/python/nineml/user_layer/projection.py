@@ -1,16 +1,17 @@
 # encoding: utf-8
-from .base import BaseULObject, resolve_reference, write_reference, Reference
-from ..base import E, read_annotations, annotate_xml, NINEML
+from . import BaseULObject
+from .component import resolve_reference, write_reference, Reference
+from nineml.xmlns import NINEML, E
+from nineml.annotations import read_annotations, annotate_xml
 from collections import defaultdict
-from .components import BaseComponent, Property
+from nineml.user_layer.component import Component
 from itertools import chain
 import nineml.user_layer
 from ..abstraction_layer import units as un
-from .utility import check_tag
-from ..utility import expect_single, expect_none_or_single
+from nineml.utils import expect_single, expect_none_or_single, check_tag
 from ..exceptions import NineMLRuntimeError
-from .values import (SingleValue, ArrayValue, ExternalArrayValue,
-                     ComponentValue)
+from .values import SingleValue
+from .component import Quantity
 
 
 class Projection(BaseULObject):
@@ -36,17 +37,17 @@ class Projection(BaseULObject):
         *delay*
             a :class:`Delay` object specifying the delay of the connections.
         *port_connections*
-            a list of :class:`PortConnection` tuples
-            `(sender, receiver, send_port, receive_port)` that
-            define the connections between the 4 components
-            of the projection, 'source', 'destination', 'response', 'plasticity'.
-            'sender' and 'receiver' must be one of these 4 names and
-            'send_port' and 'receive_port' must each be the name of
+            a list of :class:`PortConnection` tuples `(sender, receiver,
+            send_port, receive_port)` that define the connections between the 4
+            components of the projection, 'source', 'destination', 'response',
+            'plasticity'. 'sender' and 'receiver' must be one of these 4 names
+            and 'send_port' and 'receive_port' must each be the name of
             one of the ports in the corresponding components.
 
     **Attributes**:
 
-    Each of the arguments to the constructor is available as an attribute of the same name.
+    Each of the arguments to the constructor is available as an attribute of
+    the same name.
 
     """
     element_name = "Projection"
@@ -64,11 +65,15 @@ class Projection(BaseULObject):
         super(Projection, self).__init__()
         self.name = name
         self.source = source
-        if source._from_reference is None:  # when exporting to XML, should use reference
-            source._from_reference = Reference(source.name, {source.name: source})
+        # When exporting to XML we use the reference instead of the object
+        # maintaing the original format of the XML.
+        if source.from_reference is None:
+            source.from_reference = Reference(source.name,
+                                               {source.name: source})
         self.destination = destination
-        if destination._from_reference is None:
-            destination._from_reference = Reference(destination.name, {destination.name: destination})
+        if destination.from_reference is None:
+            destination.from_reference = Reference(
+                destination.name, {destination.name: destination})
         self.response = response
         self.plasticity = plasticity
         self.connectivity = connectivity
@@ -132,6 +137,23 @@ class Projection(BaseULObject):
                 components.append(component)
         return components
 
+    @property
+    def units(self):
+        return chain([self.delay.units],
+                     *[c.units for c in self.get_components()])
+
+    def standardize_units(self, reference_units=None,
+                          reference_dimensions=None):
+        for c in self.get_components():
+            c.standardize_units(reference_units=reference_units,
+                                reference_dimensions=reference_dimensions)
+        try:
+            std_unit = next(u for u in reference_units
+                            if u == self.delay.units)
+            self.delay.set_units(std_unit)
+        except StopIteration:
+            pass
+
     @write_reference
     @annotate_xml
     def to_xml(self):
@@ -153,40 +175,44 @@ class Projection(BaseULObject):
     @classmethod
     @resolve_reference
     @read_annotations
-    def from_xml(cls, element, context):
+    def from_xml(cls, element, document):
         check_tag(element, cls)
         # Get Name
         name = element.get('name')
         # Get Source
         e = expect_single(element.findall(NINEML + 'Source'))
         e = expect_single(e.findall(NINEML + 'Reference'))
-        source = nineml.user_layer.Reference.from_xml(e, context).user_layer_object  ###?
+        source = nineml.user_layer.Reference.from_xml(
+            e, document).user_layer_object
         # Get Destination
         e = expect_single(element.findall(NINEML + 'Destination'))
         e = expect_single(e.findall(NINEML + 'Reference'))
-        destination = nineml.user_layer.Reference.from_xml(e, context).user_layer_object   ###?
+        destination = nineml.user_layer.Reference.from_xml(
+            e, document).user_layer_object
         # Get Response
         e = element.find(NINEML + 'Response')
-        response = BaseComponent.from_xml(e.find(NINEML + 'Component') or
-                                          e.find(NINEML + 'Reference'),
-                                          context)
+        component = e.find(NINEML + 'Component')
+        if component is None:
+            component = e.find(NINEML + 'Reference')
+        response = Component.from_xml(component, document)
         # Get Plasticity
         e = expect_none_or_single(element.findall(NINEML + 'Plasticity'))
         if e is not None:
-            plasticity = BaseComponent.from_xml(e.find(NINEML + 'Component') or
-                                                e.find(NINEML + 'Reference'),
-                                                context)
+            component = e.find(NINEML + 'Component')
+            if component is None:
+                component = e.find(NINEML + 'Reference')
+            plasticity = Component.from_xml(component, document)
         else:
             plasticity = None
         # Get Connectivity
         e = element.find(NINEML + 'Connectivity')
-        connectivity = BaseComponent.from_xml(e.find(NINEML + 'Component') or
-                                              e.find(NINEML + 'Reference'),
-                                              context)
+        component = e.find(NINEML + 'Component')
+        if component is None:
+            component = e.find(NINEML + 'Reference')
+        connectivity = Component.from_xml(component, document)
         # Get Delay
-        delay = Delay.from_xml(expect_single(element.findall(NINEML +
-                                                             'Delay')),
-                               context)
+        delay = Delay.from_xml(
+            expect_single(element.findall(NINEML + 'Delay')), document)
         # Get port connections by Loop through 'source', 'destination',
         # 'response', 'plasticity' tags and extracting the "From*" elements
         port_connections = []
@@ -224,8 +250,7 @@ class Projection(BaseULObject):
                    port_connections=port_connections)
 
 
-# TODO: This and Property should inherit from a BaseQuantity class
-class Delay(BaseULObject):
+class Delay(Quantity):
     """
     Representation of the connection delay.
 
@@ -237,7 +262,8 @@ class Delay(BaseULObject):
             :class:`ArrayValue', :class:`ExternalArrayValue`,
             :class:`ComponentValue`.
         *units*
-            a :class:`Unit` object representing the physical units of the value.
+            a :class:`Unit` object representing the physical units of the
+            value.
 
     Numerical values may either be numbers, or a component that generates
     numbers, e.g. a RandomDistribution instance.
@@ -248,99 +274,7 @@ class Delay(BaseULObject):
         if units.dimension != un.time:
             raise Exception("Units for delay must be of the time dimension "
                             "(found {})".format(units))
-        super(Delay, self).__init__()
-        self._value = value
-        self.units = units
-
-    def __hash__(self):
-        return hash(self.name) ^ hash(self.value) ^ hash(self.units)
-
-    def is_single(self):
-        return isinstance(self._value, SingleValue)
-
-    def is_random(self):
-        return isinstance(self._value, ComponentValue)
-
-    def is_array(self):
-        return (isinstance(self._value, ArrayValue) or
-                isinstance(self._value, ExternalArrayValue))
-
-    @property
-    def value(self):
-        if self.is_single():
-            return self._value.value
-        else:
-            raise Exception("Cannot access single value for array or component"
-                            " type")
-
-    @property
-    def value_array(self):
-        if self.is_array():
-            raise NotImplementedError
-        else:
-            raise Exception("Cannot access value array for component or single"
-                            " value types")
-
-    @property
-    def random_distribution(self):
-        if self.is_random():
-            return self._value.component
-        else:
-            raise Exception("Cannot access random distribution for component "
-                            "or single value types")
-
-    def __repr__(self):
-        units = self.units.name
-        if u"µ" in units:
-            units = units.replace(u"µ", "u")
-        return "Delay(value=%s, units=%s)" % (self.value, units)
-
-    def __eq__(self, other):
-        # FIXME: obviously we should resolve the units, so 0.001 s == 1 ms,
-        #        could use python-quantities package to do this if we are
-        #        okay with the dependency
-        return (isinstance(other, self.__class__) and
-                self.value == other.value and
-                self.units == other.units)
-
-    @annotate_xml
-    def to_xml(self):
-        kwargs = {'units': self.units.name} if self.units else {}
-        return E(self.element_name,
-                 self._value.to_xml(),
-                 **kwargs)
-
-    @classmethod
-    @read_annotations
-    def from_xml(cls, element, context):
-        check_tag(element, cls)
-        if element.find(NINEML + 'SingleValue') is not None:
-            value = SingleValue.from_xml(
-                expect_single(element.findall(NINEML + 'SingleValue')),
-                context)
-        elif element.find(NINEML + 'ArrayValue') is not None:
-            value = ArrayValue.from_xml(
-                expect_single(element.findall(NINEML + 'ArrayValue')),
-                context)
-        elif element.find(NINEML + 'ExternalArrayValue') is not None:
-            value = ArrayValue.from_xml(
-                expect_single(element.findall(NINEML + 'ArrayValue')),
-                context)
-        elif element.find(NINEML + 'ComponentValue') is not None:
-            value = ArrayValue.from_xml(
-                expect_single(element.findall(NINEML + 'ArrayValue')),
-                context)
-        else:
-            raise Exception(
-                "Did not find recognised value tag in delay (found {})"
-                .format(', '.join(c.tag for c in element.getchildren())))
-        units_str = element.attrib.get('units', None)
-        try:
-            units = context[units_str] if units_str else None
-        except KeyError:
-            raise Exception("Did not find definition of '{}' units in the "
-                            "current context.".format(units_str))
-        return cls(value=value, units=units)
+        super(Delay, self).__init__(value, units)
 
 
 class PortConnection(object):
@@ -388,7 +322,9 @@ class PortConnection(object):
                 self.receive_port == other.receive_port)
 
     def __repr__(self):
-        return "PortConnection('%s', '%s', '%s', '%s')" % (self._send_role, self._receive_role, self.send_port, self.receive_port)
+        return ("PortConnection('{}', '{}', '{}', '{}')"
+                .format(self._send_role, self._receive_role, self.send_port,
+                        self.receive_port))
 
     def __hash__(self):
         return (hash(self._send_role) ^ hash(self._receive_role) ^
@@ -432,8 +368,8 @@ class PortConnection(object):
         elif isinstance(comp, nineml.user_layer.Component):
             comp_class = comp.component_class
         elif isinstance(comp, nineml.user_layer.Selection):
-            #print ("Warning: port connections have not been check for '{}' "
-            #       "Selection".format(comp.name))
+            # print ("Warning: port connections have not been checked for '{}'"
+            #        " Selection".format(comp.name))
             # only implemented for Concatenate
             def resolve(item):   # doing this here is a hack, I think
                 if isinstance(item, Reference):
@@ -443,9 +379,13 @@ class PortConnection(object):
             comp_classes = {}
             for item in comp.operation.items:
                 cc = resolve(item).cell.component_class
-                comp_classes[cc.name] = cc   # here we use equality of component class names, should really use equality of component classes
+                # here we use equality of component class names, should really
+                # use equality of component classes
+                comp_classes[cc.name] = cc
             if len(comp_classes) > 1:
-                raise Exception("Selection contains multiple component classes: %s" % str(comp_classes))
+                raise Exception(
+                    "Selection contains multiple component classes: {}"
+                    .format(comp_classes))
             comp_class = comp_classes.values()[0]
         else:
             assert False, ("Invalid '{}' object in port connection"

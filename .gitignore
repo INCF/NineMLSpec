@@ -25,6 +25,14 @@ nineml_mechanisms
 *.synctex.gz
 .9build
 /Gemfile.lock
+*.BACKUP.*.tex
+*.BASE.*.tex
+*.LOCAL.*.tex
+*.REMOTE.*.tex
+*.swp
+*~
 *.egg-info
+*.dvi
+*#
 lib9ml/python/MANIFEST
 lib9ml/python/dist

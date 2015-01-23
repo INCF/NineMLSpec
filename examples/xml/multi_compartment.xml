@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<NineML xmlns="http://nineml.net/9ML/1.0">
+  <MultiCompartmentComponent name="ExampleMultiCompartmentModel">
+    <Definition>ExampleMultiCompartmentClass</Definition>
+    <Branches>
+      <ExternalArrayValue url="./example_compartments.txt.txt"
+        mimetype="vnd.net.nineml.arrayvalue.text" columnName="parentID"/>
+    </Branches>
+    <Mapping>
+      <ExternalArrayValue url="./example_compartments.txt.txt"
+        mimetype="vnd.net.nineml.arrayvalue.text" columnName="domain"/>
+    </Mapping>
+    <Domain name="soma">
+      <MultiComponent name="somaDynamics">
+        <SubComponent name="PyramidalNa">
+          <Component>
+            <Prototype url="http://nineml.net/catalog/channels"
+              >HHPyramidalNa</Prototype>
+            <Property name="gbar" units="uS">
+              <SingleValue>0.0036</SingleValue>
+            </Property>
+          </Component>
+          <ReceiveConnection port="V">
+            <FromComponent component="membrane" port="V"/>
+          </ReceiveConnection>
+        </SubComponent>
+        <SubComponent name="PyramidalK">
+          <Component>
+            <Prototype url="http://nineml.net/catalog/channels"
+              >HHPyramidalK</Prototype>
+            <Property name="gbar" units="uS">
+              <SingleValue>0.0025</SingleValue>
+            </Property>
+          </Component>
+          <ReceiveConnection port="V">
+            <FromComponent component="membrane" port="V"/>
+          </ReceiveConnection>
+        </SubComponent>
+        <SubComponent name="Kv4">
+          <Component>
+            <Prototype url="http://nineml.net/catalog/channels"
+              >HHPyramidalK</Prototype>
+            <Property name="gbar" units="uS">
+              <SingleValue>0.0025</SingleValue>
+            </Property>
+          </Component>
+          <ReceiveConnection port="V">
+            <FromComponent component="membrane" port="V"/>
+          </ReceiveConnection>
+        </SubComponent>
+        <SubComponent name="leak">
+          <Component>
+            <Definition url="http://nineml.net/catalog/channels"
+              >Leak</Definition>
+            <Property name="g" units="uS">
+              <SingleValue>0.001</SingleValue>
+            </Property>
+            <Property name="e_rev" units="mV">
+              <SingleValue>-21</SingleValue>
+            </Property>
+          </Component>
+          <ReceiveConnection port="V">
+            <FromComponent component="membrane" port="V"/>
+          </ReceiveConnection>
+        </SubComponent>
+        <SubComponent name="membrane">
+          <Component>
+            <Definition url="http://nineml.net/catalog/channels"
+              >DefaultMembrane</Definition>
+            <Property name="length" units="um">
+              <SingleValue>15.0</SingleValue>
+            </Property>
+            <Property name="axialResistance" units="ohm_per_cm">
+              <SingleValue>100.0</SingleValue>
+            </Property>
+            <Property name="diameter" units="um">
+              <SingleValue>15.0</SingleValue>
+            </Property>
+            <Property name="C" units="uF">
+              <SingleValue>1.0</SingleValue>
+            </Property>
+          </Component>
+          <ReceiveConnection port="i">
+            <FromComponent component="Na" name="i"/>
+            <FromComponent component="K" name="i"/>
+            <FromComponent component="leak" name="i"/>
+          </ReceiveConnection>
+        </SubComponent>
+        <PortExposure name="proximalVoltage" component="membrane" port="proximalV"/>
+        <PortExposure name="distalVoltage" component="membrane" port="distalV"/>
+      </MultiComponent>
+      <ReceiveConnection port="proximalVoltage">
+        <FromProximal port="voltage"/>
+      </ReceiveConnection>
+      <ReceiveConnection port="distalVoltage">
+        <FromDistal port="voltage"/>
+      </ReceiveConnection>
+    </Domain>
+    <Domain name="dendrites">
+      <Reference>DendriteDynamics</Reference>
+      <ReceiveConnection port="proximalVoltage">
+        <FromProximal port="voltage"/>
+      </ReceiveConnection>
+      <ReceiveConnection port="distalVoltage">
+        <FromDistal port="voltage"/>
+      </ReceiveConnection>
+      <ReceiveConnection port="withinDendritesReducePort">
+        <FromProximal domain="dendrites" port="withinDendritesSendPort"/>
+        <FromDistal domain="dendrites" port="withinDendritesSendPort"/>
+      </ReceiveConnection>
+    </Domain>
+    <Annotations>
+      <Points3D>
+        <XCoords>
+          <ExternalArrayValue url="./example_compartments.txt.txt"
+            mimetype="vnd.net.nineml.arrayvalue.text" columnName="X"/>
+        </XCoords>
+        <YCoords>
+          <ExternalArrayValue url="./example_compartments.txt.txt"
+            mimetype="vnd.net.nineml.arrayvalue.text" columnName="Y"/>
+        </YCoords>
+        <ZCoords>
+          <ExternalArrayValue url="./example_compartments.txt.txt"
+            mimetype="vnd.net.nineml.arrayvalue.text" columnName="Z"/>
+        </ZCoords>
+      </Points3D>
+    </Annotations>
+  </MultiCompartmentComponent>
+  <Dimension name="time" t="1"/>
+  <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="conductance" m="-1" t="3" l="-2" i="2"/>
+  <Dimension name="area" l="2"/>
+  <Dimension name="length" l="1"/>
+  <Unit symbol="mV" dimension="voltage" power="-3"/>
+  <Unit symbol="um" dimension="length" power="-3"/>
+  <Unit symbol="ms" dimension="time" power="-3"/>
+  <Unit symbol="cm_square" dimension="area" power="-4"/>
+  <Unit symbol="mS" dimension="conductance" power="-3"/>
+</NineML>

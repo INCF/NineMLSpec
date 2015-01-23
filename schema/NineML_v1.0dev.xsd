@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--XSD for NineML v1.0-->
+
+<xs:schema targetNamespace="http://nineml.net/9ML/1.0" xmlns="http://nineml.net/9ML/1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified" vc:minVersion="1.1"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning">
+
+
+    <xs:element name="NineML">
+        <xs:annotation>
+            <xs:documentation>The root NineML element.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+
+    <xs:complexType name="ComponentClass">
+        <xs:sequence>
+            <xs:element name="component" type="Component" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="structure" type="Structure" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="group" type="Group" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+
+
+    <xs:complexType name="Component">
+        <xs:sequence>
+            <xs:element name="definition" type="Definition" minOccurs="1"/>
+            <xs:element name="property" type="Property" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+
+    <xs:complexType name="Definition">
+        <xs:sequence>
+            <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+            <!-- Further elements will be specified!! -->
+        </xs:sequence>
+        <xs:attribute name="language" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+
+    <xs:complexType name="Property">
+        <xs:sequence>
+            <xs:element name="SingleValue" type="SingleValue" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ArrayValue" type="ArrayValue"/>
+            <xs:element name="ExternalArrayValue" type="ExternalArrayValue"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="units" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="SingleValue"> </xs:complexType>
+
+
+    <xs:complexType name="Structure">
+        <xs:sequence>
+            <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+            <!-- Further elements will be specified!! -->
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="optional"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="Group">
+        <xs:sequence>
+            <xs:element name="population" type="Population" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="structure" type="Structure" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="set" type="Set" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="projection" type="Projection" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+
+        <xs:attribute name="name" type="xs:string" use="required"/>
+
+    </xs:complexType>
+
+
+
+    <xs:complexType name="Population">
+        <xs:sequence>
+            <xs:element name="number" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="prototype" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="Set">
+        <xs:sequence>
+            <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+            <!-- Further elements will be specified!! -->
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="Projection">
+        <xs:sequence>
+            <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+            <!-- Further elements will be specified!! -->
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="ArrayValue"/>
+    <xs:complexType name="ExternalArrayValue"/>
+</xs:schema>

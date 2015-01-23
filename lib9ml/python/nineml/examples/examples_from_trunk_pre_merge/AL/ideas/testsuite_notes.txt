@@ -1,8 +1,0 @@
-Author: Eilif Muller, Andrew Davison
-
-1) Test suite should check that implementation throws exception when
- building component that tries to assign to read-only ports.
-
-2) the test suite must check that the implementation can handle
-multiple events per time step. e.g. synapse got two input spikes in dt.
-

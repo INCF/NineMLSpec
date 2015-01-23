@@ -3,8 +3,6 @@
   <ComponentClass name="UniformDistribution">
     <Parameter name="minimum"/>
     <Parameter name="maximum"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/uniform.xml">UniformDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/uniform.xml"/>
   </ComponentClass>
 </NineML>

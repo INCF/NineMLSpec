@@ -3,8 +3,6 @@
   <ComponentClass name="MultinomialDistribution">
     <Parameter name="numberOfTrials"/>
     <Parameter name="probabilities"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/multinomial.xml">MultinomialDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/multinomial.xml"/>
   </ComponentClass>
 </NineML>

@@ -2,22 +2,23 @@ import os.path
 import unittest
 from lxml.etree import _Element, ElementTree
 from nineml import read
-from nineml.abstraction_layer.random import ComponentClass
+from nineml.abstraction_layer.distribution import DistributionClass
 import tempfile
 
 examples_dir = os.path.join(os.path.dirname(__file__), '..', '..', '..', '..',
                             '..', '..', '..', 'catalog', 'randomdistributions')
 
 
-class TestRandomDistribution(unittest.TestCase):
+class TestDistribution(unittest.TestCase):
 
     def test_load(self):
-        context = read(os.path.join(examples_dir, 'normal.xml'))
-        self.assertEquals(type(context['NormalDistribution']), ComponentClass)
+        document = read(os.path.join(examples_dir, 'normal.xml'))
+        self.assertEquals(type(document['NormalDistribution']),
+                          DistributionClass)
 
     def test_to_xml(self):
-        context = read(os.path.join(examples_dir, 'normal.xml'))
-        comp_class = context['NormalDistribution']
+        document = read(os.path.join(examples_dir, 'normal.xml'))
+        comp_class = document['NormalDistribution']
         xml = comp_class.to_xml()
         self.assertEquals(_Element, type(xml))
         with tempfile.TemporaryFile() as f:

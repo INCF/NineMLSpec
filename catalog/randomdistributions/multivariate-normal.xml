@@ -3,8 +3,6 @@
   <ComponentClass name="MultivariateNormalDistribution">
     <Parameter name="mean"/>
     <Parameter name="covarianceMatrix"/>
-    <RandomDistribution>
-      <StandardLibrary url="http://www.uncertml.org/distributions/multivariate-normal.xml">MultivariateNormalDistribution</StandardLibrary>
-    </RandomDistribution>
+    <RandomDistribution standardLibrary="http://www.uncertml.org/distributions/multivariate-normal.xml"/>
   </ComponentClass>
 </NineML>

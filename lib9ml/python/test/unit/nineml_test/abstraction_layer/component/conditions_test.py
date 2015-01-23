@@ -12,7 +12,8 @@ class Testcond_to_obj(unittest.TestCase):
         # Signature: name(cond_str)
                 # No Docstring
         # from nineml.abstraction_layer.component.conditions import cond_to_obj
-        warnings.warn('Tests not implemented')
+#         warnings.warn('Tests not implemented')
+        pass
         # raise NotImplementedError()
 
 

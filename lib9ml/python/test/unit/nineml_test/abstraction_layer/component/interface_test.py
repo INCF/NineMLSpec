@@ -15,12 +15,14 @@ class Parameter_test(unittest.TestCase):
         # Signature: name(self, visitor, **kwargs)
                 # |VISITATION|
         # from nineml.abstraction_layer.component.interface import Parameter
-        warnings.warn('Tests not implemented')
+#         warnings.warn('Tests not implemented')
+        pass
         # raise NotImplementedError()
 
     def test_name(self):
         # Signature: name
                 # Returns the name of the parameter
         # from nineml.abstraction_layer.component.interface import Parameter
-        warnings.warn('Tests not implemented')
+#         warnings.warn('Tests not implemented')
+        pass
         # raise NotImplementedError()
