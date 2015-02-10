@@ -1,0 +1,267 @@
+\documentclass[draftspec]{ninemlspec}
+\usepackage{microtype}
+\usepackage{pbox}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{float}
+%% ============================================================================
+%% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
+%% Authors: Thomas G. Close <tclose@oist.jp>, Ivan Raikov <raikov@oist.jp>, Andrew P. Davison <davison@unic.cnrs-gif.fr>
+%% Organization: Okinawa Institute of Science and Technology Graduate University, Centre National de la Recherche Scientifique
+%% Date created: October 2014  <---- should probably be some date in 2010, 2011 or so...
+%% https://github.com/INCF/nineml/master/spec/specification.tex
+%%
+%% Copyright (C) 2014 Okinawa Institute of Science and Technology Graduate University, Centre National de la Recherche Scientifique
+%%
+%% ============================================================================
+
+\newcommand{\incomplete}{\begin{center}\noindent{\Large\textcolor{incompletered}{\textbf{!! INCOMPLETE !!}}}\end{center}}
+
+% Define misc. references
+\newcommand{\identifier}{\typeDefRef{identifier\xspace}{sec:identifier}}
+\newcommand{\URL}{\href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}\xspace}
+\newcommand{\MathML}{\href{http://mathml.org}{MathML (http://mathml.org)}\xspace}
+
+% Element references
+\newcommand{\KineticStateVariable}{\defRef{\textbf{\class{KineticStateVariable}}\xspace}{sec:KineticStateVariable}}
+\newcommand{\ForwardRate}{\defRef{\textbf{\class{ForwardRate}}\xspace}{sec:ForwardRate}}
+
+% Macros just for this document:
+
+\newcommand{\ninemlpkg}{\texorpdfstring{%
+    \textls[-25]{\textsc{NineMLSpec}}}{%
+    \textsc{NineMLSpec}}\xspace}
+\newcommand{\ninemlpkghead}{\texorpdfstring{%
+    \textls[-50]{\textsc{NineMLSpec}}}{%
+    \textsc{NineMLSpec}}\xspace}
+\newcommand{\distURL}{https://github.com/INCF/nineml/tree/master/spec/specification.pdf}
+\newcommand{\srcURL}{https://github.com/INCF/nineml/tree/master/spec/specification.tex}
+\newcommand{\webURL}{https://github.com/INCF/nineml/tree/master/spec/specification.pdf}
+
+% Custom latex listing style, for use with the listings package.  The default
+% highlights far too many things, IMHO.  This keeps it simple and only adjusts
+% the appearance of comments within listings.
+
+\lstdefinelanguage{mylatex}{
+  morekeywords={},%
+  sensitive,%
+  alsoother={0123456789$_},%$
+  morecomment=[l]\%%
+}[keywords,tex,comments]
+
+\lstdefinestyle{latex}{language=mylatex}
+
+% -----------------------------------------------------------------------------
+% Start of document
+% -----------------------------------------------------------------------------
+
+\begin{document}
+
+\packageTitle{Kinetic Extension to NineML (9ML) Specification}
+\packageVersion{Version 2.0dev}
+\packageVersionDate{ \today}
+
+\pagestyle{empty}
+
+\begin{center}
+{\includegraphics[width=0.7\columnwidth]{figures/incf_new.png}}
+
+\end{center}
+
+\vspace*{0.5cm}
+
+\noindent\rule{\columnwidth}{2pt}
+
+\vspace*{0.75cm}
+
+\begin{center}
+\noindent{\Huge \bf NineML Kinetic Extension	}\\
+\vspace{0.5cm}
+\noindent{\LARGE \bf Specification}\\
+\vspace{0.5cm}
+\noindent{\large }\\
+\vspace{0.5cm}
+\noindent{\large Version: 2.0dev}
+\end{center}
+
+\vspace*{0.5cm}
+
+\noindent\rule{\columnwidth}{2pt}
+
+\vspace*{0.25cm}
+\noindent{
+
+{\Large\bf Editors: }
+\begin{itemize}
+\item Tom Close %probably 
+\item Russell Jarvis
+\end{itemize}
+
+\vspace*{0.25cm}
+
+\begin{normalsize}
+\noindent \textbf{Acknowledgments:}\\\\
+\noindent
+
+\vspace*{0.5cm}
+
+This document is under the Common Creative license BY-NC-SA:\\ http://creativecommons.org/licenses/by-nc-sa/3.0/
+
+\vspace*{0.25cm}
+
+{\flushright \includegraphics[width=3cm]{figures/by-nc-sa.png}}
+
+\vspace*{0.5cm}
+
+\noindent {\bf Date:} \today
+\end{normalsize}
+}
+
+\title{Kinetic Extension to NineML Specification}
+
+\newpage
+\pagestyle{plain}
+
+%\maketitlepage
+%\maketableofcontents
+
+% -----------------------------------------------------------------------------
+\section{Introduction}
+
+The purpose of NineML is to provide a simulator independent language for describing neuron relevant molecular, single cell, and neural network models. NineML is a declarative language which means that it is only necessary to describe the logic of the desired neural model, it is not necessary to provide implementation details. Because NineML provides a means to instantiate a model on any neural network simulator this will increase reproducibility of research.\\
+\\
+Because NEURON is a dominant simulator within the field of neuroscience NineML must be able to translate a complete model written in NMODL into an appropriate NineML format. NineML must also be able to translate appropriately formatted NineML model back to NMODL code. To successfully translate NMODL the KINETICs BLOCK of an NMODL mechanism must also be translated and it is this process that is described herein.
+
+%insert paragraph 4 here.
+
+%The Dynamics block represents the internal mechanisms governing the behaviour of the component. These
+%dynamics are based on ordinary differential equations (ODE) but may contain non-linear transitions between
+%different ODE regimes. The regime graph (e.g. Figure 2) must contain at least one Regime element, and contain
+%no regime islands. At any given time, a component will be in a single regime, and can change which regime it is in
+%through transitions.
+
+
+
+% -----------------------------------------------------------------------------
+%\vspace{-12.5pc} % A bit of a hack to reverse the vspace added by the Appendix name
+
+
+\subsection{Scope}
+
+The purpose of the kinetic extension to NINEML is to provide a convenient means of converting the KINETIC scheme block in a model described by NMODL to the NINEML language. The kinetic extension must also provided a means of converting from the NINEML language back into the KINETIC block scheme specified by NMODL.
+
+\begin{enumerate}
+\item NMODL
+\item STATE block
+\item KINETIC block
+\item NineML
+\item StateVariable
+\item TimeDerivative
+\end{enumerate}
+
+
+
+
+\subsection{NMDOL}
+NMODL provides a means of expanding the library of mechanisms available to NEURON simulator. The nervous system of any animal is typically made up of many species of neurons. Each species of neuron can be described by its own ionic and molecular properties. For example the concentration of Sodium ion channels may vary along the length of apical and distal dendrites. In the context of the NEURON simulator these ion channel and molecular properties are called mechanisms, and the NMODL language specifies a means to create new models of ionic and molecular mechanisms. By using a collection of compiled NMODL files the combined effects of many mechanisms can contribute to the resulting model output \cite{carnevale2006neuron}. 
+%\label{sec:\item NMODL}
+
+\section{Kinetic blocks}
+
+\subsection{KineticEquation}
+\label{sec:KineticEquation}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{KineticEquation Structure}}}\\
+    \toprule
+    \em{Attribute name} & \em{Type/Format} & \em{Required} \\
+    \midrule
+    from & \KineticStateVariable{}@name & yes\\
+    to & \KineticStateVariable{}@name & yes\\    
+    \midrule
+    \em{Element type} & \em{Multiplicity} & \em{Required} \\
+    \midrule
+    \ForwardRate & singleton & yes \\ 
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+\subsection{PARAMETER block}
+
+Parameters refer to variables that are supplied by the user of the model. These values often refer to physical properties of neural tissue and often remain constant during the simulation.  By declaring a variable in PARAMETER block, you give that variable local scope, meaning that each instance of a mechanism is allowed to have its own varying values across spatially separated mechanisms. The values declared here are most often emperically derived default values, or initial conditions.
+
+
+%PARAMETERs values are visible to HOC interpreter.
+
+%variables who values are normally specified by the user are parameters, and are declared in a PARAMETER block. PARAMETERS generally remain constant during a simulation, but they can be changed in mid-run if necssary to emulate some external influence on the characteristic properties of a model.
+
+\subsection{STATE block}
+
+When a model invokes kinetic reaction schemes the unknown (dependent) variables belonging to the reaction scheme must be declared in the state block, this can include gating variables.
+
+In NMODL a $range variable$ is a variable whose value is allowed to vary as a function of distance. This is in contrast to a $point process$ whose values are only allowed to vary over a discrete point in space. All state variables are range variables in NEURON. Although range must be defined over a continuous space they are allowed to have discrete values. 
+
+Typical state variables in a kinetic scheme are: closed, open and inactive states denoted c, o, i. The fraction of ion channels that are closed, open and inactive are all solved by differential equations. In the context of Kinetic schemes STATE variables will often follow a conservation rule, where the fraction of all possible open and closed states must equal one.
+
+
+\subsection{PROCEDURE block}
+The rate of change at which state variables can move between states is critical to the function of a kinetic scheme model. Rates are often asymetrical so that the rate at which a channel moves from open to closed may faster than the rate at which a channel move from closed to open. 
+
+The procedure block provides an opportunity to define a procedure called $rates()$  which will allow us to state equations that determine the rate based on supplied PARAMETERS. The $rates()$ procedure returns equilibrium constants.
+
+ 
+%, and as such these state variable must be declared in the state block.  % so these values must be declared in the state block.
+ 
+%\label{sec:\item STATE block}
+%Closed states and open states.
+%Almost Direct qoute 'the states in this mechanism are the fractions of channels that are in closed states 1 or 2, or in open state. Since the total number of channels in all staets is conserved, the sum of the STATE fractions must equal one. ie c1+c2+o=1
+%...
+%...
+% If there are N state variables. Because of the conservation rule, there is always N-1 indipendent states. The Nth state is dependent and is implied by the conservation of states rule. The NINEML algotihm exploits this property in calculating states.
+
+
+
+\subsection{KINETIC block}
+
+%Simple schemes which do not include Longitudinal and radial diffusion will be considered here.
+
+
+The kinetics block interfaces with a procedure $rates()$
+The rates function solves the equilibrium constants, using time constants which may have been derived theoretically.
+
+Conservation of matter.
+ 
+ %or possibly update_rates in russell@kappa2:~/neuron/nrn/share/lib/python/neuron/rxd$ emacs reaction.py ._update_rates()
+
+%\label{sec:\item KINETIC block}
+% The voltage dependent rate constants are computed in produre rates(). That procedure computes the equilibrium constants K1 and K2 from the constants k1, d1, k2, and d2, whose emperically determined default values are given in the PARAMETER 
+% block, and membrane potential v. The time constants tau1 and tau2, however are found from tables created under hoc.
+%
+%
+
+
+
+\section{NINEML Blocks}
+%\label{sec:\item NINEML block}
+
+
+NineML was designed to separate core concepts and mathematical descriptions with which model variables and state update rules are explicitly described in parametrized form.  From the syntax used to specify the instantiation and the value of parameters of all these components of a network model. This distinction is summarised as the abstraction layer and the user layer.
+
+Whithin the user layer a dynamics block can be included within a component class of the abstraction layer. The dynamics block allows the NINEML user a way of expressing the different types of neuron behaviour that are expressed under changing conditions.
+
+
+\subsection{StateVariable}
+%\label{sec:\item StateVariable}
+
+\subsection{Identifiers}
+\label{sec:identifier}
+\clearpage
+\bibliography{specification}
+
+% -----------------------------------------------------------------------------
+% End of document
+% -----------------------------------------------------------------------------
+
+\end{document}

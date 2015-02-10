@@ -74,12 +74,24 @@ class ComponentClass(BaseALObject, TopLevelObject):
         return self._main_block.aliases_map
 
     @property
+    def constants(self):
+        return self._main_block.constants
+
+    @property
+    def constants_map(self):
+        return self._main_block.constants_map
+
+    @property
     def dimensions(self):
         return set(a.dimension for a in self.attributes_with_dimension)
 
     @property
     def attributes_with_dimension(self):
         return self.parameters
+
+    @property
+    def attributes_with_units(self):
+        return self.constants
 
     def standardize_unit_dimensions(self, reference_set=None):
         """

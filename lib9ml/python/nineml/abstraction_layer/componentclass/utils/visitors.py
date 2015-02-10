@@ -30,6 +30,9 @@ class ComponentActionVisitor(ComponentVisitor):
     def visit_alias(self, alias, **kwargs):
         self.action_alias(alias, **kwargs)
 
+    def visit_constant(self, constant, **kwargs):
+        self.action_constant(constant, **kwargs)
+
     def check_pass(self):
         if self.require_explicit_overrides:
             assert False, ("There is an overriding function missing from {}"
@@ -45,4 +48,7 @@ class ComponentActionVisitor(ComponentVisitor):
         self.check_pass()
 
     def action_alias(self, alias, **kwargs):  # @UnusedVariable
+        self.check_pass()
+
+    def action_constant(self, constant, **kwargs):  # @UnusedVariable
         self.check_pass()

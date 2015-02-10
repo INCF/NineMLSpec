@@ -1,6 +1,5 @@
 from .visitors import ComponentActionVisitor
 from ...expressions.utils import get_reserved_and_builtin_symbols
-from itertools import chain
 
 
 class ComponentClassInterfaceInferer(ComponentActionVisitor):
@@ -20,8 +19,7 @@ class ComponentClassInterfaceInferer(ComponentActionVisitor):
         self.event_out_port_names = set()
         self.visit(self.componentclass)
         # Visit class and populate declared_symbols and atoms sets
-        self.parameter_names = (self.atoms - self.declared_symbols -
-                                set(get_reserved_and_builtin_symbols()))
+        self.parameter_names = self.atoms - self.declared_symbols
 
     def _notify_atom(self, atom):
         self.free_atoms.add(atom)
@@ -29,3 +27,6 @@ class ComponentClassInterfaceInferer(ComponentActionVisitor):
     def action_alias(self, alias, **kwargs):  # @UnusedVariable
         self.declared_symbols.add(alias.lhs)
         self.atoms.update(alias.rhs_atoms)
+
+    def action_constant(self, constant, **kwargs):  # @UnusedVariable
+        self.declared_symbols.add(constant.name)

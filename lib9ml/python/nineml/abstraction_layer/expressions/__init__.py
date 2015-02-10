@@ -1,1 +1,1 @@
-from .base import Alias, ODE, Expression, ExpressionWithSimpleLHS
+from .base import Alias, ODE, Expression, ExpressionWithSimpleLHS, Constant
