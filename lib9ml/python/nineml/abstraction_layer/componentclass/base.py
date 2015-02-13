@@ -74,6 +74,14 @@ class ComponentClass(BaseALObject, TopLevelObject):
         return self._main_block.aliases_map
 
     @property
+    def piecewises(self):
+        return self._main_block.piecewises
+
+    @property
+    def piecewises_map(self):
+        return self._main_block.piecewises_map
+
+    @property
     def dimensions(self):
         return set(a.dimension for a in self.attributes_with_dimension)
 
@@ -119,6 +127,7 @@ class Parameter(BaseALObject):
     future, wrapping in into its own object may make the transition easier
     """
 
+    element_name = 'Parameter'
     defining_attributes = ('name', 'dimension')
 
     def __init__(self, name, dimension=None):

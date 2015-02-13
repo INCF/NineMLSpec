@@ -74,12 +74,12 @@ class ExprParser(object):
             yacc.parse(expr)
         except NineMLMathParseError, e:
             raise NineMLMathParseError(str(e) + " Expression was: '%s'" % expr)
-
-        # remove names from the math_namespace
+        # Subtract built-in symbosl from names and functions
         self.names = set(self.names)
         self.names.difference_update(get_builtin_symbols())
-
-        return self.names, set(self.funcs)
+        self.funcs = set(self.funcs)
+#         self.funcs.difference_update(get_builtin_symbols())
+        return self.names, self.funcs
 
 
 class CalcExpr(ExprParser):

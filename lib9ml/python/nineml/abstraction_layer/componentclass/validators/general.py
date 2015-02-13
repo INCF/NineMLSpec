@@ -113,6 +113,9 @@ class NoUnresolvedSymbolsComponentValidator(PerNamespaceComponentValidator):
     def action_parameter(self, parameter, namespace, **kwargs):  # @UnusedVariable @IgnorePep8
         self.add_symbol(namespace=namespace, symbol=parameter.name)
 
+    def action_piecewise(self, piecewise, namespace, **kwargs):  # @UnusedVariable @IgnorePep8
+        self.add_symbol(namespace, piecewise.name)
+
 
 class NoDuplicatedObjectsComponentValidator(PerNamespaceComponentValidator):
 
@@ -131,6 +134,9 @@ class NoDuplicatedObjectsComponentValidator(PerNamespaceComponentValidator):
 
     def action_alias(self, alias, **kwargs):  # @UnusedVariable
         self.all_objects.append(alias)
+
+    def action_piecewise(self, piecewise, **kwargs):  # @UnusedVariable
+        self.all_objects.append(piecewise)
 
 
 class CheckNoLHSAssignmentsToMathsNamespaceComponentValidator(
@@ -159,3 +165,6 @@ class CheckNoLHSAssignmentsToMathsNamespaceComponentValidator(
 
     def action_alias(self, alias, **kwargs):  # @UnusedVariable
         self.check_lhssymbol_is_valid(alias.lhs)
+
+    def action_piecewise(self, piecewise, **kwargs):  # @UnusedVariable
+        self.check_lhssymbol_is_valid(piecewise.name)

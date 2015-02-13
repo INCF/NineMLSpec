@@ -81,3 +81,6 @@ class ComponentEqualityChecker(object):
         a1 = [(a.lhs, a.rhs) for a in d1.aliases]
         a2 = [(a.lhs, a.rhs) for a in d2.aliases]
         assert_equal_list(a1, a2)
+
+        # Check Piecewises:
+        assert_equal_list(comp1.piecewises, comp2.piecewises)

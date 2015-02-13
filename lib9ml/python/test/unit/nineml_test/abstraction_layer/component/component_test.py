@@ -1,6 +1,3 @@
-
-
-import warnings
 import unittest
 from nineml.exceptions import NineMLRuntimeError
 from nineml.abstraction_layer.dynamics.testing_utils import TestableComponent

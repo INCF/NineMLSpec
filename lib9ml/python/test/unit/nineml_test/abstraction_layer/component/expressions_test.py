@@ -2,8 +2,13 @@
 import unittest
 from nineml.abstraction_layer import (Expression,
                                       Alias, StateAssignment, TimeDerivative)
-from nineml.abstraction_layer.expressions import ExpressionWithSimpleLHS
+from nineml.abstraction_layer.expressions import (ExpressionWithSimpleLHS,
+                                                  Piecewise, Piece, Otherwise)
 from nineml.exceptions import NineMLMathParseError
+from nineml.abstraction_layer.units import mV
+from nineml.abstraction_layer.componentclass.utils.xml import (
+    ComponentClassXMLWriter as XMLWriter, ComponentClassXMLLoader as XMLLoader)
+from nineml import Document
 
 
 class Expression_test(unittest.TestCase):
@@ -150,6 +155,13 @@ class Expression_test(unittest.TestCase):
 #    def test_lhs_atoms(self):
 #        warnings.warn('Tests not implemented')
 
+
+class TestVisitor(object):
+
+    def visit(self, obj, **kwargs):
+        return obj.accept_visitor(self, **kwargs)
+
+
 # Testing Skeleton for class: ExpressionWithSimpleLHS
 class ExpressionWithSimpleLHS_test(unittest.TestCase):
 
@@ -188,16 +200,12 @@ class Alias_test(unittest.TestCase):
         # Signature: name(self, visitor, **kwargs)
                 # |VISITATION|
 
-        class TestVisitor(object):
-
-            def visit(self, obj, **kwargs):
-                return obj.accept_visitor(self, **kwargs)
-
+        class AliasTestVisitor(TestVisitor):
             def visit_alias(self, component, **kwargs):
                 return kwargs
 
         c = Alias(lhs='V', rhs='0')
-        v = TestVisitor()
+        v = AliasTestVisitor()
 
         self.assertEqual(
             v.visit(c, kwarg1='Hello', kwarg2='Hello2'),
@@ -211,16 +219,13 @@ class StateAssignment_test(unittest.TestCase):
         # Signature: name(self, visitor, **kwargs)
                 # |VISITATION|
 
-        class TestVisitor(object):
-
-            def visit(self, obj, **kwargs):
-                return obj.accept_visitor(self, **kwargs)
+        class StateAssignmentTestVisitor(TestVisitor):
 
             def visit_assignment(self, component, **kwargs):
                 return kwargs
 
         c = StateAssignment(lhs='V', rhs='0')
-        v = TestVisitor()
+        v = StateAssignmentTestVisitor()
 
         self.assertEqual(
             v.visit(c, kwarg1='Hello', kwarg2='Hello2'),
@@ -235,17 +240,13 @@ class TimeDerivative_test(unittest.TestCase):
         # Signature: name(self, visitor, **kwargs)
                 # |VISITATION|
 
-
-        class TestVisitor(object):
-
-            def visit(self, obj, **kwargs):
-                return obj.accept_visitor(self, **kwargs)
+        class TimeDerivativeTestVisitor(TestVisitor):
 
             def visit_timederivative(self, component, **kwargs):
                 return kwargs
 
         c = TimeDerivative(dependent_variable='V', rhs='0')
-        v = TestVisitor()
+        v = TimeDerivativeTestVisitor()
 
         self.assertEqual(
             v.visit(c, kwarg1='Hello', kwarg2='Hello2'),
@@ -283,3 +284,38 @@ class TimeDerivative_test(unittest.TestCase):
         # independent_variable (dt)
         td.lhs_name_transform_inplace({'T': 'time'})
         self.assertEquals(td.independent_variable, 'time')
+
+
+class Piecewise_test(unittest.TestCase):
+
+    def setUp(self):
+        self.pw = Piecewise(name="saturated_v",
+                            pieces=[Piece('v ^ 2 + c', 'v < 10'),
+                                    Piece('-k * v ^ 2 + c', 'v < 0')],
+                            otherwise=Otherwise('100 + c'))
+
+    def test_accept_visitor(self):
+        # Signature: name(self, visitor, **kwargs)
+                # |VISITATION|
+
+        class PiecewiseTestVisitor(TestVisitor):
+
+            def visit_piecewise(self, component, **kwargs):  # @UnusedVariable @IgnorePep8
+                return kwargs
+
+        v = PiecewiseTestVisitor()
+        self.assertEqual(
+            v.visit(self.pw, kwarg1='Hello', kwarg2='Hello2'),
+            {'kwarg1': 'Hello', 'kwarg2': 'Hello2'}
+        )
+
+    def test_atoms(self):
+        self.assertEquals(sorted(self.pw.rhs_atoms), sorted(['c', 'k', 'v',
+                                                             'pow']))
+
+    def test_xml_roundtrip(self):
+        writer = XMLWriter()
+        xml = self.pw.accept_visitor(writer)
+        loader = XMLLoader(Document(mV))
+        pw = loader.load_piecewise(xml)
+        self.assertEqual(pw, self.pw, "Piecewise failed xml roundtrip")

@@ -10,7 +10,7 @@ from lxml import etree
 from itertools import chain
 from nineml.xmlns import E
 from . import ComponentVisitor
-from ...expressions import Alias
+from ...expressions import Alias, Piecewise, Piece, Condition, Otherwise
 from nineml.abstraction_layer.componentclass.base import Parameter
 from nineml.annotations import annotate_xml, read_annotations
 from nineml.utils import expect_single, filter_expect_single
@@ -31,6 +31,8 @@ class ComponentClassXMLLoader(object):
     class_types = ('Dynamics', 'RandomDistribution', 'ConnectionRule')
 
     def __init__(self, document=None):
+        if document is None:
+            document = Document()
         self.document = document
 
     def load_connectports(self, element):
@@ -47,12 +49,38 @@ class ComponentClassXMLLoader(object):
         rhs = self.load_single_internmaths_block(element)
         return Alias(lhs=name, rhs=rhs)
 
+    @read_annotations
+    def load_piece(self, element):
+        expr = self.load_single_internmaths_block(element,
+                                                  checkOnlyBlock=False)
+        condition = self.load_condition(
+            expect_single(element.findall(NINEML + Condition.element_name)))
+        return Piece(expr, condition)
+
+    @read_annotations
+    def load_otherwise(self, element):
+        return Otherwise(self.load_single_internmaths_block(element))
+
+    @read_annotations
+    def load_condition(self, element):
+        return Condition(self.load_single_internmaths_block(element))
+
+    @read_annotations
+    def load_piecewise(self, element):
+        blocks = (Piece.element_name, Otherwise.element_name)
+        subnodes = self._load_blocks(element, blocks=blocks)
+        return Piecewise(name=element.get('name'),
+                         pieces=subnodes[Piece.element_name],
+                         otherwise=expect_single(
+                             subnodes[Otherwise.element_name]))
+
     def load_single_internmaths_block(self, element, checkOnlyBlock=True):
         if checkOnlyBlock:
             elements = list(element.iterchildren(tag=etree.Element))
             if len(elements) != 1:
-                print elements
-                assert 0, 'Unexpected tags found'
+                raise NineMLRuntimeError(
+                    "Unexpected tags found '{}'"
+                    .format("', '".join(e.tag for e in elements)))
         assert (len(element.findall(MATHML + "MathML")) +
                 len(element.findall(NINEML + "MathInline"))) == 1
         if element.find(NINEML + "MathInline") is not None:
@@ -84,11 +112,13 @@ class ComponentClassXMLLoader(object):
         return loaded_objects
 
     def _get_loader(self, tag):
+        # Try class specific loaders (better to ask for forgiveness philosophy)
         try:
             loader = self.tag_to_loader[tag]
         except KeyError:
+            # Otherwise try base class loaders for generic elements
             try:
-                loader = self.base_tag_to_loader[tag]
+                loader = ComponentClassXMLLoader.tag_to_loader[tag]
             except KeyError:
                 assert False, "Did not finder loader for '{}' tag".format(tag)
         return loader
@@ -109,9 +139,13 @@ class ComponentClassXMLLoader(object):
             class_type = "Distribution"
         return class_type
 
-    base_tag_to_loader = {
+    tag_to_loader = {
         "Parameter": load_parameter,
         "Alias": load_alias,
+        "Piecewise": load_piecewise,
+        "Piece": load_piece,
+        "Otherwise": load_otherwise,
+        "Condition": load_condition
     }
 
 
@@ -119,13 +153,39 @@ class ComponentClassXMLWriter(ComponentVisitor):
 
     @annotate_xml
     def visit_parameter(self, parameter):
-        return E('Parameter',
+        return E(Parameter.element_name,
                  name=parameter.name,
                  dimension=parameter.dimension.name)
 
     @annotate_xml
     def visit_alias(self, alias):
-        return E('Alias', E("MathInline", alias.rhs), name=alias.lhs)
+        return E(Alias.element_name,
+                 E("MathInline", alias.rhs),
+                 name=alias.lhs)
+
+    @annotate_xml
+    def visit_piecewise(self, piecewise):
+        pieces = [piece.accept_visitor(self) for piece in piecewise.pieces]
+        pieces.append(piecewise.otherwise.accept_visitor(self))
+        return E(Piecewise.element_name,
+                 *pieces,
+                 name=piecewise.name)
+
+    @annotate_xml
+    def visit_piece(self, piece):
+        return E(Piece.element_name,
+                 E('MathInline', piece.rhs),
+                 piece.condition.accept_visitor(self))
+
+    @annotate_xml
+    def visit_condition(self, piece):
+        return E(Condition.element_name,
+                 E('MathInline', piece.rhs))
+
+    @annotate_xml
+    def visit_otherwise(self, piece):
+        return E(Otherwise.element_name,
+                 E('MathInline', piece.rhs))
 
 
 class ComponentClassXMLReader(object):
@@ -249,3 +309,5 @@ class ComponentClassXMLReader(object):
         loader.load_componentclasses(
             xmlroot=root, xml_node_filename_map=xml_node_filename_map)
         return loader.components
+
+from nineml.document import Document

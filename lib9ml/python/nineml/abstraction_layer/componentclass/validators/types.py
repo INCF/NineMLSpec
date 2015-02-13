@@ -7,7 +7,7 @@ docstring needed
 
 from ..utils import ComponentActionVisitor
 from ..base import ComponentClass, Parameter
-from ...expressions import Alias
+from ...expressions import Alias, Piecewise
 
 
 class TypesComponentValidator(ComponentActionVisitor):
@@ -25,3 +25,6 @@ class TypesComponentValidator(ComponentActionVisitor):
 
     def action_alias(self, alias, **kwargs):  # @UnusedVariable
         assert isinstance(alias, Alias)
+
+    def action_piecewise(self, piecewise, **kwargs):  # @UnusedVariable
+        assert isinstance(piecewise, Piecewise)

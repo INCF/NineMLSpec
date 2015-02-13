@@ -71,13 +71,12 @@ class CondParser(object):
             yacc.parse(expr)
         except NineMLMathParseError, e:
             raise NineMLMathParseError(str(e) + " Expression was: '%s'" % expr)
-        # return set(self.names), set(self.funcs)
-
+        # Subtract built-in symbols from names and functions
         self.names = set(self.names)
         self.names.difference_update(get_builtin_symbols())
-
-        return self.names, set(self.funcs)
-
+        self.funcs = set(self.funcs)
+#         self.funcs.difference_update(get_builtin_symbols())
+        return self.names, self.funcs
 
 
 class CalcCond(CondParser):
