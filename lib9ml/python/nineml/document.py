@@ -6,7 +6,7 @@ import collections
 from nineml.xmlns import NINEML, E
 from nineml.annotations import Annotations
 from . import BaseNineMLObject
-from nineml.exceptions import NineMLRuntimeError
+from nineml.exceptions import NineMLRuntimeError, NineMLMissingElementError
 from nineml import TopLevelObject
 
 
@@ -68,7 +68,7 @@ class Document(dict, BaseNineMLObject):
         try:
             elem = super(Document, self).__getitem__(name)
         except KeyError:
-            raise KeyError(
+            raise NineMLMissingElementError(
                 "'{}' was not found in the NineML document {} (elements in the"
                 " document were '{}')."
                 .format(name, self.url or '', "', '".join(self.iterkeys())))
@@ -130,12 +130,12 @@ class Document(dict, BaseNineMLObject):
         element dictionary
         """
         if unloaded in self._loading:
-            raise Exception("Circular reference detected in '{}(name={})' "
-                            "element. Resolution stack was:\n"
-                            .format(unloaded.name,
-                                    "\n".join('{}(name={})'.format(u.tag,
-                                                                   u.name)
-                                              for u in self._loading)))
+            raise NineMLRuntimeError(
+                "Circular reference detected in '{}(name={})' element. "
+                "Resolution stack was:\n"
+                .format(unloaded.cls.__name__, unloaded.name,
+                        "\n".join('{}(name={})'.format(u.cls.__name__, u.name)
+                                  for u in self._loading)))
         self._loading.append(unloaded)
         elem = unloaded.cls.from_xml(unloaded.xml, self)
         assert self._loading[-1] is unloaded
@@ -297,7 +297,7 @@ def read(url, relative_to=None):
         else:
             xml = etree.parse(url)
     except:  # FIXME: Need to work out what exceptions etree raises
-        raise Exception("Could not parse XML file '{}'".format(url))
+        raise NineMLRuntimeError("Could not parse XML file '{}'".format(url))
     root = xml.getroot()
     return load(root, url)
 

@@ -68,7 +68,7 @@
 \newcommand{\Reference}{\defRef{\textbf{\class{Reference}}\xspace}{sec:Reference}}
 \newcommand{\Population}{\defRef{\textbf{\class{Population}}\xspace}{sec:Population}}
 \newcommand{\Cell}{\defRef{\textbf{\class{Cell}}\xspace}{sec:Cell}}
-\newcommand{\Number}{\defRef{\textbf{\class{Number}}\xspace}{sec:Number}}
+\newcommand{\Size}{\defRef{\textbf{\class{Size}}\xspace}{sec:Size}}
 \newcommand{\Projection}{\defRef{\textbf{\class{Projection}}\xspace}{sec:Projection}}
 \newcommand{\Source}{\defRef{\textbf{\class{Source}}\xspace}{sec:Source}}
 \newcommand{\Destination}{\defRef{\textbf{\class{Destination}}\xspace}{sec:Destination}}
@@ -419,7 +419,7 @@ as rich types with a numerical factor and exponents for each of the
 base dimensions. They are independent of the particular choice of
 units by which they are assigned.
 
-\note{The format for units and dimensions is the same as is used for LEMS/NeuroML v2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}) \citep{Cannon2014}.}
+\note{The format for units and dimensions is the same as the LEMS/NeuroMLv2.0 (\href{http://www.neuroml.org}{http://www.neuroml.org}) format \citep{Cannon2014}.}
 
 \subsection{Dimension}
 \label{sec:Dimension}
@@ -667,7 +667,7 @@ Each \Alias requires a \textit{name} attribute, which is a valid \identifier and
     name & \identifier & yes\\
     units & \Unit@name & yes\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes \\ 
     \bottomrule
@@ -682,7 +682,7 @@ Each \Constant requires a \textit{name} attribute, which should be a valid \iden
 \subsubsection{Units attribute}
 Each \Constant requires a \textit{units} attribute. The \textit{units} attribute specifies the units of the property and should refer to the name of a \Unit element in the global scope. 
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 Any valid numeric value, including shorthand scientific notation e.g. 1e-5 ($1\times10^{-5}$).
 
 \section{Ports}
@@ -1271,7 +1271,7 @@ Each \Component requires a \textit{name} attribute, which should be a valid \ide
     \midrule
     url & \URL & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \ComponentClass{}@name & \; & yes \\ 
     \bottomrule
@@ -1285,7 +1285,7 @@ document or in another file if a \textit{url} attribute is provided.
 \subsubsection{Url attribute}
 If the \ComponentClass referenced by the definition element is defined outside the current document, the \textit{url} attribute specifies a \URL for the file which contains the \ComponentClass definition. If it is omitted the \ComponentClass is assumed to be in the current document.
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 The name of the \ComponentClass to be referenced \ComponentClass needs to be provided in the text of \Definition element.
 
 \subsection{Prototype}
@@ -1300,7 +1300,7 @@ The name of the \ComponentClass to be referenced \ComponentClass needs to be pro
     \midrule
     url & \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL} & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \Component{}@name & \; & yes \\ 
     \bottomrule
@@ -1313,7 +1313,7 @@ document or in another file if a \textit{url} attribute is provided.
 \subsubsection{Url attribute}
 If the prototype \Component is defined outside the current file, the \textit{URL} attribute specifies a \URL for the file which contains the prototype \Component.
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 The name of the \Component to be referenced \Component needs to be provided in the text of \Prototype element.
 
 \draftnote{I have removed the \Quantity{s} in favour of adding units to the \Property elements as it seemed superfluous and incongruous with the AL (i.e. \Parameter s define the dimension). I will create a GitHub issue about this where we can discuss this and potentially decide to change it back if you like}
@@ -1358,7 +1358,7 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
     \midrule
     url &  \href{http://en.wikipedia.org/wiki/Uniform_resource_locator}{URL}  & no\\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     *@name & \; & yes\\
     \bottomrule
@@ -1370,7 +1370,7 @@ Each \Property element requires a \emph{units} attribute. The \textit{units} att
 \subsubsection{Url attribute}
 The \textit{url} attribute specifies a \URL for the file which contains the User Layer element to be referenced.
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 The name of the User Layer element to be referenced should be included in the text of the \Reference element.
 
 \section{Values}
@@ -1392,7 +1392,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
     \toprule
     \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{SingleValue Structure}}}\\
     \toprule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes \\ 
     \bottomrule
@@ -1401,7 +1401,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 
 A \SingleValue element represents an array filled with a single value.
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89}, including shorthand scientific notation  e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ArrayValue}
@@ -1433,7 +1433,7 @@ Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89},
     \midrule
     index & integer & yes \\
     \midrule
-    \em{Text format} & \; & \em{Required} \\
+    \em{Body format} & \; & \em{Required} \\
     \midrule
     \primtype{real number} & \; & yes\\
     \bottomrule
@@ -1446,7 +1446,7 @@ The \textit{index} attribute specifies the index of the \ArrayValueRow in the \A
 
 \note{The order of {\ArrayValueRow} elements within an \ArrayValue element does not effect the interpreted order of the values in the array in keeping with the order non-specific design philosophy of NineML (see \ref{sec:design_considerations}).}
 
-\subsubsection{Text format}
+\subsubsection{Body format}
 Any valid numeric value in \href{http://en.wikipedia.org/wiki/ANSI_C}{ANSI C89}, including shorthand scientific notation  e.g. 1e-5 ($1\times10^{-5}$).
 
 \subsection{ExternalArrayValue}
@@ -1526,16 +1526,38 @@ Each \ComponentValue requires a \textit{port} attribute, which selects which por
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \Number & singleton & yes \\
+    \Size & singleton & yes \\
     \Cell & singleton & yes \\
     \bottomrule
   \end{edtable}
 \end{table}
 
-A \Population defines a set of dynamic components of the same class. The size of the set is specified by the \Number element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
+A \Population defines a set of dynamic components of the same class. The size of the population is specified by the \Size element. The properties of the dynamic components are generated from value types, which can be constant across the population, randomly distributed or individually specified (see \ref{sec:Values}).
 
 \subsubsection{Name attribute}
 Each \Population requires a \textit{name} attribute, which should be a valid \identifier and uniquely identify the {\Population} from all other elements in the global scope.
+
+\subsection{Size}
+\label{sec:Size}
+
+\begin{table}[H]
+  \begin{edtable}{tabular}{llr}
+    \toprule
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Size Structure}}}\\
+    \toprule
+    \em{Body format} & \; & \em{Required} \\
+    \midrule
+    \primtype{integer} & \; & yes\\
+    \bottomrule
+  \end{edtable}
+\end{table}
+
+The number of cells in the population is specified by the integer provided in the text of the \Size element. 
+
+\note{Future versions may allow the size of a population to be derived from other properties.}
+
+\subsubsection{Body format}
+The text of the \Size element contains an \primtype{integer} representing the size of the population.
 
 \subsection{Cell}
 \label{sec:Cell}
@@ -1553,27 +1575,6 @@ Each \Population requires a \textit{name} attribute, which should be a valid \id
 \end{table}
 
 The \Cell element specifies the dynamic components that will make up the population. The \Component can be defined inline or via a \Reference element. 
-
-\subsection{Number}
-\label{sec:Number}
-
-\begin{table}[H]
-  \begin{edtable}{tabular}{llr}
-    \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{Number Structure}}}\\
-    \toprule
-    \em{Text format} & \; & \em{Required} \\
-    \midrule
-    \primtype{integer} & \; & yes\\
-    \bottomrule
-  \end{edtable}
-\end{table}
-
-The number of cells in the population is specified by the integer provided in the text of the \Number element. In future versions this may be extended to allow the size of a population to be derived from other features of the \Population. 
-
-\subsubsection{Text format}
-The text of the \Number element contains an \primtype{integer} representing the size of the population.
-
 \section{Projections}
 
 Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created and connected to and from explicitly defined ports of the cell components in the source and projection populations if the connection rule determines there is a connection between a particular source and destination cell pair. 

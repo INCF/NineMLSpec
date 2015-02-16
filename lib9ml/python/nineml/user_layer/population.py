@@ -14,8 +14,8 @@ class Population(BaseULObject, TopLevelObject):
     **Arguments**:
         *name*
             a name for the population.
-        *number*
-            an integer, the number of neurons in the population
+        *size*
+            an integer, the size of neurons in the population
         *cell*
             a :class:`Component`, or :class:`Reference` to a component defining
             the cell type (i.e. the mathematical model and its
@@ -24,12 +24,12 @@ class Population(BaseULObject, TopLevelObject):
             TODO: need to check if positions/structure are in the v1 spec
     """
     element_name = "Population"
-    defining_attributes = ("name", "number", "cell", "positions")
+    defining_attributes = ("name", "size", "cell", "positions")
 
-    def __init__(self, name, number, cell, positions=None):
+    def __init__(self, name, size, cell, positions=None):
         super(Population, self).__init__()
         self.name = name
-        self.number = number
+        self.size = size
         self.cell = cell
         if positions is not None:
             assert isinstance(positions, PositionList)
@@ -37,11 +37,11 @@ class Population(BaseULObject, TopLevelObject):
 
     def __str__(self):
         return ('Population "%s": %dx"%s" %s' %
-                (self.name, self.number, self.cell.name, self.positions))
+                (self.name, self.size, self.cell.name, self.positions))
 
     def __repr__(self):
-        return ("Population(name='{}', number={}, cell={}{})"
-                .format(self.name, self.number, self.cell.name,
+        return ("Population(name='{}', size={}, cell={}{})"
+                .format(self.name, self.size, self.cell.name,
                         'positions={}'.format(self.positions)
                         if self.positions else ''))
 
@@ -68,7 +68,7 @@ class Population(BaseULObject, TopLevelObject):
     def to_xml(self):
         positions = [self.positions.to_xml()] if self.positions else []
         return E(self.element_name,
-                 E.Number(str(self.number)),
+                 E.Size(str(self.size)),
                  E.Cell(self.cell.to_xml()),
                  *positions,
                  name=self.name)
@@ -87,7 +87,7 @@ class Population(BaseULObject, TopLevelObject):
         if cell_component is None:
             cell_component = cell.find(NINEML + 'Reference')
         return cls(name=element.attrib['name'],
-                   number=int(element.find(NINEML + 'Number').text),
+                   size=int(element.find(NINEML + 'Size').text),
                    cell=Component.from_xml(cell_component, document), **kwargs)
 
 
@@ -150,10 +150,10 @@ class PositionList(BaseULObject, TopLevelObject):
         Return a list or 1D numpy array of (x,y,z) positions.
         """
         if self._positions:
-            assert len(self._positions) == population.number
+            assert len(self._positions) == population.size
             return self._positions
         elif self.structure:
-            return self.structure.generate_positions(population.number)
+            return self.structure.generate_positions(population.size)
         else:
             raise Exception("Neither positions nor structure is set.")
 
@@ -214,7 +214,7 @@ class Structure(Component):
 
     def generate_positions(self, number):
         """
-        Generate a number of node positions according to the network structure.
+        Generate a size of node positions according to the network structure.
         """
         raise NotImplementedError
 

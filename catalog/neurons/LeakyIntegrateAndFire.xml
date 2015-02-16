@@ -22,7 +22,7 @@
           <StateAssignment variable="V">
             <MathInline>vreset</MathInline>
           </StateAssignment>
-          <EventOut port="spikeoutput"/>
+          <OutputEvent port="spikeoutput"/>
           <Trigger>
             <MathInline>V &gt; vthresh</MathInline>
           </Trigger>

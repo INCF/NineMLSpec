@@ -36,7 +36,7 @@
           <StateAssignment variable="U">
             <MathInline>U</MathInline>
           </StateAssignment>
-          <EventOut port="spikeOutput"/>
+          <OutputEvent port="spikeOutput"/>
         </OnCondition>
         <OnCondition target_regime="subVb">
           <Trigger>

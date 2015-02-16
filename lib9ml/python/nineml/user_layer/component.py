@@ -3,13 +3,14 @@ from itertools import chain
 from lxml import etree
 from abc import ABCMeta
 from nineml.reference import BaseReference
-from nineml.exceptions import NineMLUnitMismatchError, NineMLRuntimeError
+from nineml.exceptions import (
+    NineMLUnitMismatchError, NineMLRuntimeError, NineMLMissingElementError)
 from nineml.xmlns import nineml_namespace
 from operator import and_
 from nineml.xmlns import NINEML, E
 from nineml.annotations import read_annotations, annotate_xml
 from nineml.utils import expect_single, check_tag, check_units
-from ..abstraction_layer.units import Unit
+from ..abstraction_layer.units import Unit, unitless
 from .values import SingleValue, ArrayValue, ExternalArrayValue
 from . import BaseULObject
 from nineml.document import Document
@@ -216,9 +217,9 @@ class Component(BaseULObject, TopLevelObject):
         return "\n".join(d)
 
     def get_definition(self):
-        if not self.definition.componentclass:
-            self.definition.retrieve()
-        return self.definition.componentclass
+        if not self._definition.componentclass:
+            self._definition.retrieve()
+        return self._definition.componentclass
 
     def check_properties(self):
         # First check the names
@@ -348,7 +349,9 @@ class Quantity(BaseULObject):
                             "'Value', 'Reference', 'Component', 'ValueList', "
                             "'ExternalValueList'"
                             .format(value.__class__.__name__))
-        if not isinstance(units, Unit) and units is not None:
+        if units is None:
+            units = unitless
+        if not isinstance(units, Unit):
             raise Exception("Units ({}) must of type <Unit>".format(units))
         super(Quantity, self).__init__()
         if isinstance(value, (int, float)):
@@ -449,12 +452,13 @@ class Quantity(BaseULObject):
             raise Exception(
                 "Did not find recognised value tag in property (found {})"
                 .format(', '.join(c.tag for c in element.getchildren())))
-        units_str = element.attrib.get('units', None)
+        units_str = element.attrib.get('units')
         try:
-            units = document[units_str] if units_str else None
+            units = document[units_str]
         except KeyError:
-            raise Exception("Did not find definition of '{}' units in the "
-                            "current document.".format(units_str))
+            raise NineMLMissingElementError(
+                "Did not find definition of '{}' units in the current document."
+                .format(units_str))
         return cls(value=value, units=units)
 
 
@@ -501,7 +505,7 @@ class Property(Quantity):
         check_tag(element, cls)
         quantity = Quantity.from_xml(element, document)
         try:
-            name = element.attrib['name']
+            name = element.get('name')
         except KeyError:
             raise Exception("Property did not have a name")
         return cls(name=name, value=quantity.value, units=quantity.units)

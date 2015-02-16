@@ -70,7 +70,7 @@
           <Trigger>
             <MathInline>v &gt; -20</MathInline>
           </Trigger>
-          <EventOut port="outgoingSpike"/>
+          <OutputEvent port="outgoingSpike"/>
         </OnCondition>
       </Regime>
       <Alias name="iK">

@@ -32,6 +32,7 @@ class Port(BaseALObject):
     __metaclass__ = ABCMeta  # Ensure abstract base class isn't instantiated
 
     defining_attributes = ('name',)
+    index_key = 'Port'
 
     def __init__(self, name):
         """ Port Constructor.

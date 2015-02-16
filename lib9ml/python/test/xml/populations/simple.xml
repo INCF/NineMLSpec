@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <NineML xmlns="http://nineml.net/9ML/1.0">
   <Population name="HHPopulation">
-    <Number>10</Number>
+    <Size>10</Size>
     <Cell>
       <Reference url="../neurons/HodgkinHuxley.xml">HodgkinHuxley</Reference>
     </Cell>
   </Population>
   <Population name="IzhiPopulation">
-    <Number>20</Number>
+    <Size>20</Size>
     <Cell>
       <Reference url="../neurons/Izhikevich.xml">Izhikevich</Reference>
       <Annotations><Text>This is a third test annotation</Text></Annotations>
