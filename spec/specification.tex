@@ -2,6 +2,7 @@
 \usepackage{microtype}
 \usepackage{pbox}
 \usepackage{multirow}
+\usepackage{multicol}
 \usepackage{float}
 %% ============================================================================
 %% Description:  Documentation for \lq\lq{}The NineML Specification Document\rq\rq{}
@@ -276,9 +277,9 @@ not sensitive to the order that objects appear in.
 \subsection{Identifiers}
 \label{sec:identifier}
 
-Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class or in the global scope of the file). For a name to be a valid NineML identifier, it must meet the requirements for a \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers}. Additionally, identifiers are not permitted to begin or end with an underscore character (i.e. `\_') to allow special variables to be defined in the same scope as identified variables/objects in generated code.
+Elements are identified by \emph{names}, which are unique in the scope they are enclosed by (either within a component class, container or in the global scope of the document). For a name to be a valid NineML identifier, it must meet the requirements for \href{http://msdn.microsoft.com/en-us/library/e7f8y25b.aspx}{ANSI C89 identifiers}. Additionally, identifiers are not permitted to be one of the reserved keywords (see Appendix \ref{sec:reserved_keywords}) or begin or end with an underscore character (i.e. `\_') to allow special variables to be defined in the same scope as identified variables/objects in generated code.
 
-NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope. Identifiers used within component classes also cannot be the same (case-sensitive) as one of the built-in symbols or functions (see \MathInline).
+NineML identifiers are case-sensitive in the sense that they must be referred to with the same case as they are defined. However, two identifiers that are identical with the exception of case, e.g. `v\_threshold' and `v\_Threshold', are not permitted within the same scope.
 
 \subsection{Extensions}
 \label{sec:extensions}
@@ -2435,6 +2436,269 @@ Figure~\ref{ParallelisingTransitions}.
 \protect\caption{Parallelising of Event Resolution.}
 \label{ParallelisingTransitions}
 \end{figure}
+
+\section{Reserved Identifiers}
+\label{sec:reserved_keywords}
+
+In addition to the built-in mathematical functions and symbols (see \MathInline), the following strings (and capitalised versions) are reserved and cannot be used as identifiers,
+
+\begin{multicols}{4}
+\begin{itemize}
+\item abs
+\item abstract
+\item alias
+\item alignas
+\item alignof
+\item all
+\item and
+\item and\_eq
+\item any
+\item apply
+\item arguments
+\item as
+\item asm
+\item assert
+\item auto
+\item base
+\item basestring
+\item begin
+\item bin
+\item bitand
+\item bitor
+\item bool
+\item boolean
+\item break
+\item buffer
+\item byte
+\item bytearray
+\item callable
+\item calloc
+\item case
+\item catch
+\item char
+\item char16\_t
+\item char32\_t
+\item checked
+\item chr
+\item class
+\item classdef
+\item classmethod
+\item cmp
+\item coerce
+\item compile
+\item compl
+\item complex
+\item const
+\item const\_cast
+\item constexpr
+\item continue
+\item debugger
+\item decimal
+\item decltype
+\item def
+\item default
+\item del
+\item delattr
+\item delegate
+\item delete
+\item dict
+\item dir
+\item divmod
+\item do
+\item double
+\item dynamic\_cast
+\item elif
+\item else
+\item elseif
+\item elsif
+\item end
+\item ensure
+\item enum
+\item enumerate
+\item eval
+\item event
+\item except
+\item exec
+\item execfile
+\item explicit
+\item export
+\item extends
+\item extern
+\item false
+\item file
+\item filter
+\item final
+\item finally
+\item fixed
+\item float
+\item for
+\item foreach
+\item format
+\item free
+\item friend
+\item from
+\item frozenset
+\item function
+\item getattr
+\item global
+\item globals
+\item goto
+\item hasattr
+\item hash
+\item help
+\item hex
+\item id
+\item if
+\item implements
+\item implicit
+\item import
+\item in
+\item inline
+\item input
+\item instanceof
+\item int
+\item interface
+\item intern
+\item internal
+\item is
+\item isinstance
+\item issubclass
+\item iter
+\item lambda
+\item len
+\item let
+\item list
+\item locals
+\item lock
+\item long
+\item malloc
+\item map
+\item max
+\item memchr
+\item memcmp
+\item memcpy
+\item memmove
+\item memoryview
+\item memset
+\item min
+\item module
+\item mutable
+\item namespace
+\item native
+\item new
+\item next
+\item nil
+\item noexcept
+\item not
+\item not\_eq
+\item null
+\item nullptr
+\item object
+\item oct
+\item open
+\item operator
+\item or
+\item or\_eq
+\item ord
+\item otherwise
+\item out
+\item override
+\item package
+\item params
+\item parfor
+\item pass
+\item persistent
+\item pow
+\item print
+\item private
+\item property
+\item protected
+\item public
+\item raise
+\item range
+\item raw\_input
+\item readonly
+\item realloc
+\item redo
+\item reduce
+\item ref
+\item register
+\item reinterpret\_cast
+\item reload
+\item repr
+\item rescue
+\item retry
+\item return
+\item reversed
+\item round
+\item sbyte
+\item sealed
+\item self
+\item set
+\item setattr
+\item short
+\item signed
+\item sizeof
+\item slice
+\item sorted
+\item spmd
+\item stackalloc
+\item static
+\item static\_assert
+\item static\_cast
+\item staticmethod
+\item str
+\item strictfp
+\item string
+\item struct
+\item sum
+\item super
+\item switch
+\item synchronized
+\item template
+\item then
+\item this
+\item thread\_local
+\item throw
+\item throws
+\item transient
+\item true
+\item try
+\item tuple
+\item type
+\item typedef
+\item typeid
+\item typename
+\item typeof
+\item uint
+\item ulong
+\item unchecked
+\item undef
+\item unichr
+\item unicode
+\item union
+\item unless
+\item unsafe
+\item unsigned
+\item until
+\item ushort
+\item using
+\item var
+\item vars
+\item virtual
+\item void
+\item volatile
+\item wchar\_t
+\item when
+\item while
+\item with
+\item xor
+\item xor\_eq
+\item xrange
+\item yield
+\item zip
+\end{itemize}
+\end{multicols}
 
 \section{Acknowledgments}
 \subsection{Former NineML INCF Task Force members}
