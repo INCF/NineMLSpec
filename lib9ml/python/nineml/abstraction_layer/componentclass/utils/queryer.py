@@ -30,6 +30,11 @@ class ComponentQueryer(object):
         """Returns a map of names to |Parameter| objects"""
         return dict([(p.name, p) for p in self.componentclass.parameters])
 
+    @property
+    def randomvariables_map(self):
+        """Returns a map of names to |Parameter| objects"""
+        return dict([(c.name, c) for c in self.componentclass.randomvariables])
+
     # Used by the flattening code:
     def get_fully_qualified_port_connections(self):
         """Used by the flattening code.

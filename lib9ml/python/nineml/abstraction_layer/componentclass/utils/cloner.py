@@ -5,7 +5,7 @@ docstring needed
 :license: BSD-3, see LICENSE for details.
 """
 from nineml.exceptions import NineMLRuntimeError
-from ...expressions.utils import (is_builtin_symbol, MathUtil)
+from ...expressions.utils import is_builtin_symbol
 from .visitors import ComponentActionVisitor, ComponentVisitor
 
 
@@ -94,6 +94,11 @@ class ComponentRenameSymbol(ComponentActionVisitor):
             self.note_rhs_changed(alias)
             alias.name_transform_inplace(self.namemap)
 
+    def action_randomvariable(self, randomvariable, **kwargs):  # @UnusedVariable
+        if randomvariable.name == self.old_symbol_name:
+            self.note_lhs_changed(randomvariable)
+            randomvariable.name_transform_inplace(self.namemap)
+
 
 class ComponentClonerVisitor(ComponentVisitor):
 
@@ -119,4 +124,12 @@ class ComponentClonerVisitor(ComponentVisitor):
         name_map = dict([(a, self.prefix_variable(a, **kwargs))
                          for a in new_alias.atoms])
         new_alias.name_transform_inplace(name_map=name_map)
+        # FIXME:? TGC 1/15 Doesn't the LHS need updating too?
         return new_alias
+
+    def visit_randomvariable(self, randomvariable, **kwargs):  # @UnusedVariable
+        # FIXME: This would be handled better by a copy constructor?? TGC 1/15
+        new_randomvariable = randomvariable.__class__(name=randomvariable.name,
+                                          value=randomvariable.value,
+                                          units=randomvariable.units)
+        return new_randomvariable
