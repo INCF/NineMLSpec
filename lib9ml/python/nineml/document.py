@@ -8,6 +8,7 @@ from nineml.annotations import Annotations
 from . import BaseNineMLObject
 from nineml.exceptions import NineMLRuntimeError
 from nineml import TopLevelObject
+import contextlib
 
 
 class Document(dict, BaseNineMLObject):
@@ -18,6 +19,7 @@ class Document(dict, BaseNineMLObject):
     demand so it doesn't matter which order they appear in the NineML file.
     """
 
+    defining_attributes = ('elements',)
     element_name = 'NineML'
 
     # A tuple to hold the unresolved elements
@@ -77,6 +79,10 @@ class Document(dict, BaseNineMLObject):
             elem = self._load_elem_from_xml(elem)
         return elem
 
+    @property
+    def elements(self):
+        return dict(self.iteritems())  # Ensures all elements are loaded
+
     def itervalues(self):
         for v in super(Document, self).itervalues():
             if isinstance(v, self._Unloaded):
@@ -123,6 +129,16 @@ class Document(dict, BaseNineMLObject):
     @property
     def network_structures(self):
         return chain(self.populations, self.projections, self.selections)
+
+    @property
+    def units(self):
+        return (o for o in self.itervalues()
+                if isinstance(nineml.abstraction_layer.units.Unit))  # @UndefinedVariable @IgnorePep8
+
+    @property
+    def dimensions(self):
+        return (o for o in self.itervalues()
+                if isinstance(nineml.abstraction_layer.units.Dimension))  # @UndefinedVariable @IgnorePep8
 
     def _load_elem_from_xml(self, unloaded):
         """
@@ -264,6 +280,17 @@ class Document(dict, BaseNineMLObject):
         document.annotations = annotations
         return document
 
+    def find_mismatch(self, other):
+        """
+        A function used to display where two documents differ (typically used
+        in unit test debugging)
+        """
+        result = 'Mismatch between documents:'
+        for k, s in self.iteritems():
+            if s != other[k]:
+                result += s.find_mismatch(other[k])
+        return result
+
 
 def load(root_element, read_from=None):
     """
@@ -288,16 +315,17 @@ def read(url, relative_to=None):
     try:
         if not isinstance(url, file):
             try:
-                f = urlopen(url)
-                xml = etree.parse(f)
-            except:  # FIXME: Need to work out what exceptions urlopen raises
-                raise Exception("Could not read URL '{}'".format(url))
-            finally:
-                f.close()
+                with contextlib.closing(urlopen(url)) as f:
+                    f = urlopen(url)
+                    xml = etree.parse(f)
+            except IOError, e:
+                raise NineMLRuntimeError("Could not read 9ML URL '{}': \n{}"
+                                         .format(url, e))
         else:
             xml = etree.parse(url)
-    except:  # FIXME: Need to work out what exceptions etree raises
-        raise Exception("Could not parse XML file '{}'".format(url))
+    except etree.LxmlError, e:
+        raise NineMLRuntimeError("Could not parse XML of 9ML file '{}': \n {}"
+                                 .format(url, e))
     root = xml.getroot()
     return load(root, url)
 

@@ -62,16 +62,16 @@ class Regime(BaseALObject):
                 err = 'Unexpected Arg: %s' % arg
                 raise NineMLRuntimeError(err)
 
-        transitions = kwargs.get('transitions', None)
         name = kwargs.get('name', None)
+        if name is None:
+            self._name = 'default'
+        else:
+            self._name = name.strip()
+            ensure_valid_identifier(self._name)
+        transitions = kwargs.get('transitions', None)
         kw_tds = normalise_parameter_as_list(kwargs.get('time_derivatives',
                                                         None))
         time_derivatives = list(args) + kw_tds
-
-        self._name = name
-        if self.name is not None:
-            self._name = self._name.strip()
-            ensure_valid_identifier(self._name)
 
         # Un-named arguments are time_derivatives:
         time_derivatives = normalise_parameter_as_list(time_derivatives)

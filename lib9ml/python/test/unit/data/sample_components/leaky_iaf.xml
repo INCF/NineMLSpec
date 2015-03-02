@@ -2,7 +2,7 @@
 <NineML xmlns="http://nineml.incf.org/9ML/0.3">
   <ComponentClass name="LeakyIAF">
     <AnalogPort mode="send" name="V"/>
-    <AnalogPort mode="reduce" reduce_op="+" name="Isyn"/>
+    <AnalogPort mode="reduce" operator="+" name="Isyn"/>
     <EventPort mode="send" name="spikeoutput"/>
     <Parameter dimension="" name="C"/>
     <Parameter dimension="" name="vL"/>

@@ -43,7 +43,7 @@ class AnalogPort_test(unittest.TestCase):
         )
 
         self.assertEqual(
-            v.visit(AnalogReducePort('V', reduce_op='+'), kwarg1='Hello', kwarg2='Hello2'),
+            v.visit(AnalogReducePort('V', operator='+'), kwarg1='Hello', kwarg2='Hello2'),
             {'kwarg1': 'Hello', 'kwarg2': 'Hello2'}
         )
 
@@ -51,16 +51,16 @@ class AnalogPort_test(unittest.TestCase):
         # Signature: name
                 # The name of the port, local to the current component
         self.assertEqual(AnalogReceivePort('A').name, 'A')
-        self.assertEqual(AnalogReducePort('B', reduce_op='+').name, 'B')
+        self.assertEqual(AnalogReducePort('B', operator='+').name, 'B')
         self.assertEqual(AnalogSendPort('C').name, 'C')
 
-    def test_reduce_op(self):
+    def test_operator(self):
         # Signature: name
                 # The reduction operation of the port, if it is a 'reduce' port
         # from nineml.abstraction_layer.component.ports import AnalogPort
         self.assertRaises(
             NineMLRuntimeError,
-            AnalogReducePort, 'V', reduce_op='-')
+            AnalogReducePort, 'V', operator='-')
 
 
 # Testing Skeleton for class: EventPort
@@ -104,6 +104,6 @@ class EventPort_test(unittest.TestCase):
         pass
         # raise NotImplementedError()
 
-    def test_reduce_op(self):
+    def test_operator(self):
 #         warnings.warn('Tests not implemented')
         pass

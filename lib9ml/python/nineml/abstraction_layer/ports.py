@@ -38,6 +38,7 @@ class Port(BaseALObject):
 
         `name` -- The name of the port, as a `string`
         """
+        super(Port, self).__init__()
         name = name.strip()
         ensure_valid_identifier(name)
         self._name = name
@@ -200,30 +201,30 @@ class AnalogReducePort(AnalogPort, ReceivePort):
 
     .. note::
 
-        Currently support ``reduce_op`` s are: ``+``.
+        Currently support ``operator`` s are: ``+``.
 
     """
     mode = "reduce"
-    _reduce_op_map = {'add': '+', '+': '+', }
+    _operator_map = {'add': '+', '+': '+', }
 
-    def __init__(self, name, dimension=None, reduce_op='+'):
-        if reduce_op not in self._reduce_op_map.keys():
-            err = ("%s('%s')" + "specified undefined reduce_op: '%s'") %\
-                  (self.__class__.__name__, name, str(reduce_op))
+    def __init__(self, name, dimension=None, operator='+'):
+        if operator not in self._operator_map.keys():
+            err = ("%s('%s')" + "specified undefined operator: '%s'") %\
+                  (self.__class__.__name__, name, str(operator))
             raise NineMLRuntimeError(err)
         super(AnalogReducePort, self).__init__(name, dimension)
-        self._reduce_op = reduce_op
+        self._operator = operator
 
     def accept_visitor(self, visitor, **kwargs):
         """ |VISITATION| """
         return visitor.visit_analogreduceport(self, **kwargs)
 
     @property
-    def reduce_op(self):
-        return self._reduce_op
+    def operator(self):
+        return self._operator
 
     def __repr__(self):
         classstring = self.__class__.__name__
         return ("{}('{}', dimension='{}', op='{}')"
                 .format(classstring, self.name, self.dimension,
-                        self.reduce_op))
+                        self.operator))

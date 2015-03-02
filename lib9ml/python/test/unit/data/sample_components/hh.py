@@ -40,7 +40,7 @@ def get_component():
 # indep vars, analog_analog_ports, etc.
     parameters = ['el', 'C', 'ek', 'ena', 'gkbar', 'gnabar', 'theta', 'gl', 'celsius', ]
 
-    analog_ports = [al.SendPort("V"), al.ReducePort("Isyn", reduce_op="+")]
+    analog_ports = [al.SendPort("V"), al.ReducePort("Isyn", operator="+")]
 
     c1 = al.ComponentClass("HodgkinHuxley",
                            parameters=parameters,

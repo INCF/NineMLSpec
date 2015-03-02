@@ -102,9 +102,11 @@ class Unit(BaseALObject, TopLevelObject):
         self._offset = offset
 
     def __eq__(self, other):
-        assert isinstance(other, Unit)
-        return (self.power == other.power and self.offset == other.offset and
-                self.dimension == other.dimension)
+        if not isinstance(other, Unit):
+            return False
+        else:
+            return (self.power == other.power and self.offset == other.offset
+                    and self.dimension == other.dimension)
 
     def __hash__(self):
         return hash((self.power, self.offset, self.dimension))

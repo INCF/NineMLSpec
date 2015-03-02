@@ -59,7 +59,7 @@
 \newcommand{\Quantity}{\defRef{\textbf{\class{Quantity}}\xspace}{sec:Quantity}}
 \newcommand{\SingleValue}{\defRef{\textbf{\class{SingleValue}}\xspace}{sec:SingleValue}}
 \newcommand{\ExternalArrayValue}{\defRef{\textbf{\class{ExternalArrayValue}}\xspace}{sec:ExternalArrayValue}}
-\newcommand{\ComponentValue}{\defRef{\textbf{\class{ComponentValue}}\xspace}{sec:ComponentValue}}
+\newcommand{\RandomValue}{\defRef{\textbf{\class{RandomValue}}\xspace}{sec:RandomValue}}
 \newcommand{\ArrayValue}{\defRef{\textbf{\class{ArrayValue}}\xspace}{sec:ArrayValue}}
 \newcommand{\ArrayValueRow}{\defRef{\textbf{\class{ArrayValueRow}}\xspace}{sec:ArrayValueRow}}
 \newcommand{\ListColumn}{\defRef{\textbf{\class{ListColumn}}\xspace}{sec:ListColumn}}
@@ -787,7 +787,7 @@ Each \AnalogReducePort requires a \textit{dimension} attribute. This attribute s
 Each \AnalogReducePort requires an \textit{operator} attribute. The operator \lq\lq{}reduces\rq\rq{} the connected inputs to a single value at each time point. For example the following port,
 
 \begin{lstlisting}
-<AnalogReducePort name="total_membrane_current" dimension="current" operator="+"/>
+<AnalogReducePort name="synaptic_current" dimension="current" operator="+"/>
 \end{lstlisting}
 
 will take all of the electrical currents that have been connected to it via {\AnalogSendPort}s and sum them to get the total current passing through the membrane.
@@ -1332,7 +1332,7 @@ The name of the \Component to be referenced \Component needs to be provided in t
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \RandomValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}
@@ -1381,7 +1381,7 @@ In NineML, ``values'' are arrays that implicitly grow to fill the size of the co
 \item \SingleValue, a consistent value across the container
 \item \ArrayValue, an explicit array defined in NineML
 \item \ExternalArrayValue, an explicit array defined in text (space delimited) or HDF5 format.
-\item \ComponentValue, a return value from a \RandomDistribution component.
+\item \RandomValue, a return value from a \RandomDistribution component.
 \end{itemize}
 
 \subsection{SingleValue}
@@ -1486,13 +1486,13 @@ The \textit{mimetype} attribute specifies the data format for the external value
 Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers to a column header in the external data file. 
 
 \draftnote{What do you think of this? This allows a single component to return two (related) values at different places at the model (e.g. weight and delay in distance dependent rules). It also seemed a bit neater}
-\subsection{ComponentValue}
-\label{sec:ComponentValue}
+\subsection{RandomValue}
+\label{sec:RandomValue}
 
 \begin{table}[H]
   \begin{edtable}{tabular}{llr}
     \toprule
-    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{ExternalArrayValue Structure}}}\\
+    \multicolumn{3}{c}{\parbox{0.55\linewidth}{\center\textbf{RandomValue Structure}}}\\
     \toprule
     \em{Attribute name} & \em{Type/Format} & \em{Required} \\
     \midrule
@@ -1505,10 +1505,10 @@ Each \ExternalArrayValue must have a \textit{columnName} attribute, which refers
   \end{edtable}
 \end{table}
 
-The array of values represented by a \ComponentValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \ComponentValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \ComponentValue is nested within.
+The array of values represented by a \RandomValue element is populated from the output port of a component. As of version 1.0, only \RandomDistribution components are supported within \RandomValue but function and generator components are planned for later versions. The size of the generated array is determined by the size of the container (i.e. \Population or \Projection) the \RandomValue is nested within.
 
 \subsubsection{Port attribute}
-Each \ComponentValue requires a \textit{port} attribute, which selects which port of the \Component to read.
+Each \RandomValue requires a \textit{port} attribute, which selects which port of the \Component to read.
 
 \section{Populations}
 
@@ -1578,7 +1578,7 @@ The text of the \Number element contains an \primtype{integer} representing the 
 
 Projections define the synaptic connectivity between two populations, the post-synaptic response of the connections, the plasticity rules that modulate the post-synaptic response and the transmission delays. Synaptic and plasticity dynamic components are created and connected to and from explicitly defined ports of the cell components in the source and projection populations if the connection rule determines there is a connection between a particular source and destination cell pair. 
 
-\draftnote{I just drafted this so it will need checking}\SingleValue and \ComponentValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
+\draftnote{I just drafted this so it will need checking}\SingleValue and \RandomValue elements used in properties of a projection (in the \Connectivity, \Response, \Plasticity and \Delay elements) take the size of the number of connections made. While \ArrayValue and \ExternalArrayValue elements can either be the size of the number of connections made or the number of possible unique connections (i.e. $N_{\mathrm{source}} * N_{\mathrm{dest}}$). In either case, the expected array data is ordered by the indices
 \begin{equation}
 i_{\mathrm{value}} = i_{\mathrm{source}} * N_{\mathrm{dest}} + i_{\mathrm{dest}}
 \end{equation}
@@ -1834,7 +1834,7 @@ Each \FromResponse element requires a \textit{receiver} attribute. This should r
     \midrule
     \em{Element type} & \em{Multiplicity} & \em{Required} \\
     \midrule
-    \SingleValue | \ArrayValue | \ExternalArrayValue | \ComponentValue & singleton & yes \\ 
+    \SingleValue | \ArrayValue | \ExternalArrayValue | \RandomValue & singleton & yes \\ 
     \bottomrule
   \end{edtable}
 \end{table}

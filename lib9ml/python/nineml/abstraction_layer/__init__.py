@@ -28,7 +28,7 @@ from .expressions import Alias, Expression
 from .dynamics import (DynamicsClass, Regime,
                        OutputEvent, StateAssignment, TimeDerivative,
                        DynamicsBlock, OnCondition,
-                       Trigger, StateVariable, OnEvent, On)
+                       Trigger, StateVariable, OnEvent, On, SpikeOutputEvent)
 from .ports import (AnalogSendPort, AnalogReceivePort,
                     AnalogReducePort, EventSendPort,
                     EventReceivePort, AnalogPort, EventPort, Port)

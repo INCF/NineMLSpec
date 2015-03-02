@@ -51,7 +51,7 @@ def get_component():
                                                to="subthresholdregime"),
                              )
                              ],
-                             analog_ports=[al.ReducePort("Isyn", reduce_op="+")]
+                             analog_ports=[al.ReducePort("Isyn", operator="+")]
                              )
 
     return aeIF

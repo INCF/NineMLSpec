@@ -35,7 +35,7 @@ regimes = [
 
 
 ports = [nineml.SendPort("V_m"),
-         nineml.ReducePort("Isyn", reduce_op="+")]
+         nineml.ReducePort("Isyn", operator="+")]
 
 iaf_cond_exp_9ML = nineml.ComponentClass("iaf_cond_exp",
                                          regimes=regimes,

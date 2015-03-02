@@ -13,12 +13,12 @@
     <Parameter name="Cm" dimension="specificCapacitance"/>
     <AnalogReducePort name="iSyn" dimension="current" operator="+"/>
     <AnalogReceivePort name="iExt" dimension="current"/>
-    <AnalogSendPort name="U" dimension="dimensionless"/>
+    <AnalogSendPort name="U" dimension="voltage_cubed"/>
     <AnalogSendPort name="V" dimension="voltage"/>
     <EventSendPort name="spikeOutput" mode="send"/>
     <Dynamics>
       <StateVariable name="V" dimension="voltage"/>
-      <StateVariable name="U" dimension="dimensionless"/>
+      <StateVariable name="U" dimension="voltage_cubed"/>
       <Regime name="subthreshold">
         <TimeDerivative variable="U">
           <MathInline>a * (b * (V - Vb) ^ 3 - U)</MathInline>
@@ -36,7 +36,7 @@
           <StateAssignment variable="U">
             <MathInline>U</MathInline>
           </StateAssignment>
-          <EventOut port="spikeOutput"/>
+          <OutputEvent port="spikeOutput"/>
         </OnCondition>
         <OnCondition target_regime="subVb">
           <Trigger>
@@ -94,6 +94,7 @@
   </Component>
   <Dimension name="dimensionless"/>
   <Dimension name="voltage" m="1" l="2" t="-3" i="-1"/>
+  <Dimension name="voltage_cubed" m="3" l="6" t="-9" i="-3"/>
   <Dimension name="specificCapacitance" m="-1" l="-4" t="4" i="2"/>
   <Dimension name="current" i="1"/>
   <Unit symbol="mV" dimension="voltage" power="-3"/>

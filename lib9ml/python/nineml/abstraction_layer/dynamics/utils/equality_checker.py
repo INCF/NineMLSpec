@@ -25,8 +25,8 @@ class DynamicsEqualityChecker(ComponentEqualityChecker):
         assert_equal_list(ap1Dict.keys(), ap2Dict.keys())
         for portname in ap1Dict.keys():
             assert_equal(ap1Dict[portname].mode, ap2Dict[portname].mode)
-            assert_equal(ap1Dict[portname].reduce_op,
-                         ap2Dict[portname].reduce_op)
+            assert_equal(ap1Dict[portname].operator,
+                         ap2Dict[portname].operator)
 
         # Event Ports: Check Modes & reduce ops:
         ev1Dict = safe_dict([(ev.name, ev) for ev in comp1.event_ports])
@@ -34,8 +34,8 @@ class DynamicsEqualityChecker(ComponentEqualityChecker):
         assert_equal_list(ev1Dict.keys(), ev2Dict.keys())
         for portname in ev1Dict.keys():
             assert_equal(ev1Dict[portname].mode, ev2Dict[portname].mode)
-            assert_equal(ev1Dict[portname].reduce_op,
-                         ev2Dict[portname].reduce_op)
+            assert_equal(ev1Dict[portname].operator,
+                         ev2Dict[portname].operator)
 
         # CHECK THE SUBNAMESPACES AND PORT CONNECTIONS
         # ------------------------------------------- #

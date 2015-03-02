@@ -31,7 +31,7 @@ model = al.DynamicsClass(
     analog_ports=[
         al.AnalogSendPort("V", dimension=voltage),
         al.AnalogSendPort("t_rpend", dimension=time),
-        al.AnalogReducePort("Isyn", reduce_op="+", dimension=current)],
+        al.AnalogReducePort("Isyn", operator="+", dimension=current)],
     event_ports=[
         al.EventSendPort('spikeOutput'),
         ],

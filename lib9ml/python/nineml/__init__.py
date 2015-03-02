@@ -6,9 +6,9 @@ A Python library for working with 9ML model descriptions.
 """
 
 __version__ = "0.2dev"
-
 from itertools import chain
 from operator import and_
+import collections
 
 
 class BaseNineMLObject(object):
@@ -38,6 +38,55 @@ class BaseNineMLObject(object):
         raise NotImplementedError(
             "Derived class '{}' has not overriden accept_visitor method."
             .format(self.__class__.__name__))
+
+    def find_mismatch(self, other, indent='  '):
+        """
+        A function used for debugging where two NineML objects differ
+        """
+        if not indent:
+            result = ("Mismatch between '{}' types:"
+                      .format(self.__class__.__name__))
+        else:
+            result = ''
+        if not (isinstance(other, self.__class__) or
+                isinstance(self, other.__class__)):
+            result += "mismatch in type"
+        for attr_name in self.__class__.defining_attributes:
+            self_attr = getattr(self, attr_name)
+            other_attr = getattr(other, attr_name)
+            if self_attr != other_attr:
+                result += "\n{}Attribute '{}': ".format(indent, attr_name)
+                result += self._unwrap_mismatch(self_attr, other_attr,
+                                                indent + '  ')
+        return result
+
+    @classmethod
+    def _unwrap_mismatch(cls, s, o, indent):
+        result = ''
+        if isinstance(s, BaseNineMLObject):
+            result += s.find_mismatch(o, indent=indent + '  ')
+        elif isinstance(s, dict):
+            if set(s.keys()) != set(o.keys()):
+                result += ('keys do not match ({} and {})'
+                           .format(set(s.keys()), set(o.keys())))
+            else:
+                for k in s:
+                    if s[k] != o[k]:
+                        result += "\n{}Key '{}':".format(indent + '  ', k)
+                        result += cls._unwrap_mismatch(s[k], o[k],
+                                                       indent + '  ')
+        elif isinstance(s, list):
+            if len(s) != len(o):
+                result += 'differ in length ({} to {})'.format(len(s), len(o))
+            else:
+                for i, (s_elem, o_elem) in enumerate(zip(s, o)):
+                    if s_elem != o_elem:
+                        result += "\n{}Index {}:".format(indent + '  ', i)
+                        result += cls._unwrap_mismatch(s_elem, o_elem,
+                                                       indent + '  ')
+        else:
+            result += "{} != {}".format(s, o)
+        return result
 
 
 class TopLevelObject(object):

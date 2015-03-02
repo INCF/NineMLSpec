@@ -579,6 +579,30 @@ class DynamicsClass(ComponentClass, _NamespaceMixin):
         """Forwarding function to self.dynamicsblock.state_variables_map"""
         return self.dynamicsblock.state_variables_map
 
+    @property
+    def regime_names(self):
+        return self._main_block._regimes.iterkeys()
+
+    @property
+    def alias_names(self):
+        return self._main_block._aliases.iterkeys()
+
+    @property
+    def state_variable_names(self):
+        return self._main_block._state_variables.iterkeys()
+
+    @property
+    def num_regimes(self):
+        return len(self._main_block._regimes)
+
+    @property
+    def num_state_variables(self):
+        return len(self._main_block._state_variables)
+
+    @property
+    def num_aliases(self):
+        return len(self._main_block._aliases)
+
     # -------------------------- #
 
     def backsub_all(self):

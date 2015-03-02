@@ -18,7 +18,7 @@ def get_component():
     )
 
     ports = [al.SendPort("V"),
-             al.ReducePort("Isyn", reduce_op="+")]
+             al.ReducePort("Isyn", operator="+")]
 
     c1 = al.ComponentClass(
         name="Izhikevich",

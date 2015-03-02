@@ -36,7 +36,7 @@ class FuncTest_Flat2(object):
             parameters=['Cm', 'gL', 'E'],
             regimes=[Regime('dV/dt = (iInj + (E-V)*gL )/Cm'), ],
             analog_ports=[SendPort('V'),
-                          ReducePort('iInj', reduce_op='+')],
+                          ReducePort('iInj', operator='+')],
         )
 
         combined_comp = ComponentClass(name='Comp1',

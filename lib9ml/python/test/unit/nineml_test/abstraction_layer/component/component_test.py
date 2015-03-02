@@ -208,10 +208,10 @@ class ComponentClass_test(unittest.TestCase):
         self.assertEqual(len(c.query.analog_recv_ports), 1)
         self.assertEqual(len(c.query.analog_reduce_ports), 0)
 
-        c = ComponentClass(name='C1', analog_ports=[AnalogReducePort('B', reduce_op='+')])
+        c = ComponentClass(name='C1', analog_ports=[AnalogReducePort('B', operator='+')])
         self.assertEqual(len(list(c.analog_ports)), 1)
         self.assertEqual(list(c.analog_ports)[0].mode, 'reduce')
-        self.assertEqual(list(c.analog_ports)[0].reduce_op, '+')
+        self.assertEqual(list(c.analog_ports)[0].operator, '+')
         self.assertEqual(len(c.query.analog_send_ports), 0)
         self.assertEqual(len(c.query.analog_recv_ports), 0)
         self.assertEqual(len(c.query.analog_reduce_ports), 1)
@@ -222,7 +222,7 @@ class ComponentClass_test(unittest.TestCase):
             ComponentClass,
             name='C1',
             aliases=['A:=1'],
-            analog_ports=[AnalogReducePort('B', reduce_op='+'), AnalogSendPort('B')]
+            analog_ports=[AnalogReducePort('B', operator='+'), AnalogSendPort('B')]
         )
 
         self.assertRaises(

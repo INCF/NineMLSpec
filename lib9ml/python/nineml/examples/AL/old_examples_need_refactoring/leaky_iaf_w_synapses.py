@@ -17,7 +17,7 @@ def get_component():
         )]
 
     analog_ports = [al.SendPort("V"),
-                    al.ReducePort("Isyn", reduce_op="+")]
+                    al.ReducePort("Isyn", operator="+")]
 
     leaky_iaf = al.ComponentClass("LeakyIAF", regimes=regimes, analog_ports=analog_ports)
 

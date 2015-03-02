@@ -27,7 +27,7 @@ def get_component():
             al.StateVariable('tspike'),
         ],
         analog_ports=[al.AnalogSendPort("V"),
-                      al.AnalogReducePort("ISyn", reduce_op="+"), ],
+                      al.AnalogReducePort("ISyn", operator="+"), ],
 
         event_ports=[al.EventSendPort('spikeoutput'), ],
         parameters=['cm', 'taurefrac', 'gl', 'vreset', 'vrest', 'vthresh']

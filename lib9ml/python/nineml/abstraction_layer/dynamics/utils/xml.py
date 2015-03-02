@@ -75,7 +75,7 @@ class DynamicsClassXMLLoader(ComponentClassXMLLoader):
         return AnalogReducePort(
             name=element.get('name'),
             dimension=self.document[element.get('dimension')],
-            reduce_op=element.get("operator"))
+            operator=element.get("operator"))
 
     @read_annotations
     def load_dynamicsblock(self, element):
@@ -214,7 +214,7 @@ class DynamicsClassXMLWriter(ComponentClassXMLWriter):
     @annotate_xml
     def visit_analogreduceport(self, port):
         return E('AnalogReducePort', name=port.name,
-                 dimension=port.dimension.name, operator=port.reduce_op)
+                 dimension=port.dimension.name, operator=port.operator)
 
     @annotate_xml
     def visit_analogsendport(self, port):

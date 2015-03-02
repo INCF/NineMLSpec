@@ -357,7 +357,7 @@ class ComponentFlattener(object):
         for dstport, srcport_list in reduce_connections.iteritems():
             src_subs = [s.name for s in srcport_list]
             terms = [dstport.name] + src_subs
-            reduce_expr = dstport.reduce_op.join(terms)
+            reduce_expr = dstport.operator.join(terms)
 
             # globalRemapPort( dstport.name, reduce_expr )
             DynamicsExpandPortDefinition(
