@@ -13,12 +13,10 @@ network models for efficient model sharing and reusability
 
 NineML emerged from a joint effort of experts in the fields of computational
 neuroscience, simulator development and simulator-independent language
-initiatives (NeuroML_, PyNN_), grouped in the
-`INCF Multiscale Modeling Task Force: https://www.incf.org/activities/our-programs/modeling/people`__.
-This effort was initiated and is still supported by the
-`Multiscale Modeling Program: https://www.incf.org/activities/our-programs/modeling`__,
-as part of the standardization effort of the `International Neuroinformatics Coordinating Facility (INCF) <http://www.incf.org>`__,
-but the project is now run as a `community project <http://nineml.net/committee>`__.
+initiatives (NeuroML_, PyNN_), grouped in the INCF Multiscale Modeling Task Force.
+This effort was initiated by the Multiscale Modeling Program,
+as part of the standardization effort of the `International Neuroinformatics Coordinating Facility (INCF) <http://www.incf.org>`_,
+but the project is now run as a `community project <http://nineml.net/committee>`_.
 
 
 How to build the source
@@ -57,7 +55,7 @@ related repositories that are maintained by the NineML team
 
 - `NineML Python Library`_: A Python library for reading, writing and
   manipulating NineML descriptions
-- `NineMLCatalog`_: A collection of example NineML models serialized to XML.
+- `NineML Catalog`_: A collection of example NineML models serialized to XML.
 
 .. _PyNN: http://neuralensemble.org/PyNN/
 .. _NeuroML: http://neuroml.org
